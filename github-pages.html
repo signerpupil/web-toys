@@ -6,24 +6,79 @@
 <title>GitHub Pages – 3 Wege zur eigenen Website</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
+  /* ── LIGHT MODE (default) ── */
   :root {
-    --bg: #0d1117;
-    --surface: #161b22;
-    --surface2: #1c2129;
-    --border: #30363d;
-    --text: #e6edf3;
-    --text-muted: #8b949e;
-    --accent: #58a6ff;
-    --green: #3fb950;
-    --orange: #d29922;
-    --purple: #bc8cff;
-    --red: #f85149;
-    --pink: #f778ba;
-    --cyan: #39d353;
-    --teal: #56d4dd;
+    --bg: #f5f4f1;
+    --surface: #ffffff;
+    --surface2: #f0efec;
+    --border: #ddd9d1;
+    --text: #1c1c1e;
+    --text-muted: #6e6b63;
+    --accent: #2563eb;
+    --green: #16a34a;
+    --orange: #b45309;
+    --purple: #7c3aed;
+    --red: #dc2626;
+    --pink: #db2777;
+    --cyan: #0d9488;
+    --teal: #0891b2;
+    --depth1: rgba(0,0,0,0.03);
+    --depth2: rgba(0,0,0,0.05);
+    --depth3: rgba(0,0,0,0.06);
+    --glow-accent: rgba(37,99,235,0.1);
+    --glow-green: rgba(22,163,74,0.1);
+    --glow-purple: rgba(124,58,237,0.1);
+    --glow-orange: rgba(180,83,9,0.1);
+    --glow-pink: rgba(219,39,119,0.1);
+    --glow-teal: rgba(8,145,178,0.1);
+    --glow-red: rgba(220,38,38,0.1);
+    --glow-cyan: rgba(13,148,136,0.1);
+    --card-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03);
+    --noise-opacity: 0.015;
+    --code-bg: #f0eee9;
+    --thead-bg: rgba(0,0,0,0.02);
+    --dot-glow: 0 0 12px rgba(37,99,235,0.15);
+  }
+
+  /* ── DARK MODE ── */
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0d1117;
+      --surface: #161b22;
+      --surface2: #1c2129;
+      --border: #30363d;
+      --text: #e6edf3;
+      --text-muted: #8b949e;
+      --accent: #58a6ff;
+      --green: #3fb950;
+      --orange: #d29922;
+      --purple: #bc8cff;
+      --red: #f85149;
+      --pink: #f778ba;
+      --cyan: #39d353;
+      --teal: #56d4dd;
+      --depth1: rgba(0,0,0,0.2);
+      --depth2: rgba(0,0,0,0.25);
+      --depth3: rgba(0,0,0,0.35);
+      --glow-accent: rgba(88,166,255,0.12);
+      --glow-green: rgba(63,185,80,0.12);
+      --glow-purple: rgba(188,140,255,0.12);
+      --glow-orange: rgba(210,153,34,0.12);
+      --glow-pink: rgba(247,120,186,0.12);
+      --glow-teal: rgba(86,212,221,0.12);
+      --glow-red: rgba(248,81,73,0.12);
+      --glow-cyan: rgba(57,211,83,0.12);
+      --card-shadow: 0 1px 3px rgba(0,0,0,0.15), 0 4px 16px rgba(0,0,0,0.12);
+      --noise-opacity: 0.03;
+      --code-bg: rgba(0,0,0,0.35);
+      --thead-bg: rgba(0,0,0,0.15);
+      --dot-glow: 0 0 20px rgba(88,166,255,0.2);
+    }
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; scroll-padding-top: 56px; }
 
   body {
     background: var(--bg);
@@ -34,10 +89,69 @@
     line-height: 1.6;
   }
 
+  /* ── STICKY NAV ── */
+  .toc-nav {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: #161b22;
+    border-bottom: 1px solid var(--border);
+    padding: 0 20px;
+    animation: fadeDown 0.5s ease-out;
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
+  }
+
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .toc-inner {
+    max-width: 960px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .toc-inner::-webkit-scrollbar { display: none; }
+
+  .toc-link {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 12px 14px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #8b949e;
+    text-decoration: none;
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s ease;
+  }
+
+  .toc-link:hover {
+    color: #e6edf3;
+    border-bottom-color: #58a6ff;
+  }
+
+  .toc-link .toc-emoji {
+    font-size: 13px;
+  }
+
+  @media (max-width: 700px) {
+    .toc-link { padding: 10px 10px; font-size: 11px; }
+  }
+
   .noise {
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+    opacity: var(--noise-opacity);
     pointer-events: none;
     z-index: 999;
   }
@@ -59,7 +173,7 @@
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    background: rgba(88,166,255,0.1);
+    background: var(--glow-accent);
     border: 1px solid rgba(88,166,255,0.2);
     border-radius: 100px;
     padding: 8px 20px;
@@ -79,7 +193,7 @@
     line-height: 1.1;
     letter-spacing: -1.5px;
     margin-bottom: 16px;
-    background: linear-gradient(135deg, #e6edf3 0%, #58a6ff 50%, #bc8cff 100%);
+    background: linear-gradient(135deg, var(--text) 0%, var(--accent) 50%, var(--purple) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -143,7 +257,7 @@
   }
 
   .fc-start {
-    background: rgba(88,166,255,0.12);
+    background: var(--glow-accent);
     border: 2px solid rgba(88,166,255,0.3);
     color: var(--accent);
     font-weight: 600;
@@ -211,22 +325,28 @@
   }
 
   .fc-result-green {
-    background: rgba(63,185,80,0.08);
+    background: var(--glow-green);
     border-color: rgba(63,185,80,0.3);
     color: var(--green);
+    transition: transform 0.2s, box-shadow 0.2s;
   }
+  .fc-result-green:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(63,185,80,0.15); }
 
   .fc-result-blue {
-    background: rgba(88,166,255,0.08);
+    background: var(--glow-accent);
     border-color: rgba(88,166,255,0.3);
     color: var(--accent);
+    transition: transform 0.2s, box-shadow 0.2s;
   }
+  .fc-result-blue:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(88,166,255,0.15); }
 
   .fc-result-purple {
-    background: rgba(188,140,255,0.08);
+    background: var(--glow-purple);
     border-color: rgba(188,140,255,0.3);
     color: var(--purple);
+    transition: transform 0.2s, box-shadow 0.2s;
   }
+  .fc-result-purple:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(188,140,255,0.15); }
 
   .fc-connector {
     display: flex;
@@ -324,7 +444,7 @@
     align-items: center;
     justify-content: center;
     font-size: 24px;
-    background: rgba(210,153,34,0.12);
+    background: var(--glow-orange);
   }
 
   .commit-card-header h2 {
@@ -349,13 +469,13 @@
     margin-bottom: 28px;
     line-height: 1.65;
     padding: 16px 20px;
-    background: rgba(0,0,0,0.2);
+    background: var(--depth1);
     border-radius: 12px;
     border-left: 3px solid var(--orange);
   }
 
   .commit-analogy {
-    background: rgba(210,153,34,0.06);
+    background: var(--glow-orange);
     border: 1px dashed rgba(210,153,34,0.25);
     border-radius: 12px;
     padding: 18px 22px;
@@ -392,7 +512,7 @@
     gap: 16px;
     align-items: flex-start;
     padding: 18px 20px;
-    background: rgba(0,0,0,0.2);
+    background: var(--depth1);
     border-radius: 12px;
     border: 1px solid var(--border);
     transition: border-color 0.3s;
@@ -409,7 +529,7 @@
     align-items: center;
     justify-content: center;
     font-size: 18px;
-    background: rgba(210,153,34,0.1);
+    background: var(--glow-orange);
   }
 
   .commit-phase h4 {
@@ -435,13 +555,13 @@
   }
 
   .phase-tag-auto {
-    background: rgba(63,185,80,0.12);
+    background: var(--glow-green);
     color: var(--green);
     border: 1px solid rgba(63,185,80,0.2);
   }
 
   .phase-tag-manual {
-    background: rgba(88,166,255,0.12);
+    background: var(--glow-accent);
     color: var(--accent);
     border: 1px solid rgba(88,166,255,0.2);
   }
@@ -467,7 +587,7 @@
 
   .commit-where-item {
     padding: 16px;
-    background: rgba(0,0,0,0.2);
+    background: var(--depth1);
     border-radius: 10px;
     border: 1px solid var(--border);
     transition: border-color 0.3s;
@@ -498,7 +618,7 @@
 
   .commit-flow-visual {
     margin-top: 24px;
-    background: rgba(0,0,0,0.3);
+    background: var(--depth2);
     border: 1px solid var(--border);
     border-radius: 14px;
     padding: 24px;
@@ -540,8 +660,8 @@
 
   .ct-icon.ct-highlight {
     border-color: var(--orange);
-    box-shadow: 0 0 16px rgba(210,153,34,0.25);
-    background: rgba(210,153,34,0.1);
+    box-shadow: var(--dot-glow);
+    background: var(--glow-orange);
   }
 
   .ct-label {
@@ -565,6 +685,144 @@
     .commit-body { padding: 20px; }
     .commit-timeline { flex-direction: column; }
     .ct-arrow { transform: rotate(90deg); padding: 4px 0; margin-bottom: 0; }
+  }
+
+  /* ── WORKFLOW EXPLAINER (inside commit section) ── */
+  .workflow-explainer {
+    margin-top: 28px;
+    background: rgba(0,0,0,0.25);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+
+  .workflow-header {
+    padding: 18px 22px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .workflow-header .wf-icon {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    background: rgba(88,166,255,0.1);
+  }
+
+  .workflow-header h4 {
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  .workflow-header .wf-sub {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 1px;
+  }
+
+  .workflow-body {
+    padding: 22px;
+  }
+
+  .workflow-body > p {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.6;
+    margin-bottom: 20px;
+  }
+
+  .wf-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+
+  .wf-step {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+
+  .wf-step-icon {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    background: rgba(88,166,255,0.08);
+    border: 1px solid rgba(88,166,255,0.15);
+  }
+
+  .wf-step-content h5 {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 2px;
+  }
+
+  .wf-step-content p {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+
+  .wf-status-row {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .wf-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background: rgba(0,0,0,0.2);
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    font-size: 13px;
+    flex: 1;
+    min-width: 200px;
+  }
+
+  .wf-status-dot {
+    width: 10px;
+    height: 10px;
+    min-width: 10px;
+    border-radius: 50%;
+  }
+
+  .wf-dot-green { background: var(--green); box-shadow: 0 0 8px rgba(63,185,80,0.4); }
+  .wf-dot-orange { background: var(--orange); box-shadow: 0 0 8px rgba(210,153,34,0.4); animation: pulse 1.5s infinite; }
+  .wf-dot-red { background: var(--red); box-shadow: 0 0 8px rgba(248,81,73,0.4); }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+
+  .wf-status .wf-status-label {
+    font-weight: 500;
+  }
+
+  .wf-status .wf-status-desc {
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+
+  @media (max-width: 700px) {
+    .wf-status-row { flex-direction: column; }
+    .wf-status { min-width: 0; }
   }
 
   /* ── PATH CARDS ── */
@@ -603,9 +861,9 @@
     font-size: 26px;
   }
 
-  .path-card:nth-child(1) .path-icon { background: rgba(63,185,80,0.12); }
-  .path-card:nth-child(2) .path-icon { background: rgba(88,166,255,0.12); }
-  .path-card:nth-child(3) .path-icon { background: rgba(188,140,255,0.12); }
+  .path-card:nth-child(1) .path-icon { background: var(--glow-green); }
+  .path-card:nth-child(2) .path-icon { background: var(--glow-accent); }
+  .path-card:nth-child(3) .path-icon { background: var(--glow-purple); }
 
   .path-meta h2 {
     font-size: 22px;
@@ -661,7 +919,7 @@
     margin-bottom: 28px;
     line-height: 1.65;
     padding: 16px 20px;
-    background: rgba(0,0,0,0.2);
+    background: var(--depth1);
     border-radius: 12px;
     border-left: 3px solid var(--border);
   }
@@ -697,9 +955,9 @@
     margin-top: 2px;
   }
 
-  .path-card:nth-child(1) .pstep-num { background: rgba(63,185,80,0.12); color: var(--green); }
-  .path-card:nth-child(2) .pstep-num { background: rgba(88,166,255,0.12); color: var(--accent); }
-  .path-card:nth-child(3) .pstep-num { background: rgba(188,140,255,0.12); color: var(--purple); }
+  .path-card:nth-child(1) .pstep-num { background: var(--glow-green); color: var(--green); }
+  .path-card:nth-child(2) .pstep-num { background: var(--glow-accent); color: var(--accent); }
+  .path-card:nth-child(3) .pstep-num { background: var(--glow-purple); color: var(--purple); }
 
   .pstep-content h4 {
     font-size: 16px;
@@ -715,7 +973,7 @@
 
   .pstep-visual {
     margin-top: 12px;
-    background: rgba(0,0,0,0.35);
+    background: var(--code-bg);
     border: 1px solid var(--border);
     border-radius: 10px;
     overflow: hidden;
@@ -766,7 +1024,7 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    background: rgba(0,0,0,0.2);
+    background: var(--depth1);
   }
 
   .screenshot-topbar .dot { width: 8px; height: 8px; border-radius: 50%; }
@@ -777,7 +1035,7 @@
   .screenshot-topbar .url-bar {
     flex: 1;
     margin-left: 8px;
-    background: rgba(0,0,0,0.3);
+    background: var(--depth2);
     padding: 5px 12px;
     border-radius: 6px;
     font-family: 'Space Mono', monospace;
@@ -804,7 +1062,7 @@
   }
 
   .mock-dropdown {
-    background: rgba(0,0,0,0.3);
+    background: var(--depth2);
     border: 1px solid var(--border);
     border-radius: 8px;
     padding: 8px 14px;
@@ -831,7 +1089,7 @@
   }
 
   .mock-btn-green {
-    background: rgba(63,185,80,0.15);
+    background: var(--glow-green);
     color: var(--green);
     border: 1px solid rgba(63,185,80,0.3);
   }
@@ -868,9 +1126,9 @@
     font-weight: 400;
   }
 
-  .tag-green { background: rgba(63,185,80,0.12); color: var(--green); }
-  .tag-blue { background: rgba(88,166,255,0.12); color: var(--accent); }
-  .tag-purple { background: rgba(188,140,255,0.12); color: var(--purple); }
+  .tag-green { background: var(--glow-green); color: var(--green); }
+  .tag-blue { background: var(--glow-accent); color: var(--accent); }
+  .tag-purple { background: var(--glow-purple); color: var(--purple); }
 
   .flow-row {
     display: flex;
@@ -888,7 +1146,7 @@
     text-align: center;
     white-space: nowrap;
     border: 1px solid var(--border);
-    background: rgba(0,0,0,0.25);
+    background: var(--depth2);
     line-height: 1.3;
   }
 
@@ -946,7 +1204,7 @@
     color: var(--text-muted);
     text-align: left;
     border-bottom: 1px solid var(--border);
-    background: rgba(0,0,0,0.15);
+    background: var(--thead-bg);
   }
 
   .comparison-table thead th:first-child { border-top-left-radius: 16px; }
@@ -1058,8 +1316,8 @@
     margin-bottom: 16px;
   }
 
-  .privacy-badge.safe-badge { background: rgba(63,185,80,0.1); color: var(--green); }
-  .privacy-badge.risk-badge { background: rgba(210,153,34,0.1); color: var(--orange); }
+  .privacy-badge.safe-badge { background: var(--glow-green); color: var(--green); }
+  .privacy-badge.risk-badge { background: var(--glow-orange); color: var(--orange); }
 
   .privacy-card h3 {
     font-size: 18px;
@@ -1112,8 +1370,8 @@
     z-index: 1;
   }
 
-  .privacy-card.safe .pf-icon { background: rgba(63,185,80,0.1); }
-  .privacy-card.risk .pf-icon { background: rgba(210,153,34,0.1); }
+  .privacy-card.safe .pf-icon { background: var(--glow-green); }
+  .privacy-card.risk .pf-icon { background: var(--glow-orange); }
 
   .pf-content {
     padding: 2px 0 20px;
@@ -1140,9 +1398,9 @@
     margin-top: 5px;
   }
 
-  .pf-tag-safe { background: rgba(63,185,80,0.1); color: var(--green); }
-  .pf-tag-warn { background: rgba(210,153,34,0.1); color: var(--orange); }
-  .pf-tag-danger { background: rgba(248,81,73,0.1); color: var(--red); }
+  .pf-tag-safe { background: var(--glow-green); color: var(--green); }
+  .pf-tag-warn { background: var(--glow-orange); color: var(--orange); }
+  .pf-tag-danger { background: var(--glow-red); color: var(--red); }
 
   .privacy-server-note {
     margin-top: 16px;
@@ -1156,12 +1414,12 @@
 
   .privacy-server-note.note-safe {
     border-color: rgba(63,185,80,0.25);
-    background: rgba(63,185,80,0.04);
+    background: var(--glow-green);
   }
 
   .privacy-server-note.note-risk {
     border-color: rgba(210,153,34,0.25);
-    background: rgba(210,153,34,0.04);
+    background: var(--glow-orange);
   }
 
   .privacy-server-note strong {
@@ -1268,7 +1526,7 @@
     font-family: 'Space Mono', monospace;
     font-size: 12px;
     padding: 8px 16px;
-    background: rgba(0,0,0,0.3);
+    background: var(--depth2);
     border: 1px solid var(--border);
     border-radius: 8px;
     color: var(--text-muted);
@@ -1309,10 +1567,40 @@
 
   .footer-link:hover {
     border-color: var(--accent);
-    background: rgba(88,166,255,0.05);
+    background: var(--glow-accent);
   }
 
   .footer-link svg { width: 16px; height: 16px; color: var(--text-muted); }
+
+  /* ── CROSS-LINKS ── */
+  .cross-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    color: var(--accent);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    margin-top: 8px;
+    transition: opacity 0.2s;
+  }
+
+  .cross-link:hover { opacity: 0.8; text-decoration: underline; }
+
+  .back-to-top {
+    display: block;
+    text-align: center;
+    margin-top: 16px;
+    padding: 10px;
+    font-size: 12px;
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color 0.2s;
+    font-family: 'Space Mono', monospace;
+    letter-spacing: 0.5px;
+  }
+
+  .back-to-top:hover { color: var(--accent); }
 
   /* ── ANIMATIONS ── */
   @keyframes fadeUp {
@@ -1344,7 +1632,7 @@
 <div class="container">
 
 <!-- ════════════════════════════════════════ HEADER ════════════════════════════════════════ -->
-<header class="header">
+<header class="header" id="top">
   <div class="badge">
     <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg>
     Infografik
@@ -1353,8 +1641,22 @@
   <p>Vom einfachen Text bis zum App-Projekt – jeder Weg Schritt für Schritt erklärt, auch ohne Programmierkenntnisse.</p>
 </header>
 
+<!-- ════════════════════════════════════════ NAVIGATION ═════════════════════════════════════ -->
+<nav class="toc-nav">
+  <div class="toc-inner">
+    <a href="#entscheidung" class="toc-link"><span class="toc-emoji">🤔</span> Welcher Weg?</a>
+    <a href="#commit" class="toc-link"><span class="toc-emoji">💾</span> Commit</a>
+    <a href="#wege" class="toc-link"><span class="toc-emoji">📖</span> 3 Wege</a>
+    <a href="#flussdiagramme" class="toc-link"><span class="toc-emoji">🔀</span> Flussdiagramme</a>
+    <a href="#vergleich" class="toc-link"><span class="toc-emoji">📊</span> Vergleich</a>
+    <a href="#tipps" class="toc-link"><span class="toc-emoji">💡</span> Tipps</a>
+    <a href="#datenschutz" class="toc-link"><span class="toc-emoji">🔒</span> Datenschutz</a>
+    <a href="#url" class="toc-link"><span class="toc-emoji">🔗</span> URL</a>
+  </div>
+</nav>
+
 <!-- ════════════════════════════════════ DECISION FLOWCHART ════════════════════════════════ -->
-<section class="flowchart-section">
+<section class="flowchart-section" id="entscheidung">
   <div class="section-title">Welcher Weg passt zu mir?</div>
 
   <div class="flowchart">
@@ -1372,27 +1674,27 @@
     <div style="height:8px"></div>
 
     <div class="fc-branch">
-      <div class="fc-result fc-result-green">
+      <a href="#wege" class="fc-result fc-result-green" style="text-decoration:none; color:inherit; cursor:pointer;">
         <span class="fc-emoji">📝</span>
         Weg 1: Markdown
         <div class="fc-desc">GitHub wandelt deinen Text automatisch in eine Website um</div>
-      </div>
-      <div class="fc-result fc-result-blue">
+      </a>
+      <a href="#wege" class="fc-result fc-result-blue" style="text-decoration:none; color:inherit; cursor:pointer;">
         <span class="fc-emoji">🌐</span>
         Weg 2: HTML
         <div class="fc-desc">Lade deine fertige HTML-Datei hoch – sie wird 1:1 angezeigt</div>
-      </div>
-      <div class="fc-result fc-result-purple">
+      </a>
+      <a href="#wege" class="fc-result fc-result-purple" style="text-decoration:none; color:inherit; cursor:pointer;">
         <span class="fc-emoji">⚡</span>
         Weg 3: Lovable / Vite
         <div class="fc-desc">Die App wird automatisch gebaut und veröffentlicht</div>
-      </div>
+      </a>
     </div>
   </div>
 </section>
 
 <!-- ═══════════════════════════════ COMMIT EXPLAINER ════════════════════════════════════════ -->
-<section class="commit-section">
+<section class="commit-section" id="commit">
   <div class="section-heading">Was passiert bei «Commit Changes»?</div>
   <div class="section-sub">Dieser Button taucht in allen drei Wegen auf – hier wird erklärt, was er genau macht.</div>
 
@@ -1526,13 +1828,13 @@
           <span class="url-bar">github.com/user/meine-seite/new/main</span>
         </div>
         <div class="screenshot-body">
-          <div style="padding: 12px 16px; background: rgba(0,0,0,0.2); border-radius: 8px; border: 1px solid var(--border); margin-bottom: 14px;">
+          <div style="padding: 12px 16px; background: var(--depth1); border-radius: 8px; border: 1px solid var(--border); margin-bottom: 14px;">
             <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 8px;">Commit message <span style="color: var(--red);">*</span></div>
-            <div style="padding: 10px 14px; background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 6px; font-family: 'Space Mono', monospace; font-size: 13px; color: var(--text);">Startseite hinzugefügt</div>
+            <div style="padding: 10px 14px; background: var(--depth2); border: 1px solid var(--border); border-radius: 6px; font-family: 'Space Mono', monospace; font-size: 13px; color: var(--text);">Startseite hinzugefügt</div>
           </div>
-          <div style="padding: 12px 16px; background: rgba(0,0,0,0.2); border-radius: 8px; border: 1px solid var(--border); margin-bottom: 14px;">
+          <div style="padding: 12px 16px; background: var(--depth1); border-radius: 8px; border: 1px solid var(--border); margin-bottom: 14px;">
             <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 8px;">Extended description <span style="color: var(--text-muted);">(optional)</span></div>
-            <div style="padding: 10px 14px; background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 6px; font-family: 'Space Mono', monospace; font-size: 12px; color: var(--text-muted);">index.html mit Grundstruktur und Navigation erstellt</div>
+            <div style="padding: 10px 14px; background: var(--depth2); border: 1px solid var(--border); border-radius: 6px; font-family: 'Space Mono', monospace; font-size: 12px; color: var(--text-muted);">index.html mit Grundstruktur und Navigation erstellt</div>
           </div>
           <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 10px;">
             <div style="width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--green); display: flex; align-items: center; justify-content: center;">
@@ -1544,12 +1846,88 @@
         </div>
       </div>
 
+      <!-- Workflow: What happens after commit -->
+      <div class="workflow-explainer">
+        <div class="workflow-header">
+          <div class="wf-icon">⚙️</div>
+          <div>
+            <h4>Was passiert danach? Der «pages-build-deployment» Workflow</h4>
+            <div class="wf-sub">Sichtbar im Tab «Actions» deines Repositorys</div>
+          </div>
+        </div>
+        <div class="workflow-body">
+          <p>Sobald dein Commit auf dem <code>main</code>-Branch gespeichert ist, erkennt GitHub automatisch die Änderung und startet den Workflow <strong>«pages-build-deployment»</strong>. Du musst nichts tun – alles läuft im Hintergrund. Im Tab <a href="#wege" style="color: var(--accent);">Actions</a> kannst du den Fortschritt live mitverfolgen:</p>
+
+          <div class="wf-steps">
+            <div class="wf-step">
+              <div class="wf-step-icon">📥</div>
+              <div class="wf-step-content">
+                <h5>1. Dateien einsammeln</h5>
+                <p>GitHub nimmt den aktuellen Stand aller Dateien aus dem <code>main</code>-Branch.</p>
+              </div>
+            </div>
+            <div class="wf-step">
+              <div class="wf-step-icon">🔍</div>
+              <div class="wf-step-content">
+                <h5>2. Prüfen & Bauen</h5>
+                <p>Bei Markdown-Seiten wandelt Jekyll den Text in HTML um. Bei reinem HTML wird nur geprüft, ob eine <code>index.html</code> vorhanden ist. Bei Vite/React wird <code>npm run build</code> ausgeführt.</p>
+              </div>
+            </div>
+            <div class="wf-step">
+              <div class="wf-step-icon">📦</div>
+              <div class="wf-step-content">
+                <h5>3. Artefakt erstellen</h5>
+                <p>Die fertigen Dateien werden als Paket zusammengeschnürt – das sogenannte «Build-Artefakt».</p>
+              </div>
+            </div>
+            <div class="wf-step">
+              <div class="wf-step-icon">🌍</div>
+              <div class="wf-step-content">
+                <h5>4. Auf CDN verteilen</h5>
+                <p>Das Paket wird auf GitHubs weltweites Content Delivery Network hochgeladen. Die Seite ist jetzt unter <code>username.github.io/repo</code> erreichbar – mit HTTPS.</p>
+              </div>
+            </div>
+          </div>
+
+          <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">Im Tab <strong>«Actions»</strong> siehst du für jeden Commit einen Eintrag. Der Status zeigt dir, ob alles geklappt hat:</p>
+
+          <div class="wf-status-row">
+            <div class="wf-status">
+              <div class="wf-status-dot wf-dot-green"></div>
+              <div>
+                <div class="wf-status-label">✅ Erfolgreich</div>
+                <div class="wf-status-desc">Seite ist live und aktualisiert</div>
+              </div>
+            </div>
+            <div class="wf-status">
+              <div class="wf-status-dot wf-dot-orange"></div>
+              <div>
+                <div class="wf-status-label">🟡 In Progress</div>
+                <div class="wf-status-desc">Wird gerade gebaut (30–90 Sek.)</div>
+              </div>
+            </div>
+            <div class="wf-status">
+              <div class="wf-status-dot wf-dot-red"></div>
+              <div>
+                <div class="wf-status-label">❌ Fehlgeschlagen</div>
+                <div class="wf-status-desc">Klick drauf → Log zeigt Fehler</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px; flex-wrap: wrap; gap: 10px;">
+        <a href="#wege" class="cross-link">📖 Weiter: Die drei Wege im Detail →</a>
+        <a href="#top" class="back-to-top" style="margin: 0;">↑ Nach oben</a>
+      </div>
+
     </div>
   </div>
 </section>
 
 <!-- ══════════════════════════════════════ 3 PATHS ═════════════════════════════════════════ -->
-<section class="paths-section">
+<section class="paths-section" id="wege">
   <div class="section-heading">Die drei Wege im Detail</div>
   <div class="section-sub">Jeder Weg wird Schritt für Schritt erklärt – mit Beispielen, die du direkt nachmachen kannst.</div>
 
@@ -1629,6 +2007,8 @@ In meiner Freizeit fotografiere ich gerne.<br><br>
 <span class="fn">![Mein Foto](bild.jpg)</span>
               </div>
             </div>
+            <p style="font-size: 13px; color: var(--text-muted); margin-top: 10px;">Unten auf der Seite klickst du dann <strong>«Commit changes»</strong>, um die Datei zu speichern.</p>
+            <a href="#commit" class="cross-link">💾 Was passiert bei «Commit changes»? →</a>
           </div>
         </div>
 
@@ -1718,6 +2098,7 @@ In meiner Freizeit fotografiere ich gerne.<br><br>
           <div class="pstep-content">
             <h4>HTML-Datei hochladen</h4>
             <p>Klicke auf <strong>«Add file»</strong> → <strong>«Upload files»</strong>. Lade deine <code>index.html</code> hoch (plus allfällige CSS, JS, Bilddateien). Dann auf <strong>«Commit changes»</strong> klicken.</p>
+            <a href="#commit" class="cross-link">💾 Was passiert bei «Commit changes»? →</a>
             <div class="pstep-visual">
               <div class="pstep-visual-header">
                 <span class="dot"></span><span class="dot"></span><span class="dot"></span>
@@ -1885,15 +2266,17 @@ In meiner Freizeit fotografiere ich gerne.<br><br>
           <div class="pstep-content">
             <h4>Pushen und warten</h4>
             <p>Sobald du die Dateien committet hast, startet der Workflow automatisch. Unter dem Tab <strong>«Actions»</strong> im Repository kannst du den Fortschritt beobachten. Nach 2–3 Minuten ist die Seite live. Jeder neue Push startet einen neuen Build.</p>
+            <a href="#commit" class="cross-link">💾 Was genau passiert nach dem Commit? →</a>
           </div>
         </div>
       </div>
     </div>
   </article>
+  <a href="#top" class="back-to-top">↑ Nach oben</a>
 </section>
 
 <!-- ════════════════════════════════ PROCESS FLOW DIAGRAMS ═════════════════════════════════ -->
-<section class="flow-section">
+<section class="flow-section" id="flussdiagramme">
   <div class="section-heading">Flussdiagramme</div>
   <div class="section-sub">So verarbeitet GitHub Pages deine Inhalte – für jeden Weg visualisiert.</div>
 
@@ -1946,10 +2329,11 @@ In meiner Freizeit fotografiere ich gerne.<br><br>
       <div class="flow-box highlight-pink">CDN 🌍<small>Seite live!</small></div>
     </div>
   </div>
+  <a href="#top" class="back-to-top">↑ Nach oben</a>
 </section>
 
 <!-- ═══════════════════════════════════ COMPARISON TABLE ═══════════════════════════════════ -->
-<section class="comparison-section">
+<section class="comparison-section" id="vergleich">
   <div class="section-heading">Vergleich auf einen Blick</div>
   <div class="section-sub">Welcher Weg bietet was?</div>
 
@@ -2007,10 +2391,11 @@ In meiner Freizeit fotografiere ich gerne.<br><br>
       </tr>
     </tbody>
   </table>
+  <a href="#top" class="back-to-top">↑ Nach oben</a>
 </section>
 
 <!-- ═══════════════════════════════════════ TIPS ═══════════════════════════════════════════ -->
-<section class="tips-section">
+<section class="tips-section" id="tipps">
   <div class="section-heading">💡 Tipps & Stolperfallen</div>
   <div class="section-sub">Häufige Fragen und Probleme – und wie du sie vermeidest.</div>
 
@@ -2046,10 +2431,11 @@ In meiner Freizeit fotografiere ich gerne.<br><br>
       <p>GitHub Pages hostet nur <strong>statische</strong> Inhalte. Für Datenbanken, Login-Systeme oder serverseitige Logik brauchst du einen anderen Hosting-Anbieter (z.B. Vercel, Netlify).</p>
     </div>
   </div>
+  <a href="#top" class="back-to-top">↑ Nach oben</a>
 </section>
 
 <!-- ═════════════════════════════════ DATENSCHUTZ ═══════════════════════════════════════════ -->
-<section class="privacy-section">
+<section class="privacy-section" id="datenschutz">
   <div class="section-heading">🔒 Datenschutz & GitHub Pages</div>
   <div class="section-sub">Wann ist eine GitHub Pages-Seite datenschutzkonform – und wann nicht? Zwei Szenarien im Vergleich.</div>
 
@@ -2169,10 +2555,11 @@ In meiner Freizeit fotografiere ich gerne.<br><br>
       </div>
     </div>
   </div>
+  <a href="#top" class="back-to-top">↑ Nach oben</a>
 </section>
 
 <!-- ═══════════════════════════════════ URL STRUCTURE ══════════════════════════════════════ -->
-<section class="url-section">
+<section class="url-section" id="url">
   <div class="section-title">URL-Struktur</div>
 
   <div class="url-anatomy">
