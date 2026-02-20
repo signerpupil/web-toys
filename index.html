@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Web Toys – signerpupil</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* ── LIGHT MODE (default) ── */
+  :root {
+    --bg: #f8f7f4;
+    --bg2: #efeee9;
+    --surface: #ffffff;
+    --border: #e2e0da;
+    --border-hover: #ccc9c0;
+    --text: #1a1a1a;
+    --text-muted: #6b6860;
+    --accent: #5b4cd6;
+    --accent-dim: #5b4cd615;
+    --accent-border: #5b4cd630;
+    --tag-bg: #f0eef8;
+    --tag-text: #5b4cd6;
+    --card-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03);
+    --card-shadow-hover: 0 2px 8px rgba(0,0,0,0.06), 0 8px 24px rgba(0,0,0,0.06);
+    --emoji-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    --divider: #e8e6e0;
+    --footer-bg: #f0eee9;
+    --noise-opacity: 0.02;
+  }
+
+  /* ── DARK MODE ── */
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0e0f14;
+      --bg2: #151720;
+      --surface: #1a1c27;
+      --border: #2a2d3a;
+      --border-hover: #3d4155;
+      --text: #e4e3ef;
+      --text-muted: #7e7f96;
+      --accent: #a78bfa;
+      --accent-dim: #a78bfa15;
+      --accent-border: #a78bfa30;
+      --tag-bg: #a78bfa14;
+      --tag-text: #a78bfa;
+      --card-shadow: 0 1px 3px rgba(0,0,0,0.2), 0 4px 16px rgba(0,0,0,0.15);
+      --card-shadow-hover: 0 4px 12px rgba(0,0,0,0.3), 0 12px 32px rgba(0,0,0,0.2);
+      --emoji-shadow: 0 2px 12px rgba(0,0,0,0.3);
+      --divider: #252838;
+      --footer-bg: #12131a;
+      --noise-opacity: 0.03;
+    }
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Outfit', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Subtle grain */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+    opacity: var(--noise-opacity);
+    pointer-events: none;
+    z-index: 100;
+  }
+
+  .page {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 72px 28px 48px;
+    flex: 1;
+    width: 100%;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    margin-bottom: 52px;
+    animation: fadeUp 0.7s ease-out;
+  }
+
+  .header-tag {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: var(--tag-text);
+    background: var(--tag-bg);
+    border: 1px solid var(--accent-border);
+    border-radius: 6px;
+    padding: 4px 12px;
+    margin-bottom: 20px;
+  }
+
+  .header h1 {
+    font-size: clamp(36px, 6vw, 52px);
+    font-weight: 800;
+    letter-spacing: -1.5px;
+    line-height: 1.05;
+    margin-bottom: 12px;
+  }
+
+  .header h1 .accent { color: var(--accent); }
+
+  .header p {
+    font-size: 16px;
+    color: var(--text-muted);
+    line-height: 1.6;
+    max-width: 480px;
+    font-weight: 400;
+  }
+
+  /* ── TOY CARDS ── */
+  .divider-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 14px;
+  }
+
+  .toys {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 56px;
+  }
+
+  .toy-card {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 20px 24px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    box-shadow: var(--card-shadow);
+    text-decoration: none;
+    color: var(--text);
+    transition: all 0.25s ease;
+    animation: fadeUp 0.6s ease-out both;
+  }
+
+  .toy-card:nth-child(1) { animation-delay: 0.05s; }
+  .toy-card:nth-child(2) { animation-delay: 0.1s; }
+  .toy-card:nth-child(3) { animation-delay: 0.15s; }
+  .toy-card:nth-child(4) { animation-delay: 0.2s; }
+  .toy-card:nth-child(5) { animation-delay: 0.25s; }
+
+  .toy-card:hover {
+    border-color: var(--border-hover);
+    box-shadow: var(--card-shadow-hover);
+    transform: translateY(-2px);
+  }
+
+  .toy-card:hover .toy-arrow {
+    transform: translateX(4px);
+    color: var(--accent);
+  }
+
+  .toy-emoji {
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    background: var(--bg2);
+    box-shadow: var(--emoji-shadow);
+  }
+
+  .toy-info { flex: 1; min-width: 0; }
+
+  .toy-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 2px;
+    letter-spacing: -0.2px;
+  }
+
+  .toy-desc {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.45;
+    font-weight: 400;
+  }
+
+  .toy-tags {
+    display: flex;
+    gap: 6px;
+    margin-top: 6px;
+    flex-wrap: wrap;
+  }
+
+  .toy-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.03em;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: var(--tag-bg);
+    color: var(--tag-text);
+  }
+
+  .toy-arrow {
+    font-size: 18px;
+    color: var(--text-muted);
+    transition: all 0.25s ease;
+    flex-shrink: 0;
+  }
+
+  /* Coming soon placeholder */
+  .toy-card.coming-soon {
+    opacity: 0.45;
+    pointer-events: none;
+    border-style: dashed;
+  }
+
+  .toy-card.coming-soon .toy-emoji { filter: grayscale(0.6); }
+
+  /* ── FOOTER ── */
+  .footer {
+    padding: 24px 28px;
+    text-align: center;
+    font-size: 13px;
+    color: var(--text-muted);
+    background: var(--footer-bg);
+    border-top: 1px solid var(--divider);
+  }
+
+  .footer a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .footer a:hover { text-decoration: underline; }
+
+  .footer-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .footer-row svg { width: 16px; height: 16px; opacity: 0.5; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 520px) {
+    .page { padding: 48px 18px 36px; }
+    .toy-card { padding: 16px 18px; gap: 14px; }
+    .toy-emoji { width: 40px; height: 40px; min-width: 40px; font-size: 18px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <header class="header">
+    <span class="header-tag">signerpupil</span>
+    <h1>Web <span class="accent">Toys</span></h1>
+    <p>Kleine Webseiten, Infografiken und Tools – alles statisch, direkt im Browser lauffähig.</p>
+  </header>
+
+  <div class="divider-label">Projekte</div>
+
+  <div class="toys">
+
+    <a href="github-pages-infografik.html" class="toy-card">
+      <div class="toy-emoji">📘</div>
+      <div class="toy-info">
+        <div class="toy-title">GitHub Pages Infografik</div>
+        <div class="toy-desc">3 Wege zur eigenen Website – Schritt für Schritt erklärt, auch ohne IT-Hintergrund.</div>
+        <div class="toy-tags">
+          <span class="toy-tag">Infografik</span>
+          <span class="toy-tag">GitHub Pages</span>
+        </div>
+      </div>
+      <span class="toy-arrow">→</span>
+    </a>
+
+    <a href="datenschutz.html" class="toy-card">
+      <div class="toy-emoji">🔒</div>
+      <div class="toy-info">
+        <div class="toy-title">Datenschutz-Analyse</div>
+        <div class="toy-desc">Wann ist eine GitHub Pages-Seite datenschutzkonform – und wann nicht?</div>
+        <div class="toy-tags">
+          <span class="toy-tag">Datenschutz</span>
+          <span class="toy-tag">DSGVO</span>
+        </div>
+      </div>
+      <span class="toy-arrow">→</span>
+    </a>
+
+    <!-- ══════════════════════════════════════════════════════════
+         NEUE TOYS HIER EINFÜGEN – einfach diesen Block kopieren:
+
+    <a href="DATEINAME.html" class="toy-card">
+      <div class="toy-emoji">🎯</div>
+      <div class="toy-info">
+        <div class="toy-title">Titel</div>
+        <div class="toy-desc">Beschreibung des Projekts.</div>
+        <div class="toy-tags">
+          <span class="toy-tag">Tag 1</span>
+          <span class="toy-tag">Tag 2</span>
+        </div>
+      </div>
+      <span class="toy-arrow">→</span>
+    </a>
+
+    ══════════════════════════════════════════════════════════ -->
+
+  </div>
+
+</div>
+
+<footer class="footer">
+  <div class="footer-row">
+    <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg>
+    <span>Gehostet auf <a href="https://github.com/signerpupil/web-toys" target="_blank">GitHub Pages</a></span>
+  </div>
+</footer>
+
+</body>
+</html>
