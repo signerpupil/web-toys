@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PUPIL Stundenplan – Deep Dive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#07111A;--bg2:#0A1825;--bg3:#0F2035;--bg4:#162840;--bg5:#1C3250;
+  --p:#1E90FF;--p2:#3DAAFF;--p3:#73C4FF;--pd:#0A50A0;
+  --acc:#00E5C8;--acc2:#00B8A2;
+  --warn:#FF9B3D;--warn2:#FFB96B;
+  --green:#22D97A;--red:#FF4D6A;
+  --t1:#E8F4FF;--t2:#7BA8C8;--t3:#3A5872;--t4:#1F3448;
+  --bdr:rgba(30,144,255,.12);--bdr2:rgba(30,144,255,.22);
+  --fb:'Outfit',sans-serif;--fi:'Source Serif 4',serif;--fm:'JetBrains Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);color:var(--t1);font-family:var(--fb)}
+
+/* ══════════════════════════════
+   SETUP OVERLAY
+══════════════════════════════ */
+#setup{position:fixed;inset:0;z-index:900;display:flex;align-items:center;justify-content:center;background:var(--bg)}
+#setup::before{content:'';position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse 55% 65% at 18% 38%,rgba(30,144,255,.13) 0%,transparent 65%),
+             radial-gradient(ellipse 42% 55% at 82% 62%,rgba(0,229,200,.08) 0%,transparent 62%)}
+.sbox{position:relative;width:min(510px,93vw);background:var(--bg3);border:1px solid var(--bdr2);border-radius:16px;padding:36px 34px;box-shadow:0 36px 80px rgba(0,0,0,.65)}
+.sbox-logo{display:flex;align-items:center;gap:9px;margin-bottom:26px}
+.sbox-dot{width:10px;height:10px;border-radius:50%;background:linear-gradient(135deg,var(--p),var(--acc))}
+.sbox-logo strong{font-weight:800;font-size:14px}
+.sbox-logo small{font-family:var(--fm);font-size:10px;color:var(--t3);letter-spacing:.07em;text-transform:uppercase;margin-left:3px}
+.sbox h2{font-size:22px;font-weight:800;margin-bottom:8px}
+.sbox>p{font-size:13px;color:var(--t2);line-height:1.7;margin-bottom:22px}
+.slabel{display:block;font-family:var(--fm);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--t3);margin-bottom:7px}
+.srow{display:flex;gap:8px;margin-bottom:8px}
+.sinput{flex:1;background:var(--bg4);border:1px solid var(--bdr2);border-radius:8px;padding:11px 14px;color:var(--t1);font-family:var(--fm);font-size:13px;outline:none;transition:all .2s}
+.sinput::placeholder{color:var(--t3)}
+.sinput:focus{border-color:var(--p);background:var(--bg5);box-shadow:0 0 0 3px rgba(30,144,255,.1)}
+.sinput.err{border-color:var(--red)!important;box-shadow:0 0 0 3px rgba(255,77,106,.1)}
+.sbtn{padding:11px 20px;background:linear-gradient(135deg,var(--pd),var(--p));border:none;border-radius:8px;color:#fff;font-family:var(--fb);font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;transition:all .2s}
+.sbtn:hover{transform:translateY(-1px);box-shadow:0 6px 22px rgba(30,144,255,.38)}
+#serr{min-height:16px;font-size:12px;color:var(--red);font-family:var(--fm);margin-bottom:6px}
+.shint{font-size:11.5px;color:var(--t3);font-family:var(--fm);margin-bottom:18px}
+.shint span{color:var(--warn2)}
+.sexamples{padding:13px 15px;background:var(--bg4);border-radius:9px;border:1px solid var(--bdr);margin-bottom:14px}
+.sexamples p{font-family:var(--fm);font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
+.seg{display:flex;align-items:center;gap:9px;padding:4px 0;cursor:pointer;border-radius:4px}
+.seg:hover .seg-url{color:var(--p3)}
+.seg-dot{width:5px;height:5px;border-radius:50%;background:var(--p);flex-shrink:0}
+.seg-url{font-family:var(--fm);font-size:11.5px;color:var(--t2);transition:.15s}
+.seg-lbl{font-size:11px;color:var(--t3)}
+.sskip{width:100%;padding:9px;border:1px solid var(--bdr);border-radius:8px;background:transparent;color:var(--t3);font-size:12px;cursor:pointer;transition:all .2s}
+.sskip:hover{color:var(--t2);border-color:var(--t3)}
+
+/* ══════════════════════════════
+   PROGRESS / HEADER
+══════════════════════════════ */
+#pbar{position:fixed;top:0;left:0;height:2px;z-index:300;background:linear-gradient(90deg,var(--p),var(--acc));transition:width .5s cubic-bezier(.4,0,.2,1)}
+#hdr{position:fixed;top:0;left:0;right:0;height:50px;display:flex;align-items:center;justify-content:space-between;padding:0 18px;z-index:200;background:rgba(7,17,26,.94);backdrop-filter:blur(16px);border-bottom:1px solid var(--bdr)}
+.hlogo{font-weight:800;font-size:13px;letter-spacing:.03em;display:flex;align-items:center;gap:7px}
+.hlogo-dot{width:8px;height:8px;border-radius:50%;background:linear-gradient(135deg,var(--p),var(--acc))}
+.hright{display:flex;align-items:center;gap:10px}
+.hnum{font-family:var(--fm);font-size:11px;color:var(--t3)}
+.hsec{font-family:var(--fm);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);background:var(--bg3);padding:2px 8px;border-radius:4px;border:1px solid var(--bdr);max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#hibadge{display:none;align-items:center;gap:6px;padding:3px 10px;background:rgba(0,229,200,.08);border:1px solid rgba(0,229,200,.2);border-radius:100px;cursor:pointer;transition:all .2s}
+#hibadge:hover{background:rgba(0,229,200,.14);border-color:var(--acc)}
+#hibadge .hi-dot{width:5px;height:5px;border-radius:50%;background:var(--green);flex-shrink:0}
+#hibadge .hi-name{font-family:var(--fm);font-size:10px;color:var(--acc);max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#hibadge .hi-edit{font-family:var(--fm);font-size:9px;color:var(--t3)}
+
+/* study btn */
+#stbtn{position:fixed;top:60px;right:18px;z-index:180;display:flex;align-items:center;gap:6px;padding:5px 11px;border-radius:100px;border:1px solid var(--bdr);background:var(--bg3);color:var(--t3);font-family:var(--fm);font-size:9px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:all .2s}
+#stbtn:hover{color:var(--t1);border-color:var(--p)}
+#stbtn.on{background:rgba(30,144,255,.12);border-color:var(--p);color:var(--p3)}
+#stbtn .dot{width:6px;height:6px;border-radius:50%;background:var(--t3);transition:.2s}
+#stbtn.on .dot{background:var(--acc)}
+
+/* ══════════════════════════════
+   SLIDES
+══════════════════════════════ */
+#sc{position:fixed;top:50px;left:0;right:0;bottom:54px;overflow:hidden}
+.s{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:28px 64px;opacity:0;pointer-events:none;transition:opacity .3s ease;background:var(--bg2)}
+.s.act{opacity:1;pointer-events:all}
+.s.act .ani{animation:su .42s ease both}
+.s.act .ani:nth-child(1){animation-delay:.03s}.s.act .ani:nth-child(2){animation-delay:.08s}
+.s.act .ani:nth-child(3){animation-delay:.13s}.s.act .ani:nth-child(4){animation-delay:.18s}
+.s.act .ani:nth-child(5){animation-delay:.23s}
+@keyframes su{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.s-a::before,.s-b::before,.s-c::before,.s-title::before{content:'';position:absolute;inset:0;pointer-events:none}
+.s-a::before{background:radial-gradient(ellipse 60% 70% at 95% 50%,rgba(30,144,255,.07) 0%,transparent 65%)}
+.s-b::before{background:radial-gradient(ellipse 60% 70% at 95% 50%,rgba(0,229,200,.05) 0%,transparent 65%)}
+.s-c::before{background:radial-gradient(ellipse 60% 70% at 5% 50%,rgba(30,144,255,.06) 0%,transparent 65%)}
+.s-title::before{background:radial-gradient(ellipse 50% 60% at 15% 40%,rgba(30,144,255,.1) 0%,transparent 60%),
+                            radial-gradient(ellipse 40% 50% at 85% 60%,rgba(0,229,200,.06) 0%,transparent 60%)}
+
+/* ══════════════════════════════
+   LAYOUT
+══════════════════════════════ */
+.w{width:100%;max-width:1000px}
+.hd{width:100%;max-width:1000px;margin-bottom:18px;flex-shrink:0}
+.hd h2{font-size:clamp(20px,2.5vw,32px);font-weight:700;margin-top:7px;line-height:1.2}
+.bd{width:100%;max-width:1000px;flex:1;min-height:0;overflow-y:auto;padding-right:4px}
+.bd::-webkit-scrollbar{width:3px}.bd::-webkit-scrollbar-thumb{background:var(--t4);border-radius:2px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:11px}
+
+/* ══════════════════════════════
+   UI COMPONENTS
+══════════════════════════════ */
+.tag{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:100px;font-family:var(--fm);font-size:9px;font-weight:500;letter-spacing:.08em;text-transform:uppercase}
+.ta{background:rgba(30,144,255,.12);border:1px solid rgba(30,144,255,.28);color:var(--p3)}
+.tb{background:rgba(0,229,200,.1);border:1px solid rgba(0,229,200,.25);color:var(--acc)}
+.tc{background:rgba(255,155,61,.12);border:1px solid rgba(255,155,61,.28);color:var(--warn2)}
+.td{background:rgba(34,217,122,.1);border:1px solid rgba(34,217,122,.25);color:var(--green)}
+.new{display:inline-flex;padding:1px 6px;background:linear-gradient(135deg,var(--acc2),var(--acc));border-radius:4px;font-family:var(--fm);font-size:8px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#000;margin-left:5px;vertical-align:middle}
+.upd{display:inline-flex;padding:1px 6px;background:linear-gradient(135deg,var(--pd),var(--p));border-radius:4px;font-family:var(--fm);font-size:8px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#fff;margin-left:5px;vertical-align:middle}
+.card{background:var(--bg3);border:1px solid var(--bdr);border-radius:11px;padding:17px 18px}
+.card h3{font-size:13px;font-weight:700;margin-bottom:9px;display:flex;align-items:center;gap:6px}
+.hbox{padding:13px 15px;border-radius:9px;border-left:3px solid;margin-bottom:10px}
+.hp{background:rgba(30,144,255,.07);border-color:var(--p)}
+.hb{background:rgba(0,229,200,.06);border-color:var(--acc)}
+.hw{background:rgba(255,155,61,.07);border-color:var(--warn)}
+.hg{background:rgba(34,217,122,.06);border-color:var(--green)}
+.hbox strong{display:block;font-family:var(--fm);font-size:9px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:5px;opacity:.6}
+.hbox p,.hbox ul{font-size:13px;line-height:1.6;color:var(--t2)}
+.hbox ul{padding-left:14px;margin-top:3px}
+.hbox li{margin-bottom:2px}
+.ul{list-style:none}
+.ul li{padding:5px 0;display:flex;align-items:flex-start;gap:7px;font-size:13px;line-height:1.5;border-bottom:1px solid rgba(30,144,255,.06)}
+.ul li:last-child{border:none}
+.ul li::before{content:'›';color:var(--p2);font-weight:700;margin-top:1px;flex-shrink:0}
+.ul.warn li::before{content:'!';color:var(--warn);font-family:var(--fm);font-size:11px;margin-top:2px}
+.steps{display:flex;flex-direction:column;gap:7px}
+.step{display:flex;align-items:flex-start;gap:11px;padding:10px 13px;background:var(--bg3);border:1px solid var(--bdr);border-radius:8px;transition:.2s}
+.step:hover{border-color:var(--bdr2);background:var(--bg4)}
+.sn{width:24px;height:24px;border-radius:6px;background:linear-gradient(135deg,var(--pd),var(--p));display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0;color:#fff}
+.sc2{flex:1}.sc2 strong{display:block;font-size:12.5px;font-weight:600}.sc2 span{font-size:11.5px;color:var(--t2)}
+.ctbl{width:100%;border-collapse:collapse;font-size:12.5px}
+.ctbl th{padding:8px 11px;text-align:left;background:var(--bg3);border-bottom:1px solid var(--bdr);font-weight:600;font-family:var(--fm);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--t3)}
+.ctbl td{padding:8px 11px;border-bottom:1px solid rgba(30,144,255,.05);vertical-align:top;line-height:1.5}
+.ctbl tr:last-child td{border:none}
+.ctbl tr:hover td{background:rgba(30,144,255,.03)}
+.ctbl .ok::before{content:'✓ ';color:var(--green);font-weight:700}
+.ctbl .no::before{content:'× ';color:var(--red);font-weight:700}
+.ctbl .part::before{content:'~ ';color:var(--warn);font-weight:700}
+.scen{background:var(--bg3);border:1px solid var(--bdr);border-radius:11px;padding:16px;display:flex;flex-direction:column;gap:9px}
+.scen-title{font-size:13px;font-weight:700;display:flex;align-items:center;gap:7px}
+.scen-badge{padding:2px 7px;border-radius:4px;font-family:var(--fm);font-size:9px;text-transform:uppercase;letter-spacing:.06em}
+.sb-p{background:rgba(30,144,255,.14);color:var(--p3)}
+.sb-b{background:rgba(0,229,200,.12);color:var(--acc)}
+.sb-w{background:rgba(255,155,61,.12);color:var(--warn2)}
+.scen p{font-size:12.5px;color:var(--t2);line-height:1.55}
+.scen ul{list-style:none;font-size:12px;color:var(--t2)}
+.scen ul li{padding:3px 0;display:flex;gap:5px;align-items:flex-start}
+.scen ul li::before{content:'→';color:var(--p2);font-size:11px;margin-top:2px;flex-shrink:0}
+.tm{font-size:clamp(36px,5vw,66px);font-weight:900;line-height:1.05;text-align:center;margin:14px 0 10px;letter-spacing:-.02em}
+.ts{font-family:var(--fi);font-size:clamp(13px,1.4vw,16px);color:var(--t2);text-align:center;max-width:560px;font-style:italic;line-height:1.7}
+.sn2{display:none;margin-top:11px;padding:12px 14px;background:rgba(30,144,255,.05);border:1px solid rgba(30,144,255,.12);border-radius:8px;font-size:12px;color:var(--t2);line-height:1.65}
+.sn2.vis{display:block}
+.sn2 strong{color:var(--acc);font-family:var(--fm);font-size:9px;letter-spacing:.07em;text-transform:uppercase;display:block;margin-bottom:4px}
+a.il{color:var(--p3);text-decoration:none;border-bottom:1px solid rgba(30,144,255,.3);transition:.2s}
+a.il:hover{color:var(--acc);border-color:var(--acc)}
+
+/* ── PUPIL path / link ── */
+/* base style for path breadcrumb rows */
+.path{display:flex;align-items:center;gap:5px;padding:6px 11px;background:var(--bg4);border:1px solid var(--bdr);border-radius:7px;font-family:var(--fm);font-size:11px;color:var(--t2);margin-bottom:10px;flex-wrap:wrap;text-decoration:none;transition:all .2s}
+a.path:hover{border-color:var(--p);background:var(--bg5)}
+.path span{color:var(--t3)}.path strong{color:var(--p3)}
+.path-open{margin-left:auto;font-size:9px;color:var(--t3);white-space:nowrap;transition:.2s;flex-shrink:0}
+a.path:hover .path-open{color:var(--acc)}
+/* disabled state when no base URL set */
+.plink-off{opacity:.45;cursor:default!important;pointer-events:none}
+.plink-off .path-open::after{content:' (URL fehlt)'}
+
+/* pupil open buttons */
+.pbtns{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+.pbtn{display:inline-flex;align-items:center;gap:6px;padding:6px 13px;border-radius:7px;background:rgba(30,144,255,.1);border:1px solid rgba(30,144,255,.25);color:var(--p3);font-size:12px;font-weight:500;text-decoration:none;transition:all .2s;font-family:var(--fb)}
+.pbtn:hover{background:rgba(30,144,255,.18);border-color:var(--p);transform:translateY(-1px)}
+.pbtn.off{opacity:.35;pointer-events:none}
+
+/* external lcard */
+.lcard{display:flex;align-items:center;gap:10px;padding:10px 13px;background:var(--bg3);border:1px solid var(--bdr);border-radius:8px;text-decoration:none;color:var(--t1);transition:all .2s;margin-bottom:6px}
+.lcard:hover{background:var(--bg4);border-color:var(--p);transform:translateX(3px)}
+.lic{width:32px;height:32px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.lci strong{display:block;font-size:12.5px;font-weight:600}.lci span{font-size:11px;color:var(--t2);font-family:var(--fm)}
+
+/* pupil instance lcard (dynamic URL shown) */
+.lcard-pupil .lci .lci-url{font-family:var(--fm);font-size:10.5px;color:var(--acc2);transition:.2s}
+
+/* ══════════════════════════════
+   FOOTER NAV
+══════════════════════════════ */
+#nft{position:fixed;bottom:0;left:0;right:0;height:54px;display:flex;align-items:center;justify-content:space-between;padding:0 22px;background:rgba(7,17,26,.94);backdrop-filter:blur(14px);border-top:1px solid var(--bdr);z-index:200}
+.nb{display:flex;align-items:center;gap:5px;padding:7px 16px;border-radius:7px;border:1px solid var(--bdr);background:var(--bg3);color:var(--t2);cursor:pointer;font-family:var(--fb);font-size:13px;font-weight:500;transition:all .2s}
+.nb:hover{color:var(--t1);border-color:var(--p);background:var(--bg4)}
+.nb:disabled{opacity:.25;pointer-events:none}
+.ndots{display:flex;gap:4px;align-items:center;flex-wrap:wrap;justify-content:center;max-width:65vw}
+.ndot{width:5px;height:5px;border-radius:50%;background:var(--t4);cursor:pointer;transition:all .22s}
+.ndot.act{background:var(--p3);width:20px;border-radius:3px}
+.ndot:hover{background:var(--t2)}
+.kh{position:fixed;bottom:64px;right:18px;font-family:var(--fm);font-size:9px;color:var(--t4);display:flex;gap:3px;align-items:center}
+kbd{padding:1px 4px;border:1px solid var(--t4);border-radius:3px;font-size:9px;font-family:var(--fm)}
+@media(max-width:700px){.s{padding:20px 16px}.g2,.g3{grid-template-columns:1fr}.kh,#stbtn{display:none}}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════
+     SETUP OVERLAY
+══════════════════════════════════════════ -->
+<div id="setup">
+  <div class="sbox">
+    <div class="sbox-logo">
+      <div class="sbox-dot"></div>
+      <strong>PUPIL Stundenplan</strong>
+      <small>Deep Dive</small>
+    </div>
+    <h2>Willkommen 👋</h2>
+    <p>Gib die URL deiner PUPIL-Instanz ein. Alle internen Links in der Präsentation zeigen dann direkt auf die richtigen Ansichten — du kannst während der Präsentation sofort in PUPIL navigieren.</p>
+    <label class="slabel">PUPIL Instanz-URL</label>
+    <div class="srow">
+      <input class="sinput" id="iurl" type="url" placeholder="https://meineschule.pupil.schule" autocomplete="off" spellcheck="false">
+      <button class="sbtn" onclick="confirmUrl()">Starten →</button>
+    </div>
+    <div id="serr"></div>
+    <div class="shint">Format: <span>https://name.pupil.schule</span> oder <span>https://name.pupil-dev.ch</span></div>
+    <div class="sexamples">
+      <p>Bekannte Instanzen — klicken zum Übernehmen</p>
+      <div class="seg" onclick="fillUrl('https://kloten.pupil.schule')">
+        <div class="seg-dot"></div><span class="seg-url">kloten.pupil.schule</span><span class="seg-lbl">Kloten Sekundar</span>
+      </div>
+      <div class="seg" onclick="fillUrl('https://wartau.pupil.schule')">
+        <div class="seg-dot"></div><span class="seg-url">wartau.pupil.schule</span><span class="seg-lbl">Wartau</span>
+      </div>
+      <div class="seg" onclick="fillUrl('https://flums.pupil.schule')">
+        <div class="seg-dot"></div><span class="seg-url">flums.pupil.schule</span><span class="seg-lbl">Flums</span>
+      </div>
+      <div class="seg" onclick="fillUrl('https://sg-test2-a.pupil-dev.ch')">
+        <div class="seg-dot"></div><span class="seg-url">sg-test2-a.pupil-dev.ch</span><span class="seg-lbl">Testumgebung SG</span>
+      </div>
+    </div>
+    <button class="sskip" onclick="skipSetup()">Ohne Instanz-URL fortfahren (Links werden deaktiviert)</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     MAIN UI
+══════════════════════════════════════════ -->
+<div id="pbar"></div>
+<header id="hdr">
+  <div class="hlogo"><div class="hlogo-dot"></div>PUPIL Stundenplan — Deep Dive</div>
+  <div class="hright">
+    <div id="hibadge" onclick="openSetup()" title="Instanz wechseln">
+      <div class="hi-dot"></div><span class="hi-name" id="hiname"></span><span class="hi-edit">✎</span>
+    </div>
+    <span class="hsec" id="hsc"></span>
+    <span class="hnum"><span id="cn">1</span> / <span id="tn"></span></span>
+  </div>
+</header>
+<button id="stbtn" onclick="toggleStudy()"><div class="dot"></div>Selbststudium</button>
+
+<!-- ══════════════════════════════════════════
+     SLIDES
+══════════════════════════════════════════ -->
+<div id="sc">
+
+<!-- ═ 1 · TITLE ═════════════════════════════ -->
+<div class="s s-title act" data-sec="">
+  <div class="w" style="text-align:center">
+    <div class="ani"><span class="tag tb">PUPIL AG · Schweizer Schulverwaltung</span></div>
+    <h1 class="ani tm">PUPIL<br>Stundenplan</h1>
+    <p class="ani ts">Von der kantonalen Stundentafel bis zur Freigabe im Elternportal — alle Ansichten, Prozesse und Szenarien im Detail.</p>
+    <div class="ani" style="display:flex;gap:9px;margin-top:28px;justify-content:center;flex-wrap:wrap">
+      <span class="tag ta">📋 Alle Ansichten</span>
+      <span class="tag tb">⚙️ Prozesse & Szenarien</span>
+      <span class="tag tc">🆕 Neuerungen 2025/26</span>
+      <span class="tag td">🔗 Links direkt in PUPIL</span>
+    </div>
+    <div class="ani" style="margin-top:28px;font-family:var(--fm);font-size:10px;color:var(--t3);display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+      <span>← → navigieren</span><span>·</span><span>📖 Selbststudium für Lerntipps</span><span>·</span><span id="url-hint-title">🔗 PUPIL-Instanz oben rechts ändern</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═ 2 · MODULÜBERSICHT ════════════════════ -->
+<div class="s s-a" data-sec="Modulübersicht">
+  <div class="hd ani"><span class="tag ta">Modulübersicht</span><h2>Das PUPIL Stundenplan-Ökosystem</h2></div>
+  <div class="bd">
+    <div class="g2 ani">
+      <div>
+        <div class="hbox hp">
+          <strong>Was ist das Modul?</strong>
+          <p>Das Stundenplan-Modul ist die <strong>zentrale Datenbasis</strong> für alle stundenplanrelevanten Daten — von der Stundentafel über die Planung bis zur Elternportal-Freigabe.</p>
+        </div>
+        <div class="card">
+          <h3>🗂️ Kernansichten</h3>
+          <ul class="ul">
+            <li><strong>Kantonale Stundentafel</strong> — Pflichtlektionen nach Kanton</li>
+            <li><strong>Lektionenübersicht</strong> — Lektionsbausteine je Klasse &amp; LP</li>
+            <li><strong>Stundenplan bearbeiten</strong> — Drag &amp; Drop Planung</li>
+            <li><strong>Stundenplan Leseansicht</strong> — für alle Beteiligten</li>
+            <li><strong>Druckausgabe</strong> — Klassen-, LP-, Raumpläne</li>
+            <li><strong>Einstellungen</strong> — Zeitraster, Lektionszeiten</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="card" style="margin-bottom:12px">
+          <h3>🧭 Direkt öffnen</h3>
+          <div style="display:flex;flex-direction:column;gap:6px;margin-top:3px">
+            <a class="path plink" data-path="/master_data/lesson_table/canton" href="#" target="_blank"><strong>Master Data</strong><span>→</span>Schulen/Kl./Gr.<span>→</span><strong>Kantonale Stundentafel</strong><span class="path-open">↗ öffnen</span></a>
+            <a class="path plink" data-path="/timetable/" href="#" target="_blank"><strong>Schulleitung</strong><span>→</span>Stundenplan<span>→</span><strong>Lektionenübersicht &amp; Bearbeiten</strong><span class="path-open">↗ öffnen</span></a>
+            <a class="path plink" data-path="/timetable/setting_config" href="#" target="_blank"><strong>Schulleitung</strong><span>→</span>Stundenplan<span>→</span><strong>Einstellungen</strong><span class="path-open">↗ öffnen</span></a>
+            <a class="path plink" data-path="/timetable/print" href="#" target="_blank"><strong>Schulleitung</strong><span>→</span>Stundenplan<span>→</span><strong>Druckausgabe</strong><span class="path-open">↗ öffnen</span></a>
+          </div>
+        </div>
+        <div class="hbox hb">
+          <strong>Rolle &amp; Zugang</strong>
+          <p>Benötigt: <strong>Stundenplan-Admin</strong>. LP können mit eingeschränkten Rechten bearbeiten (Feb 2024). Schulleitungen sehen nur eigene Schuleinheit <span class="new">März 2026</span>.</p>
+        </div>
+      </div>
+    </div>
+    <div class="sn2"><strong>📚 Zum Modul</strong>Das Stundenplan-Modul ist optional und kostenpflichtig — muss von PUPIL AG aktiviert werden. Mit Dez 2025 wurden «Klassenstundentafel» und «LP-Stunden» zur neuen «Lektionenübersicht» zusammengeführt. Wichtig für Schulungen: beide Begriffe kennen und erklären können.</div>
+  </div>
+</div>
+
+<!-- ═ 3 · KANTONALE STUNDENTAFEL ════════════ -->
+<div class="s s-a" data-sec="Kantonale Stundentafel">
+  <div class="hd ani"><span class="tag ta">Ansicht 1</span><h2>Kantonale Stundentafel</h2></div>
+  <div class="bd">
+    <div class="g2 ani">
+      <div>
+        <a class="path plink" data-path="/master_data/lesson_table/canton" href="#" target="_blank"><strong>Master Data</strong><span>→</span>Schulen / Klassen / Gruppen<span>→</span><strong>Kantonale Stundentafel</strong><span class="path-open">↗ öffnen</span></a>
+        <div class="hbox hp">
+          <strong>Zweck</strong>
+          <p>Definiert <strong>Pflichtlektionen pro Fach und Jahrgang</strong> nach kantonaler Vorgabe. Bildet die Vorlage für alle Lektionsbausteine in der Lektionenübersicht.</p>
+        </div>
+        <div class="card">
+          <h3>🔑 Schlüsselfunktionen</h3>
+          <ul class="ul">
+            <li>Fächer und Lektionszahlen pro Jahrgang definieren</li>
+            <li>Grundlage für automatische Lektionsbausteine</li>
+            <li>Fächer erscheinen auf dem Zeugnis</li>
+            <li>Sync mit der Lektionenübersicht</li>
+            <li>Kantonal unterschiedliche Vorgaben (AG, SG …) abbildbar</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="hbox hw">
+          <strong>⚠️ Wichtig: Wahlfächer</strong>
+          <p>Wahlfächer in der Stundentafel erzeugen automatisch Lektionsbausteine. <strong>Keine Gruppe mit «Fächer der Stundentafel»</strong> verknüpfen — sonst erscheinen alle Wahlfächer bei allen SuS der Gruppe auf dem Zeugnis.</p>
+        </div>
+        <div class="hbox hg">
+          <strong>💡 Empfehlung</strong>
+          <ul>
+            <li>Nur zeugnisrelevante Fächer aufnehmen</li>
+            <li>Mehrere Gruppen pro Wahlfach — Fach nur einmal anlegen</li>
+            <li>«WF Frz BC» und «WF Frz A» → beide «WF Französisch»</li>
+          </ul>
+        </div>
+        <div class="hbox hp"><strong>Primarstufe SG</strong><p>Kantonale Stundentafel gemäss Mitfinanzierungsreduktion angepasst. <span class="upd">2025</span></p></div>
+        <div class="pbtns"><a class="pbtn plink" data-path="/master_data/lesson_table/canton" href="#" target="_blank">↗ Kantonale Stundentafel öffnen</a></div>
+      </div>
+    </div>
+    <div class="sn2"><strong>📚 Verbindung mit Zeugnissen</strong>Alle Fächer in der kantonalen Stundentafel erscheinen auf dem Zeugnis — deshalb bewusst wählen, was aufgenommen wird. Rein interne Fächer (Förderung, Projektarbeit) nicht zwingend in die Stundentafel aufnehmen.</div>
+  </div>
+</div>
+
+<!-- ═ 4 · LEKTIONENÜBERSICHT ════════════════ -->
+<div class="s s-a" data-sec="Lektionenübersicht">
+  <div class="hd ani"><span class="tag ta">Ansicht 2</span><h2>Lektionenübersicht <span class="new">Neu Dez 2025</span></h2></div>
+  <div class="bd">
+    <div class="g2 ani">
+      <div>
+        <a class="path plink" data-path="/timetable/" href="#" target="_blank"><strong>Schulleitung</strong><span>→</span>Stundenplan<span>→</span><strong>Lektionenübersicht</strong><span class="path-open">↗ öffnen</span></a>
+        <div class="hbox hb">
+          <strong>Was hat sich geändert?</strong>
+          <p>Bisherige Ansichten <strong>Klassenstundentafel</strong> und <strong>Lehrpersonenstunden</strong> → zusammengeführt zur <strong>Lektionenübersicht</strong>. Beide funktional erweitert. <span class="new">Dez 2025</span></p>
+        </div>
+        <div class="card">
+          <h3>📋 Inhalt der Lektionenübersicht</h3>
+          <ul class="ul">
+            <li><strong>Klassen-Tab:</strong> Lektionsbausteine je Klasse — Fach, LP, Lektionszahl, Raum</li>
+            <li><strong>LP-Tab:</strong> Alle Lektionen pro LP mit Pensum-Überblick</li>
+            <li><strong>Sync:</strong> Stundentafel-Änderungen auf Lektionsbausteine abgleichen</li>
+            <li><strong>Gruppen:</strong> Gruppenspezifische Lektionen ab Feb 2025 sichtbar</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="card" style="margin-bottom:10px">
+          <h3>⚙️ Synchronisation</h3>
+          <ul class="ul">
+            <li>Sync-Button übernimmt Stundentafel-Änderungen</li>
+            <li>Seit Aug 2025: Fächer nur noch <strong>richtiger LP</strong> zugewiesen <span class="upd">Aug 2025</span></li>
+            <li>Manuelle Einträge können überschrieben werden</li>
+            <li>Sync sperren empfohlen bei manueller Pflege (in Planung)</li>
+          </ul>
+        </div>
+        <div class="hbox hw"><strong>⚠️ Semesterwechsel-Risiko</strong><p>Alte LP/Lektionen vom Vorjahr können kopiert werden. Manuelle Bereinigung zu Beginn jedes Schuljahres nötig — bekannt bei Kloten, Oberengstringen, Nollen.</p></div>
+        <div class="pbtns"><a class="pbtn plink" data-path="/timetable/" href="#" target="_blank">↗ Lektionenübersicht öffnen</a></div>
+      </div>
+    </div>
+    <div class="sn2"><strong>📚 Vor dem KI-Export</strong>Die Lektionenübersicht ist die Grundlage für den Export in den KI-Stundenplaner. Alle Kurse, LP-Zuweisungen und Fremd-IDs müssen korrekt und vollständig sein. Gruppen ohne Fremd-ID können im KI-Stundenplaner nicht verarbeitet werden.</div>
+  </div>
+</div>
+
+<!-- ═ 5 · STUNDENPLAN BEARBEITEN ════════════ -->
+<div class="s s-a" data-sec="Stundenplan bearbeiten">
+  <div class="hd ani"><span class="tag ta">Ansicht 3</span><h2>Stundenplan bearbeiten — Drag &amp; Drop</h2></div>
+  <div class="bd">
+    <div class="g2 ani">
+      <div>
+        <a class="path plink" data-path="/timetable/" href="#" target="_blank"><strong>Schulleitung</strong><span>→</span>Stundenplan<span>→</span><strong>Stundenplan bearbeiten</strong><span class="path-open">↗ öffnen</span></a>
+        <div class="hbox hp"><strong>Kernfunktion</strong><p>Rasterdarstellung — Lektionen per Drag &amp; Drop in Zeitslots. Jede Zelle = Wochentag × Zeitperiode.</p></div>
+        <div class="card">
+          <h3>🎯 Wichtige Funktionen</h3>
+          <ul class="ul">
+            <li><strong>Hineinziehen:</strong> Aus Seitenleiste in Zeitslot ziehen</li>
+            <li><strong>Verschieben:</strong> Im Raster zwischen Slots</li>
+            <li><strong>Sperren:</strong> Lektion via Checkbox für LP sperren <span class="upd">Feb 2024</span></li>
+            <li><strong>Gruppenlektion in LP-Ansicht</strong> <span class="new">Sep 2025</span></li>
+            <li><strong>Mehrjahrgangsklassen:</strong> SuS-basierte Gruppenanzeige <span class="upd">Feb 2025</span></li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="card" style="margin-bottom:10px">
+          <h3>👤 Berechtigungen</h3>
+          <div style="font-size:12.5px;color:var(--t2);margin-top:5px">
+            <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--bdr)"><span><strong style="color:var(--t1)">Stundenplan-Admin</strong></span><span>Alles bearbeiten</span></div>
+            <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--bdr)"><span><strong style="color:var(--t1)">Lehrperson</strong></span><span>Eigene Klassen / Gruppen / Räume</span></div>
+            <div style="display:flex;justify-content:space-between;padding:6px 0"><span><strong style="color:var(--t1)">Schulleitung</strong></span><span>Nur eigene Schuleinheit <span class="new">März 2026</span></span></div>
+          </div>
+        </div>
+        <div class="hbox hb"><strong>🆕 März 2026</strong><p>Schulleitungen sehen in Bearbeiten-Ansicht nur noch eigene Räume, LP, Klassen. Druckansicht filterbar nach Schuleinheit.</p></div>
+        <div class="pbtns">
+          <a class="pbtn plink" data-path="/timetable/" href="#" target="_blank">↗ Bearbeiten</a>
+          <a class="pbtn plink" data-path="/timetable/read_only" href="#" target="_blank">↗ Leseansicht</a>
+        </div>
+      </div>
+    </div>
+    <div class="sn2"><strong>📚 Planungsreihenfolge</strong>Empfehlung: 1. Gemeinsam genutzte Räume zuerst (Sporthalle, Werkraum). 2. Fachlehrpersonen mit wenig Spielraum. 3. Restliche Lektionen. Alternativ: KI-Stundenplaner für automatische Optimierung nutzen und Nacharbeit in PUPIL.</div>
+  </div>
+</div>
+
+<!-- ═ 6 · SZENARIEN ═════════════════════════ -->
+<div class="s s-b" data-sec="Planungsszenarien">
+  <div class="hd ani"><span class="tag tb">Szenarien</span><h2>Wie plant Ihre Schule? — Drei Ansätze</h2></div>
+  <div class="bd">
+    <div class="g3 ani">
+      <div class="scen">
+        <div class="scen-title"><span class="scen-badge sb-p">Szenario A</span></div>
+        <div class="scen-title" style="margin-top:0">🖱️ Admin zieht alles</div>
+        <p><strong>Stundenplan-Admin</strong> plant den gesamten Plan eigenständig. LP haben keinen Bearbeitungszugriff.</p>
+        <ul><li>Maximale Kontrolle für Schulleitung</li><li>Klare Verantwortung</li><li>Ideal für kleine Schulen (&lt;10 Klassen)</li><li>Einfachste Rollenkonfiguration</li></ul>
+        <div class="hbox hg" style="margin:0"><strong>Geeignet wenn</strong><p>Schulleitung kennt alle Wünsche und hat Zeit für vollständige Planung.</p></div>
+      </div>
+      <div class="scen">
+        <div class="scen-title"><span class="scen-badge sb-b">Szenario B</span></div>
+        <div class="scen-title" style="margin-top:0">👩‍🏫 LP verschieben selbst</div>
+        <p><strong>Admin</strong> erstellt Grundstruktur. <strong>LP</strong> verschieben ihre Lektionen innerhalb freigegebener Klassen/Räume.</p>
+        <ul><li>LP kennen eigene Präferenzen</li><li>Admin behält Gesamtüberblick</li><li>Einzelne Lektionen sperrbar</li><li>Weniger Korrekturbedarf beim Admin</li></ul>
+        <div class="hbox hb" style="margin:0"><strong>Geeignet wenn</strong><p>LP Vertrauen geniessen und selbst motiviert sind.</p></div>
+      </div>
+      <div class="scen">
+        <div class="scen-title"><span class="scen-badge sb-w">Szenario C</span></div>
+        <div class="scen-title" style="margin-top:0">🤖 + KI-Stundenplaner</div>
+        <p>PUPIL-Daten <strong>exportieren</strong> → KI generiert Plan → <strong>Import</strong> zurück → Admin prüft &amp; freigibt.</p>
+        <ul><li>Planung in &lt;15 Minuten</li><li>KI optimiert Konflikte automatisch</li><li>Ideal für grosse Oberstufen</li><li>Manuelle Nacharbeit in PUPIL möglich</li></ul>
+        <div class="hbox hw" style="margin:0"><strong>Geeignet wenn</strong><p>Viele Klassen, LP und geteilte Räume — manuelle Planung dauert Tage.</p></div>
+      </div>
+    </div>
+    <div class="sn2 ani"><strong>📚 Mischformen in der Praxis</strong>Kombination B+C empfohlen für grosse Schulen: KI erstellt Grundplan, LP passen anschliessend in PUPIL nach. Ergibt beste Balance aus Effizienz und LP-Autonomie. Praxiswert Kloten: Gesamtaufwand von 2–3 Tagen auf ca. 3 Stunden reduziert.</div>
+  </div>
+</div>
+
+<!-- ═ 7 · KLASSEN vs GRUPPEN ════════════════ -->
+<div class="s s-a" data-sec="Klassen- vs. Gruppenlektion">
+  <div class="hd ani"><span class="tag ta">Konzept</span><h2>Klassenlektion vs. Gruppenlektion</h2></div>
+  <div class="bd">
+    <div class="g2 ani">
+      <div>
+        <div class="hbox hp"><strong>Klassenlektion</strong><p>Alle SuS einer Klasse. Erscheint bei <strong>allen SuS der Klasse</strong> und zugeteilten LP.</p></div>
+        <div class="card" style="margin-bottom:10px">
+          <h3>📋 Klassenlektion — wann?</h3>
+          <ul class="ul">
+            <li>Alle Pflichtfächer (Deutsch, Mathe, NMG …)</li>
+            <li>Gemeinsamer Unterricht der ganzen Klasse</li>
+            <li>Keine Aufteilung nach Niveau oder Wahlfach</li>
+            <li>Einfachste und häufigste Lektionsform</li>
+          </ul>
+        </div>
+        <div class="hbox hg"><strong>💡 Seit Feb 2025</strong><p>Beim Planen einer Klassenlektion werden <strong>Gruppenlektionen nach SuS-Zuteilung</strong> angezeigt — auch ohne Jahrgangshinterlegung. Mehrjahrgangsklassen stark vereinfacht.</p></div>
+      </div>
+      <div>
+        <div class="hbox hb"><strong>Gruppenlektion</strong><p>Nur SuS einer bestimmten Gruppe. Erscheint nur bei <strong>betroffenen SuS und LP</strong>.</p></div>
+        <div class="card" style="margin-bottom:10px">
+          <h3>👥 Gruppenlektion — wann?</h3>
+          <ul class="ul">
+            <li>Wahlfächer (WF Französisch, Informatik …)</li>
+            <li>Halbklassen (TTG, Sport, WAH)</li>
+            <li>Niveaugruppen (Mathe A/B/C)</li>
+            <li>Klassenübergreifende Gruppen (Sport 1. Sek)</li>
+          </ul>
+        </div>
+        <div class="hbox hw"><strong>⚠️ Gruppe muss in PUPIL erstellt sein</strong><p>Gruppen können nicht erst im KI-Stundenplaner angelegt werden. Gruppe in PUPIL erstellen, SuS zuweisen — erst dann planbar.</p></div>
+      </div>
+    </div>
+    <div class="sn2"><strong>📚 Druckausgabe-Implikation</strong>Seit Feb 2025 werden Gruppenlektionen im Klassenstundenplan-Druck automatisch mitgedruckt — für betroffene SuS. Kein separater Ausdruck für Wahlfächer mehr nötig. Besonders wertvoll für Oberstufenklassen mit vielen Wahlfächern.</div>
+  </div>
+</div>
+
+<!-- ═ 8 · EINSTELLUNGEN ══════════════════════ -->
+<div class="s s-a" data-sec="Einstellungen & Zeitraster">
+  <div class="hd ani"><span class="tag ta">Ansicht 4</span><h2>Einstellungen — Zeitraster &amp; Lektionszeiten</h2></div>
+  <div class="bd">
+    <div class="g2 ani">
+      <div>
+        <a class="path plink" data-path="/timetable/setting_config" href="#" target="_blank"><strong>Schulleitung</strong><span>→</span>Stundenplan<span>→</span><strong>Einstellungen</strong><span class="path-open">↗ öffnen</span></a>
+        <div class="card" style="margin-bottom:10px">
+          <h3>⏱️ Was konfigurierbar?</h3>
+          <ul class="ul">
+            <li><strong>Zeitraster:</strong> Beginn/Ende jeder Periode, Pausen, Mittagszeit</li>
+            <li><strong>Lektionsdauer:</strong> 45 Min Standard, 90/135 Min Blöcke, individuell</li>
+            <li>Zeiten für <strong>Klassen</strong> und <strong>Jahrgangsstufen</strong></li>
+            <li>Räume/LP mit eigenen Zeiten <em>(in Entwicklung)</em></li>
+            <li><strong>Schulbus-Integration:</strong> Zeiten für Busklassen</li>
+          </ul>
+        </div>
+        <div class="hbox hw"><strong>⚠️ Bekannte Limitation</strong><p>Zeiten nur für Klassen/Jahrgangsstufen — nicht für einzelne Räume oder LP. Steht im Backlog.</p></div>
+      </div>
+      <div>
+        <div class="card" style="margin-bottom:10px">
+          <h3>🔧 Zeitraster aufsetzen — Empfehlung</h3>
+          <div class="steps">
+            <div class="step"><div class="sn">1</div><div class="sc2"><strong>Standard-Zeiten festlegen</strong><span>Beginn, Pausen, Mittagspause, Ende für die ganze Schule</span></div></div>
+            <div class="step"><div class="sn">2</div><div class="sc2"><strong>Abweichungen pro Klasse/Stufe</strong><span>Nur wo nötig (z.B. Kindergarten, 3. Sek mit Blockzeiten)</span></div></div>
+            <div class="step"><div class="sn">3</div><div class="sc2"><strong>Blockzeiten ohne Pause</strong><span>90/135-Min-Blöcke ohne Pausenzeiten — sonst Probleme im KI-Planer</span></div></div>
+          </div>
+        </div>
+        <div class="hbox hb"><strong>💡 Verbindung mit KI-Stundenplaner</strong><p>Das Zeitraster aus PUPIL wird beim Export übertragen. Korrekte Zeiten = saubere Ausgangslage für KI-Optimierung.</p></div>
+        <div class="pbtns"><a class="pbtn plink" data-path="/timetable/setting_config" href="#" target="_blank">↗ Einstellungen öffnen</a></div>
+      </div>
+    </div>
+    <div class="sn2"><strong>📚 Praxis-Tipp Kloten</strong>In Kloten wurde für die 3. Sek ein separates Zeitraster erstellt (Blockzeiten ohne Pausen). Das ist bis heute empfohlene Vorgehensweise für Schulen mit Blockzeitenplanung. Möglichst wenig separate Raster anlegen — jedes erhöht den Pflegeaufwand.</div>
+  </div>
+</div>
+
+<!-- ═ 9 · DATEN PRÜFEN ═══════════════════════ -->
+<div class="s s-c" data-sec="Daten in PUPIL prüfen">
+  <div class="hd ani"><span class="tag tc">Qualitätsprüfung</span><h2>Daten in PUPIL prüfen — bevor es losgeht</h2></div>
+  <div class="bd">
+    <div class="g2 ani">
+      <div>
+        <div class="hbox hw" style="margin-bottom:10px">
+          <strong>Warum kritisch?</strong>
+          <p>Fehler in den Stammdaten führen im besten Fall zu Korrekturbedarf nach der Planung — im schlimmsten Fall zu falschen Stundenplänen, die Eltern oder SuS sehen. Daten zuerst prüfen spart Zeit.</p>
+        </div>
+        <div class="card" style="margin-bottom:10px">
+          <h3>🆔 Fremd-IDs — vollständig?</h3>
+          <ul class="ul">
+            <li><strong>Klassen:</strong> Jede Klasse braucht eine Fremd-ID</li>
+            <li><strong>Gruppen:</strong> Alle Gruppen mit Fremd-ID — sonst im KI-Stundenplaner nicht erkennbar</li>
+            <li><strong>Lehrpersonen:</strong> Fremd-ID = Kürzel/Personalnummer, muss gesetzt sein</li>
+            <li><strong>Räume:</strong> Fremd-ID für alle genutzten Räume setzen</li>
+          </ul>
+        </div>
+        <div class="hbox hr">
+          <strong>⚠️ Häufiger Fehler: Gruppen ohne Fremd-ID</strong>
+          <p>Gruppen ohne Fremd-ID werden beim Export/Import übergangen — die zugehörigen Lektionen fehlen dann im KI-Stundenplaner komplett.</p>
+        </div>
+      </div>
+      <div>
+        <div class="card" style="margin-bottom:10px">
+          <h3>✅ Checkliste vor der Planung</h3>
+          <ul style="list-style:none;font-size:12.5px;color:var(--t2);line-height:2.1">
+            <li>☐ Alle Klassen mit Fremd-ID versehen</li>
+            <li>☐ Alle Gruppen angelegt und mit SuS befüllt</li>
+            <li>☐ Alle Gruppen mit Fremd-ID versehen</li>
+            <li>☐ Alle LP im System — Fremd-ID gesetzt</li>
+            <li>☐ Alle genutzten Räume angelegt</li>
+            <li>☐ Lektionenübersicht: LP-Zuweisungen vollständig</li>
+            <li>☐ Lektionenübersicht: Lektionszahlen plausibel</li>
+            <li>☐ Keine Klassen/Gruppen aus Vorjahr als «Karteileichen»</li>
+          </ul>
+        </div>
+        <div class="hbox hb">
+          <strong>💡 Wo prüfen?</strong>
+          <ul>
+            <li><strong>Fremd-IDs:</strong> Master Data → Klassen / Gruppen / LP / Räume</li>
+            <li><strong>Gruppen-Mitglieder:</strong> Master Data → Gruppen → Mitglieder</li>
+            <li><strong>LP-Zuweisungen:</strong> Schulleitung → Stundenplan → Lektionenübersicht</li>
+          </ul>
+        </div>
+        <div class="pbtns">
+          <a class="pbtn plink" data-path="/master_data/classes" href="#" target="_blank">↗ Klassen</a>
+          <a class="pbtn plink" data-path="/master_data/groups" href="#" target="_blank">↗ Gruppen</a>
+          <a class="pbtn plink" data-path="/timetable/" href="#" target="_blank">↗ Lektionenübersicht</a>
+        </div>
+      </div>
+    </div>
+    <div class="sn2"><strong>📚 Erfahrung aus Importen</strong>Der häufigste Grund für Support-Anfragen nach dem KI-Stundenplaner-Import: Gruppen waren in PUPIL angelegt aber ohne Fremd-ID — die Lektionen fehlten dann vollständig. Zweithäufigst: LP-Zuweisungen in der Lektionenübersicht unvollständig, weil Sync nach einer Stundentafel-Änderung nicht erneut ausgeführt wurde.</div>
+  </div>
+</div>
+
+<!-- ═ 10 · PLANUNGSPROZESS ═══════════════════ -->
+<div class="s s-b" data-sec="Planungsprozess Schritt für Schritt">
+  <div class="hd ani"><span class="tag tb">Prozess</span><h2>Stundenplan schrittweise aufbauen</h2></div>
+  <div class="bd">
+    <div class="g2 ani">
+      <div class="steps">
+        <div class="step"><div class="sn">1</div><div class="sc2"><strong>Stammdaten prüfen</strong><span>Klassen, LP, Räume, Fächer vollständig? Fremd-IDs gesetzt?</span></div></div>
+        <div class="step"><div class="sn">2</div><div class="sc2"><strong>Kantonale Stundentafel aktualisieren</strong><span>Pflichtlektionen und Wahlfächer korrekt?</span></div></div>
+        <div class="step"><div class="sn">3</div><div class="sc2"><strong>Gruppen erstellen</strong><span>Halbklassen, Niveaugruppen, Wahlfachgruppen mit SuS befüllen</span></div></div>
+        <div class="step"><div class="sn">4</div><div class="sc2"><strong>Lektionenübersicht prüfen</strong><span>Sync ausführen, LP zuweisen, Lektionszahlen kontrollieren</span></div></div>
+        <div class="step"><div class="sn">5</div><div class="sc2"><strong>Zeitraster konfigurieren</strong><span>Perioden, Pausen, Blockzeiten — Abweichungen je Klasse</span></div></div>
+        <div class="step"><div class="sn">6</div><div class="sc2"><strong>Stundenplan erstellen</strong><span>Manuell via Drag &amp; Drop — oder Export → KI-Planer → Import</span></div></div>
+        <div class="step"><div class="sn">7</div><div class="sc2"><strong>Plan prüfen</strong><span>Konflikte, fehlende Räume, Gruppenlektionen korrekt?</span></div></div>
+        <div class="step"><div class="sn">8</div><div class="sc2"><strong>Druckausgabe &amp; Freigabe</strong><span>PDF prüfen, Elternportal / PUPIL Connect aktivieren</span></div></div>
+      </div>
+      <div>
+        <div class="hbox hp"><strong>Wann welchen Ansatz?</strong><ul><li><strong>Kleine Primarschule:</strong> Schritte 1–5 + manuelles Planen → fertig</li><li><strong>Grosse Sek:</strong> Schritte 1–5 + KI-Stundenplaner → deutlich schneller</li><li><strong>Jahreswechsel:</strong> Alle Schritte neu — besonders 3–5 nicht vergessen</li></ul></div>
+        <div class="hbox hw"><strong>⚠️ Häufige Fehlerquelle</strong><p>Schritt 3 zu spät: Gruppen erst im KI-Planer oder spät in PUPIL erstellen → fehlende SuS-Zuweisungen und falsch dargestellte Lektionen.</p></div>
+        <div class="hbox hg"><strong>💡 Schuljahreswechsel im Februar</strong><p>Stundenpläne für neues Schuljahr im <strong>Februar</strong> vorbereiten — Semester unter Master Data → Schulen/Klassen/Gruppen → Semester anlegen.</p></div>
+        <div class="pbtns">
+          <a class="pbtn plink" data-path="/master_data/lesson_table/canton" href="#" target="_blank">↗ Stundentafel</a>
+          <a class="pbtn plink" data-path="/timetable/" href="#" target="_blank">↗ Lektionenübersicht</a>
+          <a class="pbtn plink" data-path="/timetable/setting_config" href="#" target="_blank">↗ Einstellungen</a>
+        </div>
+      </div>
+    </div>
+    <div class="sn2"><strong>📚 Sync-Logik seit Aug 2025</strong>Fächer werden nur noch den LP zugewiesen, die das jeweilige Fach in der Klasse unterrichten — nicht mehr automatisch der Klassenlehrperson. Reduziert falsche Zuweisungen erheblich. Bei Migrationen besonders beachten.</div>
+  </div>
+</div>
+
+<!-- ═ 10 · DRUCKAUSGABE ══════════════════════ -->
+<div class="s s-a" data-sec="Druckausgabe">
+  <div class="hd ani"><span class="tag ta">Ansicht 5</span><h2>Druckausgabe — alle Optionen</h2></div>
+  <div class="bd">
+    <div class="g2 ani">
+      <div>
+        <a class="path plink" data-path="/timetable/print" href="#" target="_blank"><strong>Schulleitung</strong><span>→</span>Stundenplan<span>→</span><strong>Druckausgabe</strong><span class="path-open">↗ öffnen</span></a>
+        <div class="card" style="margin-bottom:10px">
+          <h3>📄 Drucktypen</h3>
+          <table class="ctbl">
+            <tr><th>Typ</th><th>Inhalt</th></tr>
+            <tr><td><strong>Klassenstundenplan</strong></td><td class="ok">Inkl. Gruppe, LP, Raum</td></tr>
+            <tr><td><strong>LP-Stundenplan</strong></td><td class="ok">Mit Legende + Lektionenanzahl</td></tr>
+            <tr><td><strong>Raumplan</strong></td><td class="ok">Belegungsplan pro Raum</td></tr>
+            <tr><td><strong>SuS-Stundenplan</strong></td><td class="ok">Inkl. Gruppenlektion-Zuteilung</td></tr>
+          </table>
+        </div>
+        <div class="card">
+          <h3>⚙️ Druckoptionen</h3>
+          <ul class="ul">
+            <li>Mit / <strong>ohne Legende</strong> <span class="upd">Dez 2024</span></li>
+            <li><strong>Kürzel</strong> für lange Gruppennamen <span class="upd">Mai 2025</span></li>
+            <li>Schriftgrösse für <strong>A4 optimiert</strong> <span class="upd">Mai 2025</span></li>
+            <li>LP-Legende mit <strong>Lektionenanzahl</strong> <span class="upd">Mai 2025</span></li>
+            <li>Filter nach <strong>Schuleinheit</strong> <span class="new">März 2026</span></li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="hbox hg"><strong>💡 Tipp: Klassenzimmeraushang</strong><p>Für ausgehängte Pläne: <strong>Ohne Legende drucken</strong> → grössere Schrift, besser lesbar auf A4.</p></div>
+        <div class="hbox hp"><strong>Kürzel für Gruppen setzen</strong><p>Pfad: Master Data → Gruppen → Kürzel. Erscheint dann auf der Druckausgabe statt des langen Gruppennamens.</p></div>
+        <div class="hbox hw"><strong>⚠️ Gruppenlektionen im Druck</strong><p>Seit Feb 2025 automatisch mitgedruckt — auch für Mehrjahrgangsklassen ohne Jahrgangshinterlegung.</p></div>
+        <div class="hbox hb"><strong>In Planung</strong><p>Grafisch überarbeitete Druckausgabe, Footer «Erstellt mit PUPIL», PowerPoint/Miro-Export.</p></div>
+        <div class="pbtns"><a class="pbtn plink" data-path="/timetable/print" href="#" target="_blank">↗ Druckausgabe öffnen</a></div>
+      </div>
+    </div>
+    <div class="sn2"><strong>📚 Mehr als 10 LP auf SuS-Plan</strong>Bekannter Supportfall: mehr als 10 LP auf einem SuS-Stundenplan kann zu Darstellungsproblemen führen. Empfehlung: Nur direkt unterrichtende LP zuweisen.</div>
+  </div>
+</div>
+
+<!-- ═ 11 · ELTERNPORTAL ══════════════════════ -->
+<div class="s s-b" data-sec="Elternportal & Freigabe">
+  <div class="hd ani"><span class="tag tb">Freigabe</span><h2>Freigabe im Elternportal &amp; PUPIL Connect</h2></div>
+  <div class="bd">
+    <div class="g2 ani">
+      <div>
+        <div class="hbox hb"><strong>Wo wird freigegeben?</strong><p>In der Stundenplan-Ansicht der Schulleitung. Steuert, was Eltern und SuS sehen — <strong>pro Jahrgangsstufe konfigurierbar</strong>.</p></div>
+        <div class="card">
+          <h3>🔓 4 Freigabe-Varianten <span class="upd">Apr 2024</span></h3>
+          <ul class="ul">
+            <li><strong>1. Vollständig:</strong> Fach, LP, Raum sichtbar</li>
+            <li><strong>2. Unterricht (Klassenzimmer):</strong> Fächer nur ausserhalb anonymisiert</li>
+            <li><strong>3. Alles anonymisiert:</strong> Alle Lektionen als «Unterricht» — Primarstufe</li>
+            <li><strong>4. Leer:</strong> Platzhalter — Plan noch in Bearbeitung</li>
+          </ul>
+        </div>
+        <div style="margin-top:9px;padding:10px 13px;background:rgba(0,229,200,.07);border:1px solid rgba(0,229,200,.18);border-radius:8px;font-size:12.5px">
+          <strong style="color:var(--acc)">Variante 4</strong> verhindert versehentliche Publikation unfertigere Pläne — Eltern sehen etwas, aber nichts Falsches.
+        </div>
+      </div>
+      <div>
+        <div class="card" style="margin-bottom:10px">
+          <h3>📱 PUPIL Connect — Sichtbarkeit</h3>
+          <ul class="ul">
+            <li>Eltern sehen Plan in PUPIL Connect App</li>
+            <li>SuS sehen Plan im SuS-Portal</li>
+            <li>LP sehen eigenen Plan in der LP-Ansicht</li>
+            <li>Stundenplan in Connect-App ausblendbar</li>
+          </ul>
+        </div>
+        <div class="hbox hp"><strong>Empfehlung: Freigabereihenfolge</strong><ul><li>Zuerst: Variante 4 aktivieren (Platzhalter)</li><li>Intern: Plan fertigstellen und prüfen</li><li>Nach Entscheid: Variante 1–3 wählen</li><li>Eltern via Connect-Nachricht informieren</li></ul></div>
+        <a href="https://dokumentation.pupil.ch/article/flvczjj8eh-pupil" target="_blank" class="lcard" style="margin-top:8px">
+          <div class="lic" style="background:rgba(0,229,200,.12)">📖</div>
+          <div class="lci"><strong>Doku: PUPIL Connect Elternportal</strong><span>dokumentation.pupil.ch</span></div>
+        </a>
+      </div>
+    </div>
+    <div class="sn2"><strong>📚 Anonymisierung nach Schulstufe</strong>Primarstufe: häufig Variante 3 (alles «Unterricht»). Oberstufe: meist Variante 1, da Eltern Fach und LP kennen wollen. Variante 2 wird oft auf Mittelstufe gewählt als Kompromiss.</div>
+  </div>
+</div>
+
+<!-- ═ 12 · WAHLFÄCHER ════════════════════════ -->
+<div class="s s-b" data-sec="Wahlfächer & Oberstufe">
+  <div class="hd ani"><span class="tag tb">Spezialfall</span><h2>Wahlfächer &amp; Oberstufe — komplexe Szenarien</h2></div>
+  <div class="bd">
+    <div class="g2 ani">
+      <div>
+        <div class="card" style="margin-bottom:10px">
+          <h3>🎓 Wahlfächer: empfohlener Ablauf</h3>
+          <div class="steps">
+            <div class="step"><div class="sn">1</div><div class="sc2"><strong>Wahlfach in Stundentafel</strong><span>Einmal pro Fach — z.B. «WF Französisch»</span></div></div>
+            <div class="step"><div class="sn">2</div><div class="sc2"><strong>Gruppen je Niveau</strong><span>«WF Frz BC», «WF Frz A» als separate Gruppen mit SuS</span></div></div>
+            <div class="step"><div class="sn">3</div><div class="sc2"><strong>Gruppenlektion anlegen</strong><span>Fach = «WF Frz», Gruppe = je Niveau, LP zuweisen</span></div></div>
+            <div class="step"><div class="sn">4</div><div class="sc2"><strong>Keine Stundentafel-Fächer der Gruppe</strong><span>Sonst erscheinen alle Wahlfächer bei allen SuS der Gruppe</span></div></div>
+          </div>
+        </div>
+        <div class="hbox hg"><strong>💡 Sternchen-Gruppen</strong><p>Administrative Spezialgruppen (z.B. «*WF Berufliche Orientierung») als eigene Kennung anlegen — nicht mit Stundentafel-Fächern verknüpfen.</p></div>
+      </div>
+      <div>
+        <div class="card" style="margin-bottom:10px">
+          <h3>🏃 Sport-Halbklassen — Fehlerquellen</h3>
+          <ul class="ul warn">
+            <li>Halbklassen (Knaben/Mädchen) müssen in PUPIL erstellt sein</li>
+            <li>SuS korrekt einteilen — nicht erst im KI-Planer</li>
+            <li>Sport-Lektionen verknüpfen: immer parallel, nie gemeinsam</li>
+          </ul>
+        </div>
+        <div class="hbox hp" style="margin-bottom:10px"><strong>Englisch/Französisch 3. Sek</strong><p>Als Gruppenlektion planen → erscheinen nur bei betroffenen SuS und LP. Keine separaten Klassen nötig.</p></div>
+        <div class="hbox hb"><strong>Co-Teaching / mehrere LP</strong><p>Mehr als 3 LP pro Lektion — UI-Erweiterung im Backlog. Aktuell via manuelle Erfassung möglich.</p></div>
+        <div class="pbtns"><a class="pbtn plink" data-path="/timetable/" href="#" target="_blank">↗ Stundenplan bearbeiten</a></div>
+      </div>
+    </div>
+    <div class="sn2"><strong>📚 Kloten-Erfahrung</strong>Wahlfächer nur einmal erstellen, mehrere Gruppen nutzen. Alle Schuleinheiten teilen Fächer. Beim Erstellen prüfen: Zeugnisrelevanz? Fächer aus der Stundentafel erscheinen automatisch auf dem Zeugnis.</div>
+  </div>
+</div>
+
+<!-- ═ 13 · NEUERUNGEN ════════════════════════ -->
+<div class="s s-c" data-sec="Neuerungen 2024–2026">
+  <div class="hd ani"><span class="tag tc">Changelog</span><h2>Neuerungen 2024–2026 im Überblick</h2></div>
+  <div class="bd">
+    <div class="g2 ani">
+      <div>
+        <div style="font-family:var(--fm);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--acc);margin-bottom:8px">2026</div>
+        <div class="hbox hp" style="margin-bottom:8px"><strong>März 2026 — Schuleinheit-Filter</strong><p>Schulleitungen sehen nur eigene Schuleinheit in Bearbeiten &amp; Druck. Druckansicht filterbar.</p></div>
+        <div style="font-family:var(--fm);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--t3);margin-bottom:8px;margin-top:12px">2025</div>
+        <div class="hbox hp" style="margin-bottom:6px"><strong>Dez 2025 — Neue Stundentafel-Struktur</strong><p>«Klassenstundentafel» → «Lektionenübersicht». Kantonale Stundentafel klar getrennt.</p></div>
+        <div class="hbox hp" style="margin-bottom:6px"><strong>Sep 2025 — Gruppenlektionen in LP-Ansicht</strong><p>Beim Bearbeiten sichtbar. Gruppe direkt wählbar, verknüpfte Klassenlektionen einblendbar.</p></div>
+        <div class="hbox hp" style="margin-bottom:6px"><strong>Aug 2025 — Smarte Synchronisation</strong><p>Fächer nur noch richtigen LP zugewiesen — nicht mehr automatisch der Klassenlehrperson.</p></div>
+        <div class="hbox hp" style="margin-bottom:0"><strong>Feb 2025 — Gruppenlektion im Druck</strong><p>Gruppenlektionen im Klassenstundenplan-Druck. Mehrjahrgangsklassen korrekt dargestellt.</p></div>
+      </div>
+      <div>
+        <div style="font-family:var(--fm);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--t3);margin-bottom:8px">2025 (Fortsetzung)</div>
+        <div class="hbox hp" style="margin-bottom:6px"><strong>Mai 2025 — Druckoptimierungen</strong><p>A4-Schriftgrösse optimiert. LP-Lektionenanzahl in Legende. Kürzel für Gruppen.</p></div>
+        <div style="font-family:var(--fm);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--t3);margin-bottom:8px;margin-top:12px">2024</div>
+        <div class="hbox hp" style="margin-bottom:6px"><strong>Dez 2024 — Druck mit/ohne Legende</strong><p>Ohne Legende = grössere Schrift für Aushang. Bemerkungen bei geteilten Lektionen separat.</p></div>
+        <div class="hbox hp" style="margin-bottom:6px"><strong>Apr 2024 — 4 Elternportal-Varianten</strong><p>Freigabe pro Jahrgangsstufe inkl. Anonymisierung und Leerplan.</p></div>
+        <div class="hbox hp" style="margin-bottom:0"><strong>Feb 2024 — LP können bearbeiten</strong><p>LP erhalten Bearbeitungsrecht für eigene Klassen/Gruppen/Räume. Lektionen sperrbar.</p></div>
+      </div>
+    </div>
+    <div class="sn2"><strong>📚 Für Schulungen</strong>Die Umbenennung «Klassenstundentafel» → «Lektionenübersicht» (Dez 2025) muss explizit adressiert werden. Viele Schulen kennen noch die alte Bezeichnung. Trainer*innen sollten beide Begriffe kennen und erklären können.</div>
+  </div>
+</div>
+
+<!-- ═ 14 · SEMESTERWECHSEL ═══════════════════ -->
+<div class="s s-c" data-sec="Semesterwechsel & Jahresplanung">
+  <div class="hd ani"><span class="tag tc">Jahresplanung</span><h2>Semesterwechsel &amp; wiederkehrende Aufgaben</h2></div>
+  <div class="bd">
+    <div class="g2 ani">
+      <div>
+        <div class="card" style="margin-bottom:10px">
+          <h3>📅 Jährlicher Stundenplan-Zyklus</h3>
+          <table class="ctbl">
+            <tr><th>Wann</th><th>Aufgabe</th></tr>
+            <tr><td><strong>Februar</strong></td><td>Stundenpläne für neues SJ vorbereiten</td></tr>
+            <tr><td><strong>Februar</strong></td><td>Semester anlegen (Master Data → Semester)</td></tr>
+            <tr><td><strong>Sommer</strong></td><td>Klassen neu, SuS zuweisen, LP aktualisieren</td></tr>
+            <tr><td><strong>Vor SJ-Start</strong></td><td>Stundenplan prüfen und freigeben</td></tr>
+          </table>
+        </div>
+        <div class="hbox hw"><strong>⚠️ Semesterwechsel-Risiko</strong><p>Alte LP/Lektionen können kopiert werden. Manuelle Bereinigung nötig — bekannt bei Kloten, Oberengstringen, Nollen.</p></div>
+      </div>
+      <div>
+        <div class="card" style="margin-bottom:10px">
+          <h3>✓ Checkliste: Neues Schuljahr</h3>
+          <ul style="list-style:none;font-size:12.5px;color:var(--t2);line-height:2.2">
+            <li>☐ Semester anlegen (Master Data)</li>
+            <li>☐ Alte Lektionen / LP bereinigen</li>
+            <li>☐ Neue SuS in Klassen einteilen</li>
+            <li>☐ LP-Zuweisungen aktualisieren</li>
+            <li>☐ Stundentafel auf Änderungen prüfen</li>
+            <li>☐ Gruppen neu befüllen</li>
+            <li>☐ Zeitraster auf Änderungen prüfen</li>
+            <li>☐ Sync ausführen und prüfen</li>
+            <li>☐ Stundenplan neu planen</li>
+            <li>☐ Freigabe: erst Variante 4 → dann live</li>
+          </ul>
+        </div>
+        <div class="pbtns">
+          <a class="pbtn plink" data-path="/timetable/" href="#" target="_blank">↗ Lektionenübersicht</a>
+          <a class="pbtn plink" data-path="/timetable/print" href="#" target="_blank">↗ Druckausgabe</a>
+        </div>
+      </div>
+    </div>
+    <div class="sn2"><strong>📚 Schulplaner-Verbindung</strong>Die Schulplaner-Aktivierung soll in die Semester-Ansicht übertragen werden (Backlog) — damit Schulplaner und Stundenplan unabhängig aktiviert werden können. Aktuell müssen beide separat koordiniert werden.</div>
+  </div>
+</div>
+
+<!-- ═ 15 · VERGLEICH ════════════════════════ -->
+<div class="s s-b" data-sec="Entscheidungshilfe">
+  <div class="hd ani"><span class="tag tb">Entscheidungshilfe</span><h2>Welches Vorgehen passt zu meiner Schule?</h2></div>
+  <div class="bd">
+    <div class="ani" style="overflow-x:auto">
+      <table class="ctbl" style="min-width:560px">
+        <tr><th>Kriterium</th><th>A: Admin allein</th><th>B: LP bearbeiten</th><th>C: + KI-Planer</th></tr>
+        <tr><td><strong>Schulgrösse</strong></td><td>Klein</td><td>Mittel</td><td>Gross / Oberstufe</td></tr>
+        <tr><td><strong>Planungszeit</strong></td><td>Stunden bis Tage</td><td>Stunden</td><td class="ok">&lt;15 Min KI + Nacharbeit</td></tr>
+        <tr><td><strong>Wahlfächer</strong></td><td class="part">Aufwändig</td><td class="part">Mittel</td><td class="ok">Gut unterstützt</td></tr>
+        <tr><td><strong>Konflikt-Erkennung</strong></td><td class="no">Manuell</td><td class="no">Manuell</td><td class="ok">KI-Optimierung</td></tr>
+        <tr><td><strong>LP-Autonomie</strong></td><td class="no">Keine</td><td class="ok">Hoch</td><td class="part">Nur nach Import</td></tr>
+        <tr><td><strong>Freigabe-Kontrolle</strong></td><td class="ok">Vollständig</td><td class="part">Teilweise</td><td class="ok">Nach Import vollständig</td></tr>
+        <tr><td><strong>Empfohlen für</strong></td><td>Primarstufe</td><td>Mittlere Sek</td><td>Grosse Sek, viele Wahlfächer</td></tr>
+      </table>
+    </div>
+    <div class="g2 ani" style="margin-top:12px">
+      <div class="hbox hg"><strong>💡 Faustregel</strong><p>Je mehr Klassen, Gruppen und LP-Wünsche, desto mehr lohnt sich der KI-Stundenplaner. Kleine Primarschulen kommen mit manuellem Ansatz gut aus.</p></div>
+      <div class="hbox hp"><strong>B + C kombinieren</strong><p>KI erstellt Grundplan → LP passen in PUPIL nach. Beste Balance aus Effizienz und LP-Autonomie. Praxis Kloten: von 2–3 Tagen auf ~3 Stunden gesamt.</p></div>
+    </div>
+    <div class="sn2"><strong>📚 Erfahrung aus Pilots</strong>Auch nach dem KI-Import sind 1–2 Stunden Nachbearbeitung in PUPIL nötig (Räume prüfen, Konflikte lösen). Der Zeitgewinn ist aber enorm — von Tagen auf Stunden.</div>
+  </div>
+</div>
+
+<!-- ═ 16 · RESSOURCEN ════════════════════════ -->
+<div class="s s-a" data-sec="Ressourcen & Links">
+  <div class="hd ani"><span class="tag ta">Ressourcen</span><h2>Dokumentation &amp; direkte Links in Ihre Instanz</h2></div>
+  <div class="bd">
+    <div class="g2 ani">
+      <div>
+        <div style="font-family:var(--fm);font-size:9px;color:var(--p3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px">📖 Offizielle Dokumentation</div>
+        <a href="https://dokumentation.pupil.ch/article/xds10caret-stundenplan" target="_blank" class="lcard">
+          <div class="lic" style="background:rgba(30,144,255,.15)">📋</div>
+          <div class="lci"><strong>PUPIL Doku: Stundenplan (Admin)</strong><span>dokumentation.pupil.ch</span></div>
+        </a>
+        <a href="https://dokumentation.pupil.ch/article/48h2ogokql-2025-12-anpassungen-an-der-stundentafel" target="_blank" class="lcard">
+          <div class="lic" style="background:rgba(0,229,200,.12)">🆕</div>
+          <div class="lci"><strong>Neuerungen Dez 2025: Stundentafel</strong><span>dokumentation.pupil.ch</span></div>
+        </a>
+        <a href="https://dokumentation.pupil.ch/article/xds10caret-stundenplan#bemerkung_zu_gruppenlektion_klassenlektion" target="_blank" class="lcard">
+          <div class="lic" style="background:rgba(30,144,255,.12)">👥</div>
+          <div class="lci"><strong>Klassen- vs. Gruppenlektion erklärt</strong><span>dokumentation.pupil.ch</span></div>
+        </a>
+        <a href="https://dokumentation.pupil.ch/article/flvczjj8eh-pupil" target="_blank" class="lcard">
+          <div class="lic" style="background:rgba(30,144,255,.1)">📱</div>
+          <div class="lci"><strong>PUPIL Connect Elternportal</strong><span>dokumentation.pupil.ch</span></div>
+        </a>
+      </div>
+      <div>
+        <div style="font-family:var(--fm);font-size:9px;color:var(--acc);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px">🔗 Direkt in Ihrer PUPIL-Instanz öffnen</div>
+        <a class="lcard plink" data-path="/master_data/lesson_table/canton" href="#" target="_blank">
+          <div class="lic" style="background:rgba(30,144,255,.12)">📊</div>
+          <div class="lci"><strong>Kantonale Stundentafel</strong><span class="plink-label" style="font-family:var(--fm);font-size:11px;color:var(--t3)">Master Data → Schulen/Kl./Gr.</span></div>
+        </a>
+        <a class="lcard plink" data-path="/timetable/" href="#" target="_blank">
+          <div class="lic" style="background:rgba(30,144,255,.1)">🗓️</div>
+          <div class="lci"><strong>Stundenplan &amp; Lektionenübersicht</strong><span class="plink-label" style="font-family:var(--fm);font-size:11px;color:var(--t3)">Schulleitung → Stundenplan</span></div>
+        </a>
+        <a class="lcard plink" data-path="/timetable/setting_config" href="#" target="_blank">
+          <div class="lic" style="background:rgba(30,144,255,.08)">⚙️</div>
+          <div class="lci"><strong>Einstellungen / Zeitraster</strong><span class="plink-label" style="font-family:var(--fm);font-size:11px;color:var(--t3)">Schulleitung → Stundenplan → Einstellungen</span></div>
+        </a>
+        <a class="lcard plink" data-path="/timetable/print" href="#" target="_blank">
+          <div class="lic" style="background:rgba(30,144,255,.06)">🖨️</div>
+          <div class="lci"><strong>Druckausgabe</strong><span class="plink-label" style="font-family:var(--fm);font-size:11px;color:var(--t3)">Schulleitung → Stundenplan → Druckausgabe</span></div>
+        </a>
+        <a class="lcard plink" data-path="/timetable/read_only" href="#" target="_blank">
+          <div class="lic" style="background:rgba(0,229,200,.08)">👁️</div>
+          <div class="lci"><strong>Stundenplan Leseansicht</strong><span class="plink-label" style="font-family:var(--fm);font-size:11px;color:var(--t3)">Schulleitung → Stundenplan (Readonly)</span></div>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═ 17 · FAZIT ═════════════════════════════ -->
+<div class="s s-title" data-sec="">
+  <div class="w" style="text-align:center">
+    <div class="ani"><span class="tag td">Fazit</span></div>
+    <h1 class="ani tm" style="font-size:clamp(30px,4vw,52px)">PUPIL Stundenplan<br><span style="color:var(--p3)">— Komplett im Griff</span></h1>
+    <div class="ani g3" style="max-width:820px;margin:22px auto;text-align:left">
+      <div style="padding:16px;background:var(--bg3);border:1px solid var(--bdr);border-radius:10px">
+        <div style="font-size:22px;margin-bottom:6px">📋</div>
+        <div style="font-size:13px;font-weight:600;margin-bottom:5px">Vorbereitung</div>
+        <div style="font-size:12px;color:var(--t2);line-height:1.6">Stundentafel → Gruppen → Lektionenübersicht. Qualität der Stammdaten bestimmt die Qualität des Plans.</div>
+      </div>
+      <div style="padding:16px;background:var(--bg3);border:1px solid var(--bdr);border-radius:10px">
+        <div style="font-size:22px;margin-bottom:6px">⚙️</div>
+        <div style="font-size:13px;font-weight:600;margin-bottom:5px">Planung</div>
+        <div style="font-size:12px;color:var(--t2);line-height:1.6">Drei Szenarien je nach Schulgrösse. KI-Stundenplaner für komplexe Schulen spart Tage an Planungszeit.</div>
+      </div>
+      <div style="padding:16px;background:var(--bg3);border:1px solid var(--bdr);border-radius:10px">
+        <div style="font-size:22px;margin-bottom:6px">✅</div>
+        <div style="font-size:13px;font-weight:600;margin-bottom:5px">Freigabe</div>
+        <div style="font-size:12px;color:var(--t2);line-height:1.6">4 Freigabe-Varianten für Elternportal. Zuerst Variante 4 → dann vollständig nach Prüfung freischalten.</div>
+      </div>
+    </div>
+    <div class="ani" style="max-width:640px;margin:0 auto">
+      <div class="hbox hb" style="text-align:left">
+        <strong>Was kommt als Nächstes?</strong>
+        <p>API-Anbindung Royal Schedule · Überarbeitetes Zeiten-UI · Verbesserte Druckausgabe · Fächerstundenplan-Ansicht · Synchronisation sperren. Kontinuierliche Weiterentwicklung.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end #sc -->
+
+<footer id="nft">
+  <button class="nb" id="pb" onclick="nav(-1)" disabled>← Zurück</button>
+  <div class="ndots" id="ndots"></div>
+  <button class="nb" id="nb2" onclick="nav(1)">Weiter →</button>
+</footer>
+<div class="kh"><kbd>←</kbd><kbd>→</kbd></div>
+
+<script>
+// ─── State ────────────────────────────────────────────────────────
+let pupilBase = '';
+let study = false;
+
+// ─── Slides setup ─────────────────────────────────────────────────
+const slides = Array.from(document.querySelectorAll('.s'));
+const N = slides.length;
+let cur = 0;
+document.getElementById('tn').textContent = N;
+
+const dc = document.getElementById('ndots');
+slides.forEach((_, i) => {
+  const d = document.createElement('div');
+  d.className = 'ndot' + (i === 0 ? ' act' : '');
+  d.title = slides[i].dataset.sec || '';
+  d.onclick = () => gts(i);
+  dc.appendChild(d);
+});
+
+function uiNav() {
+  document.getElementById('pbar').style.width = ((cur + 1) / N * 100) + '%';
+  document.getElementById('cn').textContent = cur + 1;
+  document.getElementById('hsc').textContent = slides[cur].dataset.sec || '';
+  document.querySelectorAll('.ndot').forEach((d, i) => d.className = 'ndot' + (i === cur ? ' act' : ''));
+  document.getElementById('pb').disabled = cur === 0;
+  const nb = document.getElementById('nb2');
+  nb.disabled = cur === N - 1;
+  nb.textContent = cur === N - 1 ? '✓ Ende' : 'Weiter →';
+}
+
+function gts(i) {
+  if (i < 0 || i >= N || i === cur) return;
+  slides[cur].classList.remove('act');
+  cur = i;
+  slides[cur].classList.add('act');
+  if (study) { const sn = slides[cur].querySelector('.sn2'); if (sn) sn.classList.add('vis'); }
+  uiNav();
+}
+function nav(d) { gts(cur + d); }
+
+function toggleStudy() {
+  study = !study;
+  const b = document.getElementById('stbtn');
+  b.className = study ? 'on' : '';
+  b.innerHTML = study ? '<div class="dot"></div>📖 An' : '<div class="dot"></div>Selbststudium';
+  document.querySelectorAll('.sn2').forEach(n => {
+    study ? n.classList.add('vis') : n.classList.remove('vis');
+  });
+}
+
+document.addEventListener('keydown', e => {
+  if (document.getElementById('setup').style.display !== 'none') return;
+  if (['ArrowRight', 'ArrowDown', ' '].includes(e.key)) { e.preventDefault(); nav(1); }
+  else if (['ArrowLeft', 'ArrowUp'].includes(e.key)) { e.preventDefault(); nav(-1); }
+  else if (e.key === 'Home') gts(0);
+  else if (e.key === 'End') gts(N - 1);
+});
+
+// ─── Instance URL logic ────────────────────────────────────────────
+function normalizeUrl(raw) {
+  let url = raw.trim();
+  if (!url) return '';
+  if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
+  // strip trailing slash / path, keep only origin
+  try {
+    return new URL(url).origin;
+  } catch {
+    return null; // invalid
+  }
+}
+
+/**
+ * Apply a base URL to all .plink elements.
+ * If base is empty string, disable all links.
+ */
+function applyBase(base) {
+  pupilBase = base;
+  const links = document.querySelectorAll('.plink');
+
+  links.forEach(el => {
+    const path = el.dataset.path || '/';
+    if (base) {
+      el.href = base + path;
+      el.classList.remove('plink-off');
+      // Update dynamic URL labels on resource slide lcards
+      const lbl = el.querySelector('.plink-label');
+      if (lbl) {
+        const short = base.replace(/^https?:\/\//, '');
+        lbl.textContent = short + path;
+        lbl.style.color = 'var(--acc2)';
+      }
+    } else {
+      el.removeAttribute('href');
+      el.classList.add('plink-off');
+    }
+  });
+
+  // Prevent click when no base — show setup instead
+  links.forEach(el => {
+    el.onclick = base ? null : (e) => { e.preventDefault(); openSetup(); };
+  });
+
+  // Header badge
+  const badge = document.getElementById('hibadge');
+  if (base) {
+    document.getElementById('hiname').textContent = base.replace(/^https?:\/\//, '');
+    badge.style.display = 'flex';
+  } else {
+    badge.style.display = 'none';
+  }
+}
+
+function confirmUrl() {
+  const raw = document.getElementById('iurl').value;
+  const base = normalizeUrl(raw);
+  const input = document.getElementById('iurl');
+  const err = document.getElementById('serr');
+
+  if (raw && base === null) {
+    input.classList.add('err');
+    err.textContent = '⚠ Ungültige URL — bitte Format prüfen (z.B. https://meineschule.pupil.schule)';
+    return;
+  }
+
+  input.classList.remove('err');
+  err.textContent = '';
+
+  if (base) {
+    try { localStorage.setItem('pupil_base_url', base); } catch {}
+  }
+
+  applyBase(base || '');
+  closeSetup();
+}
+
+function skipSetup() {
+  applyBase('');
+  closeSetup();
+}
+
+function closeSetup() {
+  const overlay = document.getElementById('setup');
+  overlay.style.transition = 'opacity .3s ease';
+  overlay.style.opacity = '0';
+  setTimeout(() => { overlay.style.display = 'none'; }, 320);
+  uiNav();
+}
+
+function openSetup() {
+  const overlay = document.getElementById('setup');
+  overlay.style.display = 'flex';
+  overlay.style.opacity = '0';
+  requestAnimationFrame(() => {
+    overlay.style.transition = 'opacity .3s ease';
+    overlay.style.opacity = '1';
+  });
+  const inp = document.getElementById('iurl');
+  if (pupilBase) inp.value = pupilBase;
+  inp.focus();
+  inp.select();
+}
+
+function fillUrl(url) {
+  const inp = document.getElementById('iurl');
+  inp.value = url;
+  inp.classList.remove('err');
+  document.getElementById('serr').textContent = '';
+  inp.focus();
+}
+
+document.getElementById('iurl').addEventListener('keydown', e => {
+  if (e.key === 'Enter') confirmUrl();
+});
+
+// ─── Swipe / Touch support ────────────────────────────────────────
+(function initSwipe() {
+  let sx = null, sy = null;
+  const sc = document.getElementById('sc');
+
+  sc.addEventListener('touchstart', e => {
+    if (e.touches.length !== 1) return;
+    sx = e.touches[0].clientX;
+    sy = e.touches[0].clientY;
+  }, { passive: true });
+
+  sc.addEventListener('touchend', e => {
+    if (sx === null) return;
+    const dx = e.changedTouches[0].clientX - sx;
+    const dy = e.changedTouches[0].clientY - sy;
+    sx = sy = null;
+    // Only act on predominantly horizontal swipes (>40px, less than 45° off-axis)
+    if (Math.abs(dx) < 40 || Math.abs(dy) > Math.abs(dx)) return;
+    // Ignore if setup overlay is visible
+    if (document.getElementById('setup').style.display !== 'none') return;
+    dx < 0 ? nav(1) : nav(-1);
+  }, { passive: true });
+})();
+
+// ─── Init ──────────────────────────────────────────────────────────
+(function init() {
+  let saved = '';
+  try { saved = localStorage.getItem('pupil_base_url') || ''; } catch {}
+  if (saved) {
+    document.getElementById('iurl').value = saved;
+  }
+  // All plinks start as "no base" — clicking them will open setup
+  applyBase('');
+  uiNav();
+})();
+</script>
+</body>
+</html>
