@@ -1,0 +1,1508 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Datenschutz im Schüler*innen-Dossier — Best Practice Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,300;0,400;0,600;0,700;1,400&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #FAFAF8;
+  --bg-card: #FFFFFF;
+  --bg-subtle: #F3F2EE;
+  --bg-accent: #1B2E4A;
+  --text: #1A1A1A;
+  --text-secondary: #5A5A5A;
+  --text-muted: #8A8A8A;
+  --text-on-dark: #F0EDE6;
+  --accent: #2D5A27;
+  --accent-light: #E8F0E6;
+  --accent-hover: #3D7A35;
+  --warning: #B8860B;
+  --warning-light: #FFF8E7;
+  --danger: #8B2500;
+  --danger-light: #FFF0EC;
+  --info: #1B4F72;
+  --info-light: #EBF5FB;
+  --border: #E0DDD5;
+  --border-strong: #C8C4B8;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+  --shadow-lg: 0 8px 30px rgba(0,0,0,0.10);
+  --radius: 8px;
+  --radius-lg: 14px;
+  --font-serif: 'Source Serif 4', Georgia, serif;
+  --font-sans: 'DM Sans', -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.65;
+  font-size: 15px;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── LAYOUT ── */
+.container { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+
+/* ── HERO ── */
+.hero {
+  background: var(--bg-accent);
+  color: var(--text-on-dark);
+  padding: 64px 0 56px;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -20%;
+  width: 500px;
+  height: 500px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(45,90,39,0.15) 0%, transparent 70%);
+}
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: rgba(240,237,230,0.6);
+  margin-bottom: 20px;
+}
+.hero-badge::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  background: var(--accent);
+  border-radius: 50%;
+}
+.hero h1 {
+  font-family: var(--font-serif);
+  font-size: clamp(28px, 4vw, 42px);
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 16px;
+  max-width: 680px;
+}
+.hero p {
+  font-size: 16px;
+  line-height: 1.7;
+  color: rgba(240,237,230,0.75);
+  max-width: 600px;
+}
+.hero-meta {
+  display: flex;
+  gap: 24px;
+  margin-top: 28px;
+  font-size: 13px;
+  color: rgba(240,237,230,0.5);
+}
+
+/* ── NAVIGATION TABS ── */
+.nav-bar {
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: var(--shadow-sm);
+}
+.nav-tabs {
+  display: flex;
+  gap: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.nav-tabs::-webkit-scrollbar { display: none; }
+.nav-tab {
+  padding: 16px 20px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  border: none;
+  background: none;
+  cursor: pointer;
+  white-space: nowrap;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+}
+.nav-tab:hover { color: var(--text); }
+.nav-tab.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+/* ── SECTIONS ── */
+.section {
+  display: none;
+  padding: 48px 0 64px;
+  animation: fadeIn 0.3s ease;
+}
+.section.active { display: block; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.section-title {
+  font-family: var(--font-serif);
+  font-size: 26px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.section-subtitle {
+  font-size: 15px;
+  color: var(--text-secondary);
+  margin-bottom: 36px;
+  max-width: 640px;
+}
+
+/* ── CARDS ── */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow-sm);
+}
+.card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+.card-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.card-icon.green { background: var(--accent-light); }
+.card-icon.yellow { background: var(--warning-light); }
+.card-icon.red { background: var(--danger-light); }
+.card-icon.blue { background: var(--info-light); }
+.card-title {
+  font-weight: 700;
+  font-size: 16px;
+  margin-bottom: 2px;
+}
+.card-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+.card p, .card li {
+  color: var(--text-secondary);
+  font-size: 14px;
+  line-height: 1.7;
+}
+.card ul { padding-left: 20px; }
+.card li { margin-bottom: 6px; }
+
+/* ── SENSITIVITY LEVELS ── */
+.level-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.level-card {
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  border: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+}
+.level-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+}
+.level-card.l1 { background: #F6FBF5; }
+.level-card.l1::before { background: #4CAF50; }
+.level-card.l2 { background: #FFFCF0; }
+.level-card.l2::before { background: #FF9800; }
+.level-card.l3 { background: #FFF5F3; }
+.level-card.l3::before { background: #E53935; }
+.level-tag {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+.l1 .level-tag { background: #E8F5E9; color: #2E7D32; }
+.l2 .level-tag { background: #FFF3E0; color: #E65100; }
+.l3 .level-tag { background: #FFEBEE; color: #C62828; }
+.level-card h4 { font-size: 15px; margin-bottom: 8px; }
+.level-card p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+
+/* ── WIZARD ── */
+.wizard-container {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+}
+.wizard-progress {
+  display: flex;
+  background: var(--bg-subtle);
+  border-bottom: 1px solid var(--border);
+  padding: 0;
+}
+.wizard-step-indicator {
+  flex: 1;
+  padding: 14px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-align: center;
+  position: relative;
+  transition: all 0.3s;
+}
+.wizard-step-indicator.active {
+  color: var(--accent);
+  background: var(--bg-card);
+}
+.wizard-step-indicator.done {
+  color: var(--accent);
+}
+.wizard-step-indicator.done::after {
+  content: ' ✓';
+}
+.wizard-body { padding: 32px; }
+.wizard-question {
+  font-family: var(--font-serif);
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.wizard-hint {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 24px;
+  line-height: 1.6;
+}
+.wizard-options { display: flex; flex-direction: column; gap: 10px; }
+.wizard-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 16px 20px;
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all 0.2s;
+  background: var(--bg-card);
+}
+.wizard-option:hover {
+  border-color: var(--accent);
+  background: var(--accent-light);
+}
+.wizard-option.selected {
+  border-color: var(--accent);
+  background: var(--accent-light);
+}
+.wizard-option-radio {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid var(--border-strong);
+  flex-shrink: 0;
+  margin-top: 1px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+.wizard-option.selected .wizard-option-radio {
+  border-color: var(--accent);
+}
+.wizard-option.selected .wizard-option-radio::after {
+  content: '';
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+.wizard-option-check {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  border: 2px solid var(--border-strong);
+  flex-shrink: 0;
+  margin-top: 1px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  font-size: 12px;
+  color: transparent;
+}
+.wizard-option.selected .wizard-option-check {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: white;
+}
+.wizard-option-title {
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 2px;
+}
+.wizard-option-desc {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+.wizard-nav {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 28px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+.btn {
+  padding: 10px 24px;
+  border-radius: var(--radius);
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: var(--font-sans);
+}
+.btn-primary {
+  background: var(--accent);
+  color: white;
+}
+.btn-primary:hover { background: var(--accent-hover); }
+.btn-primary:disabled { background: #C8C4B8; cursor: not-allowed; }
+.btn-ghost {
+  background: none;
+  color: var(--text-secondary);
+}
+.btn-ghost:hover { color: var(--text); }
+
+/* ── RESULT ── */
+.result-container { display: none; }
+.result-container.active { display: block; }
+.result-header {
+  background: var(--accent);
+  color: white;
+  padding: 28px;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+.result-header h3 {
+  font-family: var(--font-serif);
+  font-size: 20px;
+  margin-bottom: 4px;
+}
+.result-header p { font-size: 13px; opacity: 0.8; }
+.result-body {
+  border: 1px solid var(--border);
+  border-top: none;
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  background: var(--bg-card);
+}
+.result-section {
+  padding: 24px 28px;
+  border-bottom: 1px solid var(--border);
+}
+.result-section:last-child { border-bottom: none; }
+.result-section h4 {
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.result-section p, .result-section li {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+.result-section ul { padding-left: 20px; }
+.result-section li { margin-bottom: 6px; }
+
+.pupil-tip {
+  background: var(--info-light);
+  border: 1px solid #B8D4E8;
+  border-radius: var(--radius);
+  padding: 14px 18px;
+  margin-top: 12px;
+  font-size: 13px;
+  color: var(--info);
+  line-height: 1.6;
+}
+.pupil-tip strong { font-weight: 700; }
+.pupil-tip code {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  background: rgba(27,79,114,0.08);
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+
+.warning-box {
+  background: var(--warning-light);
+  border: 1px solid #E8D5A0;
+  border-radius: var(--radius);
+  padding: 14px 18px;
+  margin-top: 12px;
+  font-size: 13px;
+  color: #7A5C00;
+  line-height: 1.6;
+}
+
+/* ── MATRIX TABLE ── */
+.matrix-wrapper {
+  overflow-x: auto;
+  margin: 20px 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+th {
+  background: var(--bg-subtle);
+  font-weight: 600;
+  text-align: left;
+  padding: 10px 14px;
+  border-bottom: 2px solid var(--border);
+  white-space: nowrap;
+  font-size: 12px;
+}
+td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+tr:last-child td { border-bottom: none; }
+td:first-child {
+  font-weight: 600;
+  white-space: nowrap;
+  min-width: 160px;
+}
+.badge-r { color: var(--info); font-weight: 600; }
+.badge-rw { color: var(--accent); font-weight: 700; }
+.badge-none { color: var(--text-muted); }
+
+/* ── ACCORDION ── */
+.accordion { margin-bottom: 12px; }
+.accordion-trigger {
+  width: 100%;
+  text-align: left;
+  padding: 16px 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.2s;
+}
+.accordion-trigger:hover { border-color: var(--accent); }
+.accordion-trigger.open {
+  border-radius: var(--radius) var(--radius) 0 0;
+  border-color: var(--accent);
+  background: var(--accent-light);
+}
+.accordion-arrow {
+  transition: transform 0.2s;
+  font-size: 12px;
+}
+.accordion-trigger.open .accordion-arrow { transform: rotate(180deg); }
+.accordion-content {
+  display: none;
+  padding: 20px;
+  border: 1px solid var(--accent);
+  border-top: none;
+  border-radius: 0 0 var(--radius) var(--radius);
+  background: var(--bg-card);
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+.accordion-content.open { display: block; }
+.accordion-content a {
+  color: var(--accent);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(45,90,39,0.3);
+  transition: border-color 0.2s;
+}
+.accordion-content a:hover { border-bottom-color: var(--accent); }
+.pupil-tip a {
+  color: var(--info);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(27,79,114,0.3);
+}
+.pupil-tip a:hover { border-bottom-color: var(--info); }
+
+/* ── CHECKLIST ── */
+.checklist { list-style: none; padding: 0; }
+.checklist li {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: 14px;
+}
+.checklist li:last-child { border-bottom: none; }
+.check-icon {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  border: 2px solid var(--border-strong);
+  flex-shrink: 0;
+  margin-top: 1px;
+  cursor: pointer;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.check-icon.checked {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: white;
+  font-size: 11px;
+}
+
+/* ── FOOTER ── */
+.footer {
+  border-top: 1px solid var(--border);
+  padding: 32px 0;
+  margin-top: 48px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.8;
+}
+.footer a { color: var(--accent); text-decoration: none; }
+.footer a:hover { text-decoration: underline; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 640px) {
+  .hero { padding: 40px 0 36px; }
+  .hero h1 { font-size: 24px; }
+  .level-grid { grid-template-columns: 1fr; }
+  .wizard-progress { overflow-x: auto; }
+  .wizard-step-indicator { font-size: 11px; padding: 10px 8px; }
+  .nav-tab { padding: 14px 14px; font-size: 12px; }
+}
+
+/* ── PRINT ── */
+@media print {
+  .nav-bar, .wizard-nav, .btn { display: none; }
+  .section { display: block !important; page-break-before: always; }
+  .hero { background: #333; -webkit-print-color-adjust: exact; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════ HERO ═══════ -->
+<header class="hero">
+  <div class="container">
+    <div class="hero-badge">Best Practice Guide</div>
+    <h1>Datenschutz im Schüler*innen-Dossier</h1>
+    <p>Interaktiver Leitfaden für Schulen zur datenschutzkonformen Einrichtung des Personendossiers — von der Entscheidung bis zur Konfiguration.</p>
+    <div class="hero-meta">
+      <span>Stand: März 2026</span>
+      <span>CH-Kantone: AG · ZH · SG · SZ · TG · BE · BL</span>
+    </div>
+  </div>
+</header>
+
+<!-- ═══════ NAV ═══════ -->
+<nav class="nav-bar">
+  <div class="container">
+    <div class="nav-tabs">
+      <button class="nav-tab active" data-section="overview">Übersicht</button>
+      <button class="nav-tab" data-section="categories">Datenkategorien</button>
+      <button class="nav-tab" data-section="roles">Rollen & Rechte</button>
+      <button class="nav-tab" data-section="wizard">Konfigurations-Assistent</button>
+      <button class="nav-tab" data-section="checklist">Checkliste</button>
+      <button class="nav-tab" data-section="legal">Rechtsgrundlagen</button>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- SECTION: OVERVIEW                          -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="container">
+<section class="section active" id="overview">
+  <h2 class="section-title">Warum dieses Thema?</h2>
+  <p class="section-subtitle">Das Personendossier enthält schützenswerte, sensible Daten. Wer was sehen und bearbeiten darf, ist keine technische Nebensache — sondern eine rechtliche und pädagogische Grundsatzentscheidung.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon green">🎯</div>
+      <div>
+        <div class="card-title">Drei Grundprinzipien</div>
+        <div class="card-label">Gelten kantonsübergreifend in der ganzen Schweiz</div>
+      </div>
+    </div>
+    <p>Die folgenden Grundsätze bilden das Fundament jeder Datenschutzkonfiguration im Schulumfeld:</p>
+    <ul style="margin-top:12px">
+      <li><strong>Zweckbindung</strong> — Daten dürfen nur für den Zweck verwendet werden, für den sie erhoben wurden. Schulische Daten dienen dem Bildungsauftrag.</li>
+      <li><strong>Datensparsamkeit (Verhältnismässigkeit)</strong> — Nur die Daten erfassen und zugänglich machen, die tatsächlich benötigt werden. Weniger ist mehr.</li>
+      <li><strong>Need-to-know</strong> — Jede Person sieht nur das, was sie für ihre Aufgabe braucht. Nicht mehr, nicht weniger.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon yellow">⚠️</div>
+      <div>
+        <div class="card-title">Häufige Fehler in der Praxis</div>
+        <div class="card-label">Aus Erfahrungswerten von Schweizer Schulen</div>
+      </div>
+    </div>
+    <ul>
+      <li><strong>Zu grosszügige Rollen:</strong> Mitarbeitende erhalten pauschal Zugriff auf alle Daten, obwohl sie nur einen Bruchteil benötigen.</li>
+      <li><strong>Keine Ordnerstruktur:</strong> Alle Dokumente landen in einem Ordner — ohne Unterscheidung nach Sensitivität.</li>
+      <li><strong>Berechtigungen werden nicht überprüft:</strong> Wer einmal Zugriff hat, behält ihn — auch nach Rollen- oder Schulwechsel.</li>
+      <li><strong>Fehlende Trennung:</strong> Administrative und pädagogische Daten sind nicht getrennt — Schulverwaltung sieht Noten, Lehrpersonen sehen Vertragsdaten.</li>
+      <li><strong>Phantom-User als Workaround:</strong> Schulen erstellen Test-Accounts, um zu prüfen, was eine Rolle sieht — ein Zeichen fehlender Transparenz.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon blue">📐</div>
+      <div>
+        <div class="card-title">Das Berechtigungsmodell im Überblick</div>
+        <div class="card-label">Vier Ebenen bestimmen, wer was sieht</div>
+      </div>
+    </div>
+    <p>Ein gut konfiguriertes Berechtigungssystem arbeitet auf vier Ebenen, die aufeinander aufbauen:</p>
+    <ul style="margin-top:12px">
+      <li><strong>Ebene 1 — Globale Administration:</strong> Vollzugriff für technische Admins (z.B. Master Data Admin). Bewusst wenigen Personen vorbehalten.</li>
+      <li><strong>Ebene 2 — Schuleinheiten:</strong> Schulleitung und Schulverwaltung erhalten Zugriff auf alle SuS ihrer Schuleinheit. Personalführung sieht Mitarbeitende.</li>
+      <li><strong>Ebene 3 — Klassen-/Gruppenzuweisung:</strong> Lehrpersonen sehen nur ihre zugeteilten SuS und deren Erziehungsberechtigte.</li>
+      <li><strong>Ebene 4 — Ordnerberechtigungen:</strong> Pro Dossier-Ordner wird separat festgelegt, welche Rolle lesen und welche schreiben darf.</li>
+    </ul>
+    <div class="pupil-tip" style="margin-top:16px">
+      <strong>💡 PUPIL-Konfiguration:</strong> In PUPIL werden Ordnerberechtigungen unter <code>Schulverwaltung → <a href="https://dokumentation.pupil.ch/article/u4v28cvol2-januar-2022-dossier-in-master-data" target="_blank">Personendossier Einstellungen</a></code> konfiguriert. Berechtigungen werden <strong>nicht vererbt</strong> — jeder Unterordner benötigt eigene Lese-/Schreibrechte. Feldberechtigungen (z.B. Gesundheitsdaten) werden separat über <code><a href="https://dokumentation.pupil.ch/article/6n59cjoeh6-rolle-feldberechtigungen" target="_blank">Rolle/Feldberechtigungen</a></code> gesteuert.
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- SECTION: DATA CATEGORIES                    -->
+<!-- ═══════════════════════════════════════════ -->
+<section class="section" id="categories">
+  <h2 class="section-title">Datenkategorien & Schutzstufen</h2>
+  <p class="section-subtitle">Nicht alle Daten im Schüler*innen-Dossier sind gleich sensibel. Die Einstufung bestimmt, wie streng die Zugriffsregeln sein müssen.</p>
+
+  <div class="level-grid">
+    <div class="level-card l1">
+      <span class="level-tag">Stufe 1 — Allgemein</span>
+      <h4>Stammdaten & Schullaufbahn</h4>
+      <p>Name, Adresse, Geburtsdatum, Klasse, Nationalität, Aufenthaltsstatus, Erziehungsberechtigte, Kontaktdaten, Schullaufbahn (Ein-/Austritte, Übertrittsempfehlungen), Absenzen, AHV-Nummer.</p>
+    </div>
+    <div class="level-card l2">
+      <span class="level-tag">Stufe 2 — Sensibel</span>
+      <h4>Pädagogische Daten</h4>
+      <p>Fördermassnahmen (IF, ISF, Logopädie, DaZ, Begabtenförderung), Nachteilsausgleich (NTA), Lernberichte, Beurteilungen, disziplinarische Massnahmen, Journal-Einträge, Förderplanungen.</p>
+    </div>
+    <div class="level-card l3">
+      <span class="level-tag">Stufe 3 — Besonders schützenswert</span>
+      <h4>Gesundheits- & Abklärungsdaten</h4>
+      <p>Gesundheitsdaten (Allergien, Medikamente, Diagnosen), schulpsychologische Berichte (SPD), Daten der Schulsozialarbeit/Fallführung, Religionszugehörigkeit, Sorgerechtsregelungen bei Gefährdung.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon red">🔒</div>
+      <div>
+        <div class="card-title">Was macht Daten «besonders schützenswert»?</div>
+      </div>
+    </div>
+    <p>Das revidierte Bundesgesetz über den Datenschutz (DSG, Art. 5 lit. c) und die kantonalen Gesetze definieren folgende Kategorien als besonders schützenswert: religiöse/weltanschauliche/politische Ansichten, Gesundheitsdaten, Intimsphäre, ethnische Herkunft, Massnahmen der sozialen Hilfe sowie strafrechtliche Daten.</p>
+    <div class="warning-box" style="margin-top:12px">
+      <strong>Achtung — Kontextabhängige Sensitivität:</strong> Auch scheinbar harmlose Daten können kontextabhängig besonders schützenswert werden. Beispiel: Eine Adresse wird hochsensibel, wenn Eltern wegen häuslicher Gewalt getrennt leben. Eine Fördermassnahme wird sensibel, wenn sie auf eine Diagnose schliessen lässt.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon yellow">📂</div>
+      <div>
+        <div class="card-title">Empfohlene Ordnerstruktur</div>
+        <div class="card-label">Für das Schüler*innen-Dossier</div>
+      </div>
+    </div>
+    <p>Die Ordnerstruktur sollte die Schutzstufen widerspiegeln. Eine bewährte Struktur:</p>
+    <ul style="margin-top:12px">
+      <li><strong>📁 Berichte & Korrespondenz</strong> — Elternbriefe, Gesprächsprotokolle (Stufe 1–2)</li>
+      <li><strong>📁 Zeugnisse & Beurteilung</strong> — Zeugnisse, Lernberichte (Stufe 1)</li>
+      <li><strong>📁 Fördermassnahmen</strong> — Förderpläne, NTA-Vereinbarungen, Therapieberichte (Stufe 2)</li>
+      <li><strong>📁 Gesundheitsdaten</strong> — Allergien, Medikamente, ärztliche Atteste (Stufe 3)</li>
+      <li><strong>📁 Abklärungen / SPD</strong> — Schulpsychologische Berichte (Stufe 3)</li>
+      <li><strong>📁 Disziplinarisches</strong> — Verwarnungen, Massnahmen, mit Ablaufdatum (Stufe 2)</li>
+      <li><strong>📁 Sonstiges</strong> — Allgemeine Dokumente (Stufe 1)</li>
+    </ul>
+    <div class="pupil-tip" style="margin-top:16px">
+      <strong>💡 PUPIL-Konfiguration:</strong> Stammordner werden unter <code>Schulverwaltung → <a href="https://dokumentation.pupil.ch/article/u4v28cvol2-januar-2022-dossier-in-master-data" target="_blank">Personendossier Einstellungen</a></code> erstellt. Pro Ordner definieren Sie: (1) Bei welchen Rollen der Ordner angezeigt wird («Standard für Rolle»), (2) Wer lesen darf, (3) Wer schreiben/löschen/bearbeiten darf. Für Disziplinarisches nutzen Sie das <strong>Ablaufdatum</strong>: Dokumente werden automatisch nach Fristablauf gelöscht. <a href="https://youtu.be/KNBYfHoOXyc" target="_blank">→ Video-Anleitung</a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- SECTION: ROLES                              -->
+<!-- ═══════════════════════════════════════════ -->
+<section class="section" id="roles">
+  <h2 class="section-title">Rollen & Berechtigungsmatrix</h2>
+  <p class="section-subtitle">Wer braucht Zugriff auf welche Daten? Die Antwort hängt von der Aufgabe ab — nicht von der Hierarchie.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon blue">👥</div>
+      <div>
+        <div class="card-title">Typische Rollen im Schulumfeld</div>
+      </div>
+    </div>
+    <div class="matrix-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Datenkategorie</th>
+            <th>SV</th>
+            <th>SL</th>
+            <th>KLP</th>
+            <th>FLP</th>
+            <th>SHP/DaZ</th>
+            <th>SSA</th>
+            <th>SPD</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Stammdaten</td>
+            <td class="badge-rw">R/W</td>
+            <td class="badge-r">R</td>
+            <td class="badge-r">R</td>
+            <td class="badge-r">R*</td>
+            <td class="badge-r">R*</td>
+            <td class="badge-r">R°</td>
+            <td class="badge-r">R°</td>
+          </tr>
+          <tr>
+            <td>Erziehungsberechtigte / Sorgerecht</td>
+            <td class="badge-rw">R/W</td>
+            <td class="badge-r">R</td>
+            <td class="badge-r">R</td>
+            <td class="badge-none">—</td>
+            <td class="badge-r">R*</td>
+            <td class="badge-r">R°</td>
+            <td class="badge-r">R°</td>
+          </tr>
+          <tr>
+            <td>Zeugnisse / Beurteilung</td>
+            <td class="badge-none">—</td>
+            <td class="badge-r">R</td>
+            <td class="badge-rw">R/W</td>
+            <td class="badge-rw">R/W†</td>
+            <td class="badge-none">—</td>
+            <td class="badge-none">—</td>
+            <td class="badge-none">—</td>
+          </tr>
+          <tr>
+            <td>Absenzen</td>
+            <td class="badge-r">R</td>
+            <td class="badge-r">R</td>
+            <td class="badge-rw">R/W</td>
+            <td class="badge-r">R*</td>
+            <td class="badge-r">R*</td>
+            <td class="badge-none">—</td>
+            <td class="badge-none">—</td>
+          </tr>
+          <tr>
+            <td>Förderpläne / NTA</td>
+            <td class="badge-none">—</td>
+            <td class="badge-r">R</td>
+            <td class="badge-rw">R/W</td>
+            <td class="badge-none">—</td>
+            <td class="badge-rw">R/W*</td>
+            <td class="badge-none">—</td>
+            <td class="badge-none">—</td>
+          </tr>
+          <tr>
+            <td>Gesundheitsdaten</td>
+            <td class="badge-none">—</td>
+            <td class="badge-r">R†</td>
+            <td class="badge-r">R</td>
+            <td class="badge-none">—</td>
+            <td class="badge-r">R*</td>
+            <td class="badge-none">—</td>
+            <td class="badge-rw">R/W°</td>
+          </tr>
+          <tr>
+            <td>SPD-Berichte</td>
+            <td class="badge-none">—</td>
+            <td class="badge-r">R†</td>
+            <td class="badge-none">—</td>
+            <td class="badge-none">—</td>
+            <td class="badge-none">—</td>
+            <td class="badge-none">—</td>
+            <td class="badge-rw">R/W°</td>
+          </tr>
+          <tr>
+            <td>Disziplinarisches</td>
+            <td class="badge-r">R</td>
+            <td class="badge-rw">R/W</td>
+            <td class="badge-rw">R/W</td>
+            <td class="badge-none">—</td>
+            <td class="badge-none">—</td>
+            <td class="badge-r">R°</td>
+            <td class="badge-none">—</td>
+          </tr>
+          <tr>
+            <td>Fallführung / SSA</td>
+            <td class="badge-none">—</td>
+            <td class="badge-r">R†</td>
+            <td class="badge-none">—</td>
+            <td class="badge-none">—</td>
+            <td class="badge-none">—</td>
+            <td class="badge-rw">R/W°</td>
+            <td class="badge-none">—</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size:12px; color:var(--text-muted); margin-top:8px; line-height:1.6">
+      <strong>Legende:</strong> SV=Schulverwaltung, SL=Schulleitung, KLP=Klassenlehrperson, FLP=Fachlehrperson, SHP=Schulische Heilpädagog*in, SSA=Schulsozialarbeit, SPD=Schulpsychologischer Dienst.<br>
+      * = nur zugeteilte SuS &nbsp; † = nur eigenes Fach/eingeschränkt &nbsp; ° = nur zugewiesene Fälle/Dossiers
+    </p>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon green">🔑</div>
+      <div>
+        <div class="card-title">Braucht es zusätzliche Rollen?</div>
+        <div class="card-label">Wann Rollen-Granularität Sinn macht</div>
+      </div>
+    </div>
+    <p>Die Standardrollen (SV, SL, KLP, FLP) reichen für viele Schulen. Zusätzliche Rollen werden nötig, wenn:</p>
+    <ul style="margin-top:12px">
+      <li><strong>Zyklen-Trennung (Zyklus 1/2/3):</strong> Wenn LP Zyklus 1 keine Sekundar-Dossiers sehen sollen → separate Schuleinheiten statt Rollen</li>
+      <li><strong>Schulsozialarbeit:</strong> SSA arbeitet fallbasiert mit Freiwilligkeitsprinzip → eigene Rolle mit Zugriff nur auf zugewiesene Fälle</li>
+      <li><strong>Therapeutische Fachpersonen:</strong> Logopädie, Psychomotorik → eigene Rolle, nur zugeteilte SuS</li>
+      <li><strong>Tagesstruktur / Betreuung:</strong> Sieht Allergien und Notfallkontakte, aber keine pädagogischen Daten</li>
+      <li><strong>Schulbehörde / Schulpräsidium:</strong> Eingeschränkter Zugriff, z.B. nur bei Disziplinarverfahren</li>
+    </ul>
+    <div class="pupil-tip" style="margin-top:16px">
+      <strong>💡 PUPIL-Tipp:</strong> In PUPIL wird die Zyklen-Trennung am besten über <strong>Schuleinheiten</strong> gelöst (<code>Master Data → Schulen/Klassen/Gruppen → <a href="https://dokumentation.pupil.ch/article/yfye9izyw0-schuleinheit" target="_blank">Schuleinheiten</a></code>). Erstellen Sie z.B. «SE Zyklus 1» und «SE Zyklus 2» und weisen Sie die entsprechenden Klassen zu. LP sehen dann nur SuS aus ihrer Schuleinheit. Für SSA nutzen Sie das Modul <strong><a href="https://dokumentation.pupil.ch/article/4vdla44h0e-fallfuhrung-konfigurieren" target="_blank">Fallführung</a></strong> mit eigenem Berechtigungskonzept (Dienststellen, Lese-/Schreibrechte pro Dossier).
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon yellow">⚖️</div>
+      <div>
+        <div class="card-title">Data Hiding vs. Zugriffsschutz</div>
+      </div>
+    </div>
+    <p>Es gibt einen wichtigen Unterschied zwischen diesen beiden Ansätzen:</p>
+    <ul style="margin-top:12px">
+      <li><strong>Zugriffsschutz:</strong> Ein Ordner/Feld ist sichtbar, aber gesperrt. Die Person weiss, dass es existiert, kann aber nicht darauf zugreifen. → Für allgemein bekannte Datenfelder (z.B. Noten-Menü)</li>
+      <li><strong>Data Hiding:</strong> Ein Ordner/Feld ist gar nicht sichtbar. Die Person weiss nicht einmal, dass es existiert. → Für sensible Bereiche (z.B. SPD-Berichte, Fallführung)</li>
+    </ul>
+    <p style="margin-top:8px"><strong>Empfehlung:</strong> Für besonders schützenswerte Daten (Stufe 3) ist Data Hiding dem Zugriffsschutz vorzuziehen.</p>
+    <div class="pupil-tip" style="margin-top:12px">
+      <strong>💡 PUPIL-Konfiguration:</strong> Wenn ein Ordner in den <a href="https://dokumentation.pupil.ch/article/u4v28cvol2-januar-2022-dossier-in-master-data" target="_blank">Personendossier-Einstellungen</a> bei einer Rolle <strong>nicht als Standard gesetzt</strong> wird und auch keine Lese-/Schreibberechtigung erhält, ist dieser Ordner für diese Rolle unsichtbar (Data Hiding). PUPIL unterstützt auch die Feldsichtbarkeit pro Rolle über <code><a href="https://dokumentation.pupil.ch/article/6n59cjoeh6-rolle-feldberechtigungen" target="_blank">Rolle/Feldberechtigungen</a></code> — z.B. Gesundheitsdaten nur für bestimmte Rollen einblenden.
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- SECTION: WIZARD                             -->
+<!-- ═══════════════════════════════════════════ -->
+<section class="section" id="wizard">
+  <h2 class="section-title">Konfigurations-Assistent</h2>
+  <p class="section-subtitle">Beantworten Sie 5 Fragen und erhalten Sie eine auf Ihre Schule zugeschnittene Empfehlung für die Berechtigungskonfiguration.</p>
+
+  <div class="wizard-container" id="wizardContainer">
+    <div class="wizard-progress">
+      <div class="wizard-step-indicator active" data-step="0">1. Grösse</div>
+      <div class="wizard-step-indicator" data-step="1">2. Struktur</div>
+      <div class="wizard-step-indicator" data-step="2">3. Fachpersonen</div>
+      <div class="wizard-step-indicator" data-step="3">4. Daten</div>
+      <div class="wizard-step-indicator" data-step="4">5. Audit</div>
+    </div>
+    <div class="wizard-body" id="wizardBody"></div>
+  </div>
+
+  <div class="result-container" id="wizardResult"></div>
+</section>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- SECTION: CHECKLIST                          -->
+<!-- ═══════════════════════════════════════════ -->
+<section class="section" id="checklist">
+  <h2 class="section-title">Datenschutz-Checkliste</h2>
+  <p class="section-subtitle">Prüfen Sie systematisch, ob Ihre Konfiguration die wichtigsten Punkte abdeckt. Klicken Sie die Punkte ab.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon green">✅</div>
+      <div><div class="card-title">Grundkonfiguration</div></div>
+    </div>
+    <ul class="checklist">
+      <li><span class="check-icon" onclick="toggleCheck(this)"></span>Rollen und Berechtigungskonzept ist dokumentiert und von der Schulleitung genehmigt</li>
+      <li><span class="check-icon" onclick="toggleCheck(this)"></span>Ordnerstruktur im Personendossier ist nach Schutzstufen gegliedert</li>
+      <li><span class="check-icon" onclick="toggleCheck(this)"></span>Jeder Ordner hat explizite Lese- und Schreibberechtigungen (nicht vererbt!)</li>
+      <li><span class="check-icon" onclick="toggleCheck(this)"></span>Besonders schützenswerte Daten (Stufe 3) sind nur für berechtigte Rollen sichtbar (Data Hiding)</li>
+      <li><span class="check-icon" onclick="toggleCheck(this)"></span>Feldberechtigungen (Gesundheitsdaten, Allergien etc.) sind pro Rolle konfiguriert</li>
+      <li><span class="check-icon" onclick="toggleCheck(this)"></span>Schulverwaltung hat keinen Zugriff auf Noten/Beurteilungen</li>
+      <li><span class="check-icon" onclick="toggleCheck(this)"></span>Lehrpersonen haben keinen Schreibzugriff auf Stammdaten</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon blue">🏫</div>
+      <div><div class="card-title">Organisation & Schuleinheiten</div></div>
+    </div>
+    <ul class="checklist">
+      <li><span class="check-icon" onclick="toggleCheck(this)"></span>Schuleinheiten sind sinnvoll gegliedert (nach Standort, Zyklus oder Kombination)</li>
+      <li><span class="check-icon" onclick="toggleCheck(this)"></span>Schulleitungen sind in der korrekten Schuleinheit eingetragen (Feld D)</li>
+      <li><span class="check-icon" onclick="toggleCheck(this)"></span>«Zugriff auf Rollen» ist bewusst eingeschränkt (nur nötige Rollen)</li>
+      <li><span class="check-icon" onclick="toggleCheck(this)"></span>Spezialfall «angestellte Eltern» / Doppelrollen ist berücksichtigt</li>
+      <li><span class="check-icon" onclick="toggleCheck(this)"></span>Master Data Admin ist auf minimal nötige Personen beschränkt</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon yellow">🔄</div>
+      <div><div class="card-title">Laufender Betrieb</div></div>
+    </div>
+    <ul class="checklist">
+      <li><span class="check-icon" onclick="toggleCheck(this)"></span>Berechtigungen werden bei Personalwechsel aktualisiert (Austritt, Rollenwechsel)</li>
+      <li><span class="check-icon" onclick="toggleCheck(this)"></span>Jährliche Überprüfung der Rollenzuweisungen ist eingeplant</li>
+      <li><span class="check-icon" onclick="toggleCheck(this)"></span>Ablaufdaten sind für zeitlich begrenzte Dokumente gesetzt (z.B. Disziplinarmassnahmen)</li>
+      <li><span class="check-icon" onclick="toggleCheck(this)"></span>Aufbewahrungsfristen sind bekannt und werden eingehalten</li>
+      <li><span class="check-icon" onclick="toggleCheck(this)"></span>Lehrpersonen und Mitarbeitende sind über den korrekten Umgang mit dem Dossier informiert</li>
+      <li><span class="check-icon" onclick="toggleCheck(this)"></span>Es ist geregelt, wer bei Schulübertritt welche Dossier-Inhalte weitergibt</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon red">📋</div>
+      <div><div class="card-title">Dokumentation & Compliance</div></div>
+    </div>
+    <ul class="checklist">
+      <li><span class="check-icon" onclick="toggleCheck(this)"></span>Bearbeitungsverzeichnis ist erstellt (educa.ch-Vorlage verfügbar)</li>
+      <li><span class="check-icon" onclick="toggleCheck(this)"></span>Datenschutzverantwortliche Person ist bestimmt</li>
+      <li><span class="check-icon" onclick="toggleCheck(this)"></span>Informationspflicht gegenüber Erziehungsberechtigten ist erfüllt</li>
+      <li><span class="check-icon" onclick="toggleCheck(this)"></span>Kantonsspezifische Aufbewahrungsfristen sind dokumentiert</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- SECTION: LEGAL                              -->
+<!-- ═══════════════════════════════════════════ -->
+<section class="section" id="legal">
+  <h2 class="section-title">Rechtsgrundlagen & Ressourcen</h2>
+  <p class="section-subtitle">Die wichtigsten kantonalen Gesetze und weiterführenden Materialien für den Datenschutz im Schulumfeld.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon blue">⚖️</div>
+      <div>
+        <div class="card-title">Wichtig: Kantonales Recht gilt</div>
+      </div>
+    </div>
+    <p>Öffentliche Schulen unterstehen <strong>ausschliesslich den kantonalen Datenschutzgesetzen</strong> — nicht dem Bundesgesetz (DSG). Das revidierte DSG (seit 1. September 2023) gilt nur für Bundesorgane und Private. Die Grundprinzipien sind jedoch identisch.</p>
+  </div>
+
+  <div class="accordion">
+    <button class="accordion-trigger" onclick="toggleAccordion(this)">
+      🏛️ Kantonale Datenschutzgesetze
+      <span class="accordion-arrow">▼</span>
+    </button>
+    <div class="accordion-content">
+      <ul>
+        <li><strong>Zürich:</strong> IDG (LS 170.4), VSG §§3a–3d — inkl. <a href="https://www.datenschutz.ch/lexika/volksschule" target="_blank">Datenschutzlexikon Volksschule</a> des DSB ZH (<a href="https://www.datenschutz.ch/lexika/volksschule/datenschutzrechtliche-prinzipien" target="_blank">Prinzipien</a>, <a href="https://www.datenschutz.ch/lexika/volksschule/informationssicherheit" target="_blank">Informationssicherheit</a>, <a href="https://www.datenschutz.ch/lexika/volksschule/aktenaufbewahrung" target="_blank">Aktenaufbewahrung</a>, <a href="https://www.datenschutz.ch/lexika/volksschule/auslagerung" target="_blank">Auslagerung</a>)</li>
+        <li><strong>Aargau:</strong> IDAG (SAR 150.700) — <a href="https://www.ag.ch/de/ueber-uns/kantonale-verwaltung/unabhaengige-fachorgane/beauftragte-fuer-oeffentlichkeit-und-datenschutz-(oedb)/fragen-publikationen/datenschutz" target="_blank">ÖDSB Aargau</a> empfiehlt offiziell die <a href="https://www.datenschutz.ch/lexika/volksschule" target="_blank">ZH-Leitfäden</a> für AG-Schulen</li>
+        <li><strong>St. Gallen:</strong> DSG (sGS 142.1) — <a href="https://www.sg.ch/bildung-sport/volksschule/rahmenbedingungen/rechtliche-grundlagen/Datenschutz.html" target="_blank">Datenschutz in der Schule (sg.ch)</a> mit <a href="https://www.sg.ch/bildung-sport/volksschule/rahmenbedingungen/rechtliche-grundlagen/Datenschutz/_jcr_content/Par/sgch_downloadlist/DownloadListPar/sgch_download.ocFile/Handreichung_Datenschutz_und_Informationssicherheit_Dez19.pdf" target="_blank">Handreichung (PDF, 2019)</a></li>
+        <li><strong>Bern:</strong> KDSG (BSG 152.04, Revision hängig) — <a href="https://www.lp-sl.bkd.be.ch/de/start/schulleitungen/datenschutzlexikon/datenschutzrechtliche-begriffe.html" target="_blank">Datenschutzlexikon für Schulleitungen</a> mit <a href="https://www.lp-sl.bkd.be.ch/de/start/schulleitungen/datenschutzlexikon/aktenaufbewahrung/aufbewahrungsfristen.html" target="_blank">Aufbewahrungsfristen</a></li>
+        <li><strong>Basel-Landschaft:</strong> IDG (seit 2011) — <a href="https://kanton.baselland.ch/bildungs-kultur-und-sportdirektion/bildung-handbuch/rechtsstaatliches-handeln/datenschutz/formulare-zum-thema-1/leitfaden-datenschutz-schulen_stand-august-2024.pdf" target="_blank">Leitfaden Datenschutz für Schulen BL (PDF, Aug. 2024)</a></li>
+        <li><strong>Schwyz:</strong> ÖDSG (SRSZ 140.410) — <a href="https://www.kdsb.ch" target="_blank">KDSB Schwyz</a>, <a href="https://www.kdsb.ch/storage/69494d7cec1438427dc348a564dc881bb4903dbdf211b4b9cfd0584a4f90888d" target="_blank">Merkblatt Datenschutz an Schulen (PDF)</a></li>
+        <li><strong>Thurgau:</strong> DSG (RB 170.7) — Module Cloud-Dienste (2020), Datenschutzbeauftragter TG</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="accordion">
+    <button class="accordion-trigger" onclick="toggleAccordion(this)">
+      📅 Aufbewahrungsfristen nach Kanton
+      <span class="accordion-arrow">▼</span>
+    </button>
+    <div class="accordion-content">
+      <div class="matrix-wrapper">
+        <table>
+          <thead>
+            <tr><th>Datenkategorie</th><th>ZH</th><th>BE</th><th>SZ</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Schülerdaten (allg.)</td><td>10 Jahre</td><td>15 Jahre ab Austritt</td><td>10 Jahre</td></tr>
+            <tr><td>Beurteilungsberichte</td><td>10 Jahre</td><td>15 Jahre ab Austritt</td><td>10 Jahre</td></tr>
+            <tr><td>Übertrittunterlagen</td><td>—</td><td>Bis Schulaustritt</td><td>—</td></tr>
+            <tr><td>Gesundheitskarten</td><td>10 Jahre</td><td>15 Jahre ab Austritt</td><td>—</td></tr>
+            <tr><td>Unterlagen SSA</td><td>—</td><td>Bis Schulaustritt</td><td>—</td></tr>
+            <tr><td>Klassenbücher</td><td>10 Jahre</td><td>—</td><td>5 Jahre</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="margin-top:12px">Nach Ablauf der Frist: Anbieten an kantonales/kommunales Archiv. <strong>Nicht archivwürdige Daten müssen vernichtet werden</strong> — eine unbefristete Speicherung ist in keinem Kanton zulässig. Details: <a href="https://www.datenschutz.ch/lexika/volksschule/aktenaufbewahrung" target="_blank">DSB ZH: Aktenaufbewahrung</a> · <a href="https://www.lp-sl.bkd.be.ch/de/start/schulleitungen/datenschutzlexikon/aktenaufbewahrung/aufbewahrungsfristen.html" target="_blank">Kt. Bern: Aufbewahrungsfristen</a></p>
+    </div>
+  </div>
+
+  <div class="accordion">
+    <button class="accordion-trigger" onclick="toggleAccordion(this)">
+      🔗 Weiterführende Ressourcen
+      <span class="accordion-arrow">▼</span>
+    </button>
+    <div class="accordion-content">
+      <p style="font-weight:600; margin-bottom:12px">Überkantonale Stellen</p>
+      <ul>
+        <li><a href="https://www.educa.ch/de/themen/informations-und-rechtssicherheit/datenschutz-im-kontext-schule/rahmenbedingungen-zu-schule" target="_blank"><strong>educa.ch</strong> — Rahmenbedingungen Datenschutz im Kontext Schule</a> (Bearbeitungsverzeichnis, Applikationscheckliste, Service Desk)</li>
+        <li><a href="https://www.privatim.ch/de/cloud-computing-im-schulbereich/" target="_blank"><strong>privatim</strong> — Cloud Computing im Schulbereich</a> (Merkblatt zu Risiken und Massnahmen)</li>
+        <li><a href="https://www.datenschutz.ch/lexika/volksschule" target="_blank"><strong>DSB Kanton Zürich</strong> — Datenschutzlexikon Volksschule</a> (umfassendste kantonale Referenz, auch für AG empfohlen)</li>
+        <li><a href="https://docs.datenschutz.ch/u/d/informationssicherheit/konzept/abweichend/vsa/leitfaden_informationssicherheit_in_volksschulen.pdf" target="_blank"><strong>DSB ZH</strong> — Leitfaden Informationssicherheit in Volksschulen (PDF)</a></li>
+      </ul>
+      <p style="font-weight:600; margin-bottom:12px; margin-top:20px">PUPIL Dokumentation</p>
+      <ul>
+        <li><a href="https://dokumentation.pupil.ch/article/onbqd8cpzx-personen-su-s-gv-lp-sv-ma-sb" target="_blank"><strong>Personen (SuS/GV/LP/SV/MA/SB)</strong></a> — Personendossier, Berechtigungen, Gesundheitsdaten, Feldkonfiguration</li>
+        <li><a href="https://dokumentation.pupil.ch/article/6n59cjoeh6-rolle-feldberechtigungen" target="_blank"><strong>Rolle / Feldberechtigungen</strong></a> — Felder pro Rolle aktivieren/deaktivieren, Kategorien</li>
+        <li><a href="https://dokumentation.pupil.ch/article/yfye9izyw0-schuleinheit" target="_blank"><strong>Schuleinheiten</strong></a> — Zugriffssteuerung, Felder C/D/E, Schulleitung, Personalführung</li>
+        <li><a href="https://dokumentation.pupil.ch/article/u4v28cvol2-januar-2022-dossier-in-master-data" target="_blank"><strong>Personendossier überarbeitet (2022)</strong></a> — Ordnerstruktur, vordefinierte Ordner, Lese-/Schreibrechte</li>
+        <li><a href="https://dokumentation.pupil.ch/article/3r20uqfnct-februar-2022-zugriffsrechte-neu-dargestellt-in-einer-bersichtlichen-matrix" target="_blank"><strong>Zugriffsrechte Matrix</strong></a> — Übersicht über Zugriffsgruppen und Module</li>
+        <li><a href="https://dokumentation.pupil.ch/article/4vdla44h0e-fallfuhrung-konfigurieren" target="_blank"><strong>Fallführung konfigurieren</strong></a> — Dienststellen, Rollen, Schreib-/Leserechte (SSA, SPD)</li>
+        <li><a href="https://dokumentation.pupil.ch/article/ulo572tpc1-journal" target="_blank"><strong>Journal</strong></a> — Dokumentation von Beobachtungen, Gesprächen, Regelverstössen</li>
+        <li><a href="https://dokumentation.pupil.ch/category/9k8by7x0du-f-rderplaner" target="_blank"><strong>Förderplaner</strong></a> — Förderdossiers, Lernberichte, Rollen und Bereiche</li>
+        <li><a href="https://dokumentation.pupil.ch/article/ygskkq16bf-weitere-massnahmen" target="_blank"><strong>Weitere Massnahmen</strong></a> — Massnahmearten, statusbasierte Zugriffsbeschränkungen</li>
+        <li><a href="https://dokumentation.pupil.ch/article/cbr4wnyef6-dokumentenverwaltung-oyc" target="_blank"><strong>Dokumentenverwaltung</strong></a> — Vorlagen, Dokumente im Dossier ablegen</li>
+        <li><a href="https://dokumentation.pupil.ch/category/238rteftio-schulverwaltung" target="_blank"><strong>Kategorie Schulverwaltung</strong></a> — Alle Schulverwaltungs-Module im Überblick</li>
+      </ul>
+      <p style="font-weight:600; margin-bottom:12px; margin-top:20px">Video-Anleitungen</p>
+      <ul>
+        <li><a href="https://youtu.be/AfY1WFXHrTg" target="_blank"><strong>Video: Schüler*innen-Dossier — Arbeiten mit dem Dossier</strong></a> (Dateien hochladen, Versionierung, Ablaufdatum, Unterordner)</li>
+        <li><a href="https://youtu.be/KNBYfHoOXyc" target="_blank"><strong>Video: Personendossier Einstellungen — Admin-Konfiguration</strong></a> (Stammordner, Lese-/Schreibberechtigungen, Rollen zuweisen)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="accordion">
+    <button class="accordion-trigger" onclick="toggleAccordion(this)">
+      🤝 Datenweitergabe beim Schulübertritt
+      <span class="accordion-arrow">▼</span>
+    </button>
+    <div class="accordion-content">
+      <p>Beim Schulübertritt gelten strenge Regeln, die sich kantonal unterscheiden (vgl. <a href="https://www.sg.ch/bildung-sport/volksschule/rahmenbedingungen/rechtliche-grundlagen/Datenschutz.html" target="_blank">SG: Datenschutz in der Schule</a>, <a href="https://www.lp-sl.bkd.be.ch/de/start/schulleitungen/datenschutzlexikon/datenschutzrechtliche-begriffe.html" target="_blank">BE: Datenschutzlexikon</a>):</p>
+      <ul style="margin-top:12px">
+        <li><strong>Grundsatz:</strong> Nur «unentbehrliche» Informationen für den Bildungsauftrag dürfen weitergegeben werden.</li>
+        <li><strong>SPD-Berichte:</strong> Nur mit Einwilligung der Erziehungsberechtigten; in SG dürfen Berichte älter als 1 Jahr nicht weitergeleitet werden.</li>
+        <li><strong>Schulsozialarbeit:</strong> Arbeitet auf dem Freiwilligkeitsprinzip — Daten nur mit ausdrücklicher Einwilligung der Betroffenen.</li>
+        <li><strong>Empfehlung:</strong> Vor dem Übertritt prüfen, welche Dossier-Inhalte weitergegeben werden, und dies dokumentieren.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- ═══════ FOOTER ═══════ -->
+<footer class="footer">
+  <div class="container">
+    <p>Dieser Leitfaden dient als Orientierungshilfe und ersetzt keine rechtsverbindliche Beratung.<br>
+    Bei Fragen wenden Sie sich an Ihre kantonale Datenschutzstelle oder Ihre PUPIL-Ansprechperson.<br>
+    <a href="https://dokumentation.pupil.ch" target="_blank">dokumentation.pupil.ch</a> · 
+    <a href="https://dokumentation.pupil.ch/article/onbqd8cpzx-personen-su-s-gv-lp-sv-ma-sb" target="_blank">PUPIL: Personen & Dossier</a> · 
+    <a href="https://www.educa.ch/de/themen/informations-und-rechtssicherheit/datenschutz-im-kontext-schule/rahmenbedingungen-zu-schule" target="_blank">educa.ch: Datenschutz</a> · 
+    <a href="https://www.datenschutz.ch/lexika/volksschule" target="_blank">DSB ZH: Volksschule</a> · 
+    <a href="https://www.privatim.ch/de/cloud-computing-im-schulbereich/" target="_blank">privatim: Cloud</a>
+    </p>
+  </div>
+</footer>
+
+<script>
+// ═══════ NAV TABS ═══════
+document.querySelectorAll('.nav-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById(tab.dataset.section).classList.add('active');
+    window.scrollTo({ top: document.querySelector('.nav-bar').offsetTop, behavior: 'smooth' });
+  });
+});
+
+// ═══════ ACCORDION ═══════
+function toggleAccordion(el) {
+  el.classList.toggle('open');
+  el.nextElementSibling.classList.toggle('open');
+}
+
+// ═══════ CHECKLIST ═══════
+function toggleCheck(el) {
+  el.classList.toggle('checked');
+  el.textContent = el.classList.contains('checked') ? '✓' : '';
+}
+
+// ═══════ WIZARD ═══════
+const wizardSteps = [
+  {
+    type: 'single',
+    question: 'Wie gross ist Ihre Schule?',
+    hint: 'Die Schulgrösse beeinflusst die Komplexität des Berechtigungskonzepts.',
+    options: [
+      { id: 'small', title: 'Klein (< 200 SuS)', desc: 'Wenige Klassen, überschaubare Struktur, oft ein Schulstandort.' },
+      { id: 'medium', title: 'Mittel (200–600 SuS)', desc: 'Mehrere Standorte oder Zyklen, verschiedene Fachpersonen.' },
+      { id: 'large', title: 'Gross (> 600 SuS)', desc: 'Mehrere Schulhäuser, komplexe Organisation, viele Rollen.' }
+    ]
+  },
+  {
+    type: 'single',
+    question: 'Wie ist Ihre Schule strukturiert?',
+    hint: 'Die Struktur bestimmt, ob Schuleinheiten nach Standort, Zyklus oder beidem gegliedert werden.',
+    options: [
+      { id: 'single', title: 'Ein Standort, alle Zyklen', desc: 'Kindergarten bis Oberstufe unter einem Dach.' },
+      { id: 'cycle', title: 'Nach Zyklen getrennt', desc: 'Zyklus 1, 2 und 3 an verschiedenen Standorten oder organisatorisch getrennt.' },
+      { id: 'multi', title: 'Mehrere Standorte, gemischt', desc: 'Mehrere Schulhäuser mit gemischten Zyklen.' }
+    ]
+  },
+  {
+    type: 'multi',
+    question: 'Welche Fachpersonen arbeiten an Ihrer Schule?',
+    hint: 'Wählen Sie alle zutreffenden Rollen aus. KLP, FLP, SL und SV sind immer vorhanden und vorausgesetzt.',
+    options: [
+      { id: 'shp', title: 'Schulische Heilpädagogik (SHP)', desc: 'IF/ISF-Lehrpersonen mit eigenen SuS-Zuweisungen.' },
+      { id: 'daz', title: 'DaZ-Lehrpersonen', desc: 'Deutsch als Zweitsprache — unterrichten zugeteilte SuS.' },
+      { id: 'therapie', title: 'Logopädie / Psychomotorik', desc: 'Therapeutische Fachpersonen mit eigenen Förderdossiers.' },
+      { id: 'ssa', title: 'Schulsozialarbeit (SSA)', desc: 'Arbeitet fallbasiert, Freiwilligkeitsprinzip, eigene Dokumentation.' },
+      { id: 'spd', title: 'Schulpsychologischer Dienst (SPD)', desc: 'Führt Abklärungen durch, erstellt Berichte mit hoher Vertraulichkeit.' },
+      { id: 'tagesstruktur', title: 'Tagesstruktur / Betreuung', desc: 'Benötigt Zugriff auf Allergien und Notfallkontakte.' },
+      { id: 'schulbehoerde', title: 'Schulbehörde / Schulpräsidium', desc: 'Eingeschränkter Zugriff, z.B. bei Disziplinarverfahren oder Rekursen.' }
+    ]
+  },
+  {
+    type: 'multi',
+    question: 'Welche sensiblen Daten verwalten Sie im Dossier?',
+    hint: 'Wählen Sie alle Datentypen, die im Personendossier systematisch abgelegt werden.',
+    options: [
+      { id: 'foerder', title: 'Förderpläne & NTA-Vereinbarungen', desc: 'Förderplanungen, individuelle Lernziele, Nachteilsausgleich-Dokumente.' },
+      { id: 'gesundheit', title: 'Gesundheitsdaten', desc: 'Allergien, Medikamente, chronische Erkrankungen, ärztliche Atteste.' },
+      { id: 'spd_berichte', title: 'SPD-Berichte & Abklärungen', desc: 'Schulpsychologische Gutachten und Abklärungsergebnisse.' },
+      { id: 'fallfuehrung', title: 'Fallführung / SSA-Dokumentation', desc: 'Dossiers der Schulsozialarbeit, Beratungsprotokolle.' },
+      { id: 'disziplinar', title: 'Disziplinarische Massnahmen', desc: 'Verwarnungen, Sanktionen, Schulausschlüsse — mit Ablaufdaten.' },
+      { id: 'sorgerecht', title: 'Sorgerechts- & Gefährdungsdokumente', desc: 'KESB-Verfügungen, Kontaktverbote, Besuchsregelungen.' }
+    ]
+  },
+  {
+    type: 'single',
+    question: 'Wie wichtig ist Ihnen die Nachvollziehbarkeit von Zugriffen?',
+    hint: 'Audit-Logging wird von den kantonalen Datenschutzbeauftragten empfohlen, insbesondere für Stufe-3-Daten.',
+    options: [
+      { id: 'basic_audit', title: 'Grundlegend', desc: 'Übersicht, wer welche Rolle hat. Detailliertes Logging ist nicht prioritär.' },
+      { id: 'advanced_audit', title: 'Erweitert', desc: 'Wir möchten nachvollziehen können, wer wann auf welche Daten zugegriffen hat.' }
+    ]
+  }
+];
+
+let currentStep = 0;
+let answers = {};
+
+function isStepValid(step) {
+  const s = wizardSteps[step];
+  const val = answers[step];
+  if (s.type === 'multi') return true; // multi-select: empty = none selected = valid
+  if (!val) return false;
+  return true;
+}
+
+function renderWizardStep(step) {
+  const s = wizardSteps[step];
+  const selected = answers[step];
+  const isMulti = s.type === 'multi';
+  
+  document.querySelectorAll('.wizard-step-indicator').forEach((ind, i) => {
+    ind.classList.remove('active', 'done');
+    if (i === step) ind.classList.add('active');
+    else if (i < step) ind.classList.add('done');
+  });
+
+  const isSelected = (id) => {
+    if (isMulti) return Array.isArray(selected) && selected.includes(id);
+    return selected === id;
+  };
+
+  let html = `
+    <div class="wizard-question">${s.question}</div>
+    <div class="wizard-hint">${s.hint}${isMulti ? ' <em style="color:var(--accent)">(Mehrfachauswahl — ohne Auswahl weiter = nur Grundrollen/Basisdaten)</em>' : ''}</div>
+    <div class="wizard-options">
+      ${s.options.map(o => `
+        <div class="wizard-option ${isSelected(o.id) ? 'selected' : ''}" data-id="${o.id}" onclick="selectOption(${step}, '${o.id}')">
+          <div class="${isMulti ? 'wizard-option-check' : 'wizard-option-radio'}">${isMulti && isSelected(o.id) ? '✓' : ''}</div>
+          <div>
+            <div class="wizard-option-title">${o.title}</div>
+            <div class="wizard-option-desc">${o.desc}</div>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+    <div class="wizard-nav">
+      <button class="btn btn-ghost" onclick="prevStep()" ${step === 0 ? 'style="visibility:hidden"' : ''}>← Zurück</button>
+      <button class="btn btn-primary" id="nextBtn" onclick="${step === wizardSteps.length - 1 ? 'showResult()' : 'nextStep()'}" ${!isStepValid(step) ? 'disabled' : ''}>
+        ${step === wizardSteps.length - 1 ? 'Empfehlung anzeigen →' : 'Weiter →'}
+      </button>
+    </div>
+  `;
+  document.getElementById('wizardBody').innerHTML = html;
+}
+
+function selectOption(step, id) {
+  const s = wizardSteps[step];
+  if (s.type === 'multi') {
+    if (!Array.isArray(answers[step])) answers[step] = [];
+    const idx = answers[step].indexOf(id);
+    if (idx >= 0) answers[step].splice(idx, 1);
+    else answers[step].push(id);
+  } else {
+    answers[step] = id;
+  }
+  renderWizardStep(step);
+}
+
+function nextStep() {
+  if (isStepValid(currentStep)) {
+    currentStep++;
+    renderWizardStep(currentStep);
+  }
+}
+
+function prevStep() {
+  if (currentStep > 0) {
+    currentStep--;
+    renderWizardStep(currentStep);
+  }
+}
+
+function has(stepIdx, id) {
+  const val = answers[stepIdx];
+  if (Array.isArray(val)) return val.includes(id);
+  return val === id;
+}
+
+function showResult() {
+  document.getElementById('wizardContainer').style.display = 'none';
+  const result = document.getElementById('wizardResult');
+  result.classList.add('active');
+
+  const size = answers[0];
+  const structure = answers[1];
+  const roles = answers[2] || [];
+  const data = answers[3] || [];
+  const audit = answers[4];
+
+  // Convenience
+  const hasRole = (id) => roles.includes(id);
+  const hasData = (id) => data.includes(id);
+
+  // Determine complexity
+  const roleCount = roles.length;
+  const dataCount = data.length;
+  const hasStufe3 = hasData('gesundheit') || hasData('spd_berichte') || hasData('fallfuehrung') || hasData('sorgerecht');
+  const complexity = (size === 'large' || roleCount >= 4 || (hasStufe3 && dataCount >= 4)) ? 'hoch' :
+                     (size === 'small' && roleCount <= 1 && dataCount <= 1) ? 'einfach' : 'mittel';
+  const complexityLabel = { einfach: '🟢 Einfach', mittel: '🟡 Mittel', hoch: '🔴 Komplex' };
+
+  // ── School units recommendation ──
+  let seReco = '';
+  if (structure === 'single') {
+    seReco = size === 'small' ? 'Eine Schuleinheit für die gesamte Schule genügt.' :
+      'Auch bei einem Standort empfehlen wir mindestens zwei Schuleinheiten (z.B. «Zyklus 1–2» und «Zyklus 3»), um den Zugriff differenziert zu steuern.';
+  } else if (structure === 'cycle') {
+    seReco = 'Erstellen Sie eine Schuleinheit pro Zyklus. Damit sehen LP nur SuS aus ihrem Zyklus.';
+  } else {
+    seReco = 'Erstellen Sie Schuleinheiten nach Standort UND Zyklus (z.B. «Schulhaus West – Zyklus 1», «Schulhaus Ost – Zyklus 2/3»). So kombinieren Sie geografische und organisatorische Trennung.';
+  }
+
+  // ── Folder recommendation ──
+  let folderReco = '<ul>';
+  folderReco += '<li>📁 <strong>Berichte & Korrespondenz</strong> — Lesen: KLP, SL, SV · Schreiben: KLP, SL</li>';
+  folderReco += '<li>📁 <strong>Zeugnisse</strong> — Lesen: KLP, SL · Schreiben: KLP</li>';
+  if (hasData('foerder')) {
+    folderReco += '<li>📁 <strong>Fördermassnahmen / NTA</strong> — Lesen: KLP, SL' + (hasRole('shp') ? ', SHP' : '') + ' · Schreiben: KLP' + (hasRole('shp') ? ', SHP' : '') + '</li>';
+  }
+  if (hasData('gesundheit')) {
+    folderReco += '<li>📁 <strong>Gesundheitsdaten</strong> — Lesen: KLP, SL (eingeschränkt)' + (hasRole('tagesstruktur') ? ', Tagesstruktur' : '') + ' · Schreiben: SV ⚠️ Data Hiding für FLP</li>';
+  }
+  if (hasData('spd_berichte')) {
+    folderReco += '<li>📁 <strong>SPD / Abklärungen</strong> — Lesen: SL (eingeschränkt)' + (hasRole('spd') ? ' · Schreiben: SPD' : '') + ' ⚠️ Data Hiding für alle anderen</li>';
+  }
+  if (hasData('fallfuehrung')) {
+    folderReco += '<li>📁 <strong>Fallführung / SSA</strong> — Über separates Modul mit eigenem Berechtigungskonzept (nicht als Dossier-Ordner!)</li>';
+  }
+  if (hasData('disziplinar')) {
+    folderReco += '<li>📁 <strong>Disziplinarisches</strong> — Lesen: KLP, SL' + (hasRole('schulbehoerde') ? ', Schulbehörde' : '') + ' · Schreiben: KLP, SL · <strong>Ablaufdatum setzen!</strong></li>';
+  }
+  if (hasData('sorgerecht')) {
+    folderReco += '<li>📁 <strong>Sorgerecht / KESB</strong> — Lesen: SL, SV · Schreiben: SV ⚠️ Data Hiding für LP</li>';
+  }
+  folderReco += '<li>📁 <strong>Sonstiges</strong> — Lesen: KLP, SL, SV · Schreiben: KLP, SV</li>';
+  folderReco += '</ul>';
+
+  // ── Role recommendation ──
+  let roleReco = '<ul>';
+  roleReco += '<li><strong>Schulverwaltung (SV):</strong> Stammdaten R/W, kein Zugriff auf Noten/Beurteilungen</li>';
+  roleReco += '<li><strong>Schulleitung (SL):</strong> Über Schuleinheit Feld D, sieht alle SuS + definierte MA-Rollen</li>';
+  roleReco += '<li><strong>Klassenlehrperson (KLP):</strong> Zugriff auf zugeteilte SuS/GV, R/W auf pädagogische Ordner</li>';
+  roleReco += '<li><strong>Fachlehrperson (FLP):</strong> Nur zugeteilte SuS, nur Lesen auf allgemeine Ordner</li>';
+  if (hasRole('shp')) roleReco += '<li><strong>SHP (Schulische Heilpädagogik):</strong> Nur zugeteilte SuS, R/W auf Förderpläne und NTA</li>';
+  if (hasRole('daz')) roleReco += '<li><strong>DaZ-Lehrpersonen:</strong> Nur zugeteilte SuS, Lesen auf allgemeine Ordner, R/W auf DaZ-Förderdokumentation</li>';
+  if (hasRole('therapie')) roleReco += '<li><strong>Logopädie / Psychomotorik:</strong> Nur zugeteilte SuS, R/W auf eigene Therapie-/Förderdokumente</li>';
+  if (hasRole('ssa')) roleReco += '<li><strong>Schulsozialarbeit (SSA):</strong> Über Modul Fallführung mit eigenen Dienststellen-Berechtigungen. Freiwilligkeitsprinzip beachten!</li>';
+  if (hasRole('spd')) roleReco += '<li><strong>Schulpsychologischer Dienst (SPD):</strong> Eigener geschützter Ordner im Dossier, Data Hiding für alle anderen Rollen</li>';
+  if (hasRole('tagesstruktur')) roleReco += '<li><strong>Tagesstruktur / Betreuung:</strong> Nur Allergien und Notfallkontakte sichtbar (über Feldberechtigungen). Kein Zugriff auf pädagogische Daten.</li>';
+  if (hasRole('schulbehoerde')) roleReco += '<li><strong>Schulbehörde / Schulpräsidium:</strong> Eingeschränkter Lesezugriff, nur auf Disziplinar- und Rekursdokumente</li>';
+  roleReco += '</ul>';
+
+  // ── Audit recommendation ──
+  let auditReco = audit === 'advanced_audit' ?
+    'Prüfen Sie regelmässig, wer auf sensible Ordner zugreift. Dokumentieren Sie die Rollenzuweisungen halbjährlich. Führen Sie eine jährliche Stichprobe durch, ob Zugriffsrechte noch der aktuellen Aufgabe entsprechen.' :
+    'Erstellen Sie eine Übersicht der Rollenzuweisungen und überprüfen Sie diese jährlich. Bei Personalwechseln immer sofort Berechtigungen anpassen.';
+
+  // ── PUPIL step-by-step ──
+  const hasFF = hasRole('ssa') || hasRole('spd');
+  const hasFieldPerms = hasData('gesundheit') || hasRole('tagesstruktur');
+  let pupilSteps = '<ol style="padding-left:20px">';
+  pupilSteps += `<li style="margin-bottom:8px"><strong>Schuleinheiten einrichten:</strong> <code>Master Data → Schulen/Klassen/Gruppen → Schuleinheiten</code> — ${structure === 'single' ? 'mindestens eine' : 'pro Zyklus/Standort eine'} Schuleinheit erstellen. SL bei Feld D eintragen, «Zugriff auf Rollen» gezielt einschränken.</li>`;
+  pupilSteps += '<li style="margin-bottom:8px"><strong>Ordnerstruktur definieren:</strong> <code>Schulverwaltung → Personendossier Einstellungen</code> — Stammordner gemäss obiger Empfehlung erstellen. Pro Ordner: «Standard für Rolle» setzen, Lese- und Schreibrechte <strong>separat</strong> vergeben. Berechtigungen vererben sich nicht!</li>';
+  if (hasFieldPerms) {
+    pupilSteps += '<li style="margin-bottom:8px"><strong>Feldberechtigungen konfigurieren:</strong> <code>Rolle/Feldberechtigungen</code> — Gesundheitsdaten-Felder (Allergien, Medikamente, Ernährungsbedürfnisse) nur für berechtigte Rollen aktivieren.' + (hasRole('tagesstruktur') ? ' Tagesstruktur: nur Allergien und Notfallkontakte freischalten.' : '') + '</li>';
+  }
+  if (hasFF) {
+    pupilSteps += '<li style="margin-bottom:8px"><strong>Fallführung einrichten:</strong> <code>Schulverwaltung → Fallführung</code> — Dienststellen erstellen (z.B.' + (hasRole('ssa') ? ' «SSA»' : '') + (hasRole('spd') ? ' «SPD»' : '') + '), zugriffsberechtigte Rollen definieren, Standard-Schreib-/Leserechte pro Dienststelle vergeben.</li>';
+  }
+  if (hasData('disziplinar')) {
+    pupilSteps += '<li style="margin-bottom:8px"><strong>Ablaufdaten nutzen:</strong> Bei disziplinarischen Dokumenten das Ablaufdatum setzen — das Dokument wird nach Fristablauf automatisch gelöscht. Praxis: Verwarnungen oft 1–2 Schuljahre.</li>';
+  }
+  pupilSteps += '<li style="margin-bottom:8px"><strong>Testen:</strong> Loggen Sie sich mit verschiedenen Rollen ein und prüfen Sie: Sieht die KLP nur ihre SuS? Ist der SPD-Ordner für FLP unsichtbar? Hat die SV keinen Notenzugriff?' + (hasRole('tagesstruktur') ? ' Sieht die Tagesstruktur nur Allergien?' : '') + '</li>';
+  pupilSteps += '<li><strong>Dokumentieren:</strong> Halten Sie das Berechtigungskonzept schriftlich fest und lassen Sie es von der SL genehmigen. Tipp: Nutzen Sie die ZH-Vorlage für Berechtigungskonzepte als Basis.</li>';
+  pupilSteps += '</ol>';
+
+  // ── Build summary text ──
+  const roleSummary = roles.length === 0 ? 'nur Grundrollen' : roles.map(r => {
+    const labels = { shp:'SHP', daz:'DaZ', therapie:'Therapie', ssa:'SSA', spd:'SPD', tagesstruktur:'Tagesstruktur', schulbehoerde:'Schulbehörde' };
+    return labels[r] || r;
+  }).join(', ');
+  const dataSummary = data.length === 0 ? 'nur Basisdaten' : data.map(d => {
+    const labels = { foerder:'Förderplanung', gesundheit:'Gesundheit', spd_berichte:'SPD-Berichte', fallfuehrung:'Fallführung', disziplinar:'Disziplinar', sorgerecht:'Sorgerecht' };
+    return labels[d] || d;
+  }).join(', ');
+
+  result.innerHTML = `
+    <div class="result-header">
+      <h3>${complexityLabel[complexity]} — Ihre Empfehlung</h3>
+      <p>Basierend auf Ihren Angaben: ${size === 'small' ? 'kleine' : size === 'medium' ? 'mittelgrosse' : 'grosse'} Schule · Fachpersonen: ${roleSummary} · Daten: ${dataSummary}</p>
+    </div>
+    <div class="result-body">
+      <div class="result-section">
+        <h4>🏫 Schuleinheiten</h4>
+        <p>${seReco}</p>
+        <div class="pupil-tip"><strong>PUPIL:</strong> <code>Master Data → Schulen/Klassen/Gruppen → Schuleinheiten</code></div>
+      </div>
+      <div class="result-section">
+        <h4>📂 Empfohlene Ordnerstruktur</h4>
+        ${folderReco}
+        <div class="pupil-tip"><strong>PUPIL:</strong> <code>Schulverwaltung → Personendossier Einstellungen → Neuer Stammordner</code>. Berechtigungen werden pro Ordner separat vergeben — sie vererben sich nicht!</div>
+      </div>
+      <div class="result-section">
+        <h4>👥 Empfohlene Rollen & Rechte</h4>
+        ${roleReco}
+        <div class="pupil-tip"><strong>PUPIL:</strong> Rollen werden in <code>Master Data → Personen</code> zugewiesen. Schuleinheiten-Felder C/D/E steuern den Scope. Feldberechtigungen über <code>Rolle/Feldberechtigungen</code>.</div>
+      </div>
+      ${hasStufe3 ? `
+      <div class="result-section">
+        <h4>🔒 Data Hiding für Stufe-3-Daten</h4>
+        <p>Folgende Ordner sollten nur für explizit berechtigte Rollen <strong>sichtbar</strong> sein (nicht nur gesperrt, sondern gar nicht angezeigt):</p>
+        <ul>
+          ${hasData('gesundheit') ? '<li><strong>Gesundheitsdaten:</strong> Unsichtbar für FLP' + (hasRole('schulbehoerde') ? ', Schulbehörde' : '') + '</li>' : ''}
+          ${hasData('spd_berichte') ? '<li><strong>SPD/Abklärungen:</strong> Unsichtbar für alle ausser SL (eingeschränkt) und SPD</li>' : ''}
+          ${hasData('sorgerecht') ? '<li><strong>Sorgerecht/KESB:</strong> Unsichtbar für LP — nur SL und SV</li>' : ''}
+          ${hasData('fallfuehrung') ? '<li><strong>Fallführung:</strong> Über separates Modul, nicht über Dossier-Ordner lösen</li>' : ''}
+        </ul>
+        <div class="warning-box">In PUPIL: Wenn ein Ordner bei einer Rolle <strong>nicht als Standard</strong> gesetzt wird und <strong>keine Leseberechtigung</strong> erhält, ist er für diese Rolle unsichtbar. Das ist Data Hiding.</div>
+      </div>` : ''}
+      <div class="result-section">
+        <h4>📋 Audit & Nachvollziehbarkeit</h4>
+        <p>${auditReco}</p>
+      </div>
+      <div class="result-section">
+        <h4>🔧 Umsetzung in PUPIL — Schritt für Schritt</h4>
+        ${pupilSteps}
+      </div>
+      <div class="result-section" style="text-align:center; padding:28px">
+        <button class="btn btn-primary" onclick="resetWizard()">🔄 Erneut durchführen</button>
+        <button class="btn btn-ghost" onclick="window.print()">🖨️ Drucken</button>
+      </div>
+    </div>
+  `;
+}
+
+function resetWizard() {
+  currentStep = 0;
+  answers = {};
+  document.getElementById('wizardContainer').style.display = '';
+  document.getElementById('wizardResult').classList.remove('active');
+  document.getElementById('wizardResult').innerHTML = '';
+  renderWizardStep(0);
+}
+
+// Initialize wizard
+renderWizardStep(0);
+</script>
+</body>
+</html>
