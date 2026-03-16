@@ -117,13 +117,29 @@ body {
   z-index: 100;
   box-shadow: var(--shadow-sm);
 }
+.nav-bar .container { position: relative; }
+.nav-bar .container::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 40px;
+  background: linear-gradient(to right, transparent, var(--bg-card));
+  pointer-events: none;
+  z-index: 1;
+}
 .nav-tabs {
   display: flex;
   gap: 0;
   overflow-x: auto;
-  scrollbar-width: none;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+  padding-right: 40px;
 }
-.nav-tabs::-webkit-scrollbar { display: none; }
+.nav-tabs::-webkit-scrollbar { height: 3px; }
+.nav-tabs::-webkit-scrollbar-track { background: transparent; }
+.nav-tabs::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 3px; }
 .nav-tab {
   padding: 16px 20px;
   font-size: 13px;
@@ -630,6 +646,127 @@ td:first-child {
   .section { display: block !important; page-break-before: always; }
   .hero { background: #333; -webkit-print-color-adjust: exact; }
 }
+
+/* ── VIDEO CARDS ── */
+.video-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin: 20px 0; }
+.video-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--bg-card);
+  transition: all 0.2s;
+  text-decoration: none;
+  color: var(--text);
+  display: block;
+}
+.video-card:hover { border-color: var(--accent); box-shadow: var(--shadow-md); transform: translateY(-2px); }
+.video-thumb {
+  background: var(--bg-accent);
+  height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.video-play {
+  width: 52px; height: 52px;
+  background: rgba(255,255,255,0.95);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+}
+.video-play::after {
+  content: '';
+  width: 0; height: 0;
+  border-style: solid;
+  border-width: 10px 0 10px 18px;
+  border-color: transparent transparent transparent var(--accent);
+  margin-left: 3px;
+}
+.video-thumb-label {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background: rgba(0,0,0,0.7);
+  color: white;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+.video-info { padding: 14px 16px; }
+.video-info h4 { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+.video-info p { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+
+/* ── SVG DIAGRAMS ── */
+.diagram-container {
+  margin: 24px 0;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  overflow-x: auto;
+}
+.diagram-container svg { max-width: 100%; height: auto; display: block; margin: 0 auto; }
+.diagram-label { font-size: 12px; color: var(--text-muted); text-align: center; margin-top: 10px; }
+
+/* ── MOCKUP ── */
+.mockup-container {
+  margin: 20px 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+.mockup-header {
+  background: #2C3E50;
+  color: white;
+  padding: 8px 16px;
+  font-size: 11px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.mockup-dot { width: 8px; height: 8px; border-radius: 50%; }
+.mockup-dot.r { background: #e74c3c; }
+.mockup-dot.y { background: #f39c12; }
+.mockup-dot.g { background: #2ecc71; }
+.mockup-body { background: var(--bg-card); padding: 0; }
+.mockup-body svg { width: 100%; height: auto; display: block; }
+.mockup-note {
+  padding: 10px 16px;
+  font-size: 12px;
+  color: var(--text-muted);
+  background: var(--bg-subtle);
+  border-top: 1px solid var(--border);
+  font-style: italic;
+}
+
+/* ── FEATURE GRID ── */
+.feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin: 20px 0; }
+.feature-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  transition: border-color 0.2s;
+}
+.feature-card:hover { border-color: var(--accent); }
+.feature-card h4 { font-size: 14px; font-weight: 700; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+.feature-card p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+.feature-card .tag {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: var(--accent-light);
+  color: var(--accent);
+  margin-top: 8px;
+}
 </style>
 </head>
 <body>
@@ -654,9 +791,10 @@ td:first-child {
       <button class="nav-tab active" data-section="overview">Übersicht</button>
       <button class="nav-tab" data-section="categories">Datenkategorien</button>
       <button class="nav-tab" data-section="roles">Rollen & Rechte</button>
-      <button class="nav-tab" data-section="wizard">Konfigurations-Assistent</button>
+      <button class="nav-tab" data-section="pupil">PUPIL im Detail</button>
+      <button class="nav-tab" data-section="wizard">Assistent</button>
       <button class="nav-tab" data-section="checklist">Checkliste</button>
-      <button class="nav-tab" data-section="legal">Rechtsgrundlagen</button>
+      <button class="nav-tab" data-section="legal">Recht & Quellen</button>
     </div>
   </div>
 </nav>
@@ -719,6 +857,52 @@ td:first-child {
     </ul>
     <div class="pupil-tip" style="margin-top:16px">
       <strong>💡 PUPIL-Konfiguration:</strong> In PUPIL werden Ordnerberechtigungen unter <code>Schulverwaltung → <a href="https://dokumentation.pupil.ch/article/u4v28cvol2-januar-2022-dossier-in-master-data" target="_blank">Personendossier Einstellungen</a></code> konfiguriert. Berechtigungen werden <strong>nicht vererbt</strong> — jeder Unterordner benötigt eigene Lese-/Schreibrechte. Feldberechtigungen (z.B. Gesundheitsdaten) werden separat über <code><a href="https://dokumentation.pupil.ch/article/6n59cjoeh6-rolle-feldberechtigungen" target="_blank">Rolle/Feldberechtigungen</a></code> gesteuert.
+    </div>
+  </div>
+
+  <div class="diagram-container">
+    <svg viewBox="0 0 760 300" xmlns="http://www.w3.org/2000/svg" style="font-family:'DM Sans',sans-serif">
+      <rect x="20" y="8" width="720" height="58" rx="10" fill="#1B2E4A"/>
+      <text x="380" y="33" text-anchor="middle" fill="white" font-size="13" font-weight="700">Ebene 1 — Master Data Admin</text>
+      <text x="380" y="51" text-anchor="middle" fill="rgba(255,255,255,0.6)" font-size="11">Vollzugriff · Nur 1–2 Personen · Alle Dossiers ohne Einschränkung</text>
+      <rect x="60" y="78" width="640" height="58" rx="10" fill="#2D5A27" opacity="0.9"/>
+      <text x="380" y="103" text-anchor="middle" fill="white" font-size="13" font-weight="700">Ebene 2 — Schuleinheiten (Felder C / D / E)</text>
+      <text x="380" y="121" text-anchor="middle" fill="rgba(255,255,255,0.65)" font-size="11">SL sieht alle SuS der SE · SV via Feld C · Personalführung via Feld E</text>
+      <rect x="100" y="148" width="560" height="58" rx="10" fill="#B8860B" opacity="0.85"/>
+      <text x="380" y="173" text-anchor="middle" fill="white" font-size="13" font-weight="700">Ebene 3 — Klassen- &amp; Gruppenzuweisung</text>
+      <text x="380" y="191" text-anchor="middle" fill="rgba(255,255,255,0.7)" font-size="11">LP sehen nur zugeteilte SuS und deren Erziehungsberechtigte</text>
+      <rect x="140" y="218" width="480" height="58" rx="10" fill="#8B2500" opacity="0.85"/>
+      <text x="380" y="243" text-anchor="middle" fill="white" font-size="13" font-weight="700">Ebene 4 — Ordner- &amp; Feldberechtigungen</text>
+      <text x="380" y="261" text-anchor="middle" fill="rgba(255,255,255,0.7)" font-size="11">Pro Ordner: Lesen / Schreiben je Rolle · Pro Feld: sichtbar / bearbeitbar</text>
+      <text x="8" y="165" fill="#8A8A8A" font-size="9" transform="rotate(-90,8,165)">← Weniger Daten sichtbar</text>
+      <text x="753" y="165" fill="#8A8A8A" font-size="9" transform="rotate(90,753,165)">← Mehr Personen</text>
+    </svg>
+    <div class="diagram-label">Berechtigungsmodell: 4 Ebenen — von global bis granular</div>
+  </div>
+
+  <div style="margin-top:32px">
+    <h3 style="font-size:16px; font-weight:700; margin-bottom:12px">📹 Video-Anleitungen zum Personendossier</h3>
+    <div class="video-grid">
+      <a href="https://youtu.be/AfY1WFXHrTg" target="_blank" class="video-card">
+        <div class="video-thumb">
+          <div class="video-play"></div>
+          <span class="video-thumb-label">5:36</span>
+        </div>
+        <div class="video-info">
+          <h4>Schüler*innen-Dossier — Arbeiten</h4>
+          <p>Dateien hochladen, Versionierung, Unterordner erstellen/verschieben, Ablaufdatum setzen, Links erstellen.</p>
+        </div>
+      </a>
+      <a href="https://youtu.be/KNBYfHoOXyc" target="_blank" class="video-card">
+        <div class="video-thumb">
+          <div class="video-play"></div>
+          <span class="video-thumb-label">4:09</span>
+        </div>
+        <div class="video-info">
+          <h4>Personendossier — Admin-Konfiguration</h4>
+          <p>Stammordner pro Rolle anlegen, Lese-/Schreibberechtigungen setzen, Rollen zuweisen, Unterordner konfigurieren.</p>
+        </div>
+      </a>
     </div>
   </div>
 </section>
@@ -847,7 +1031,7 @@ td:first-child {
           <tr>
             <td>Absenzen</td>
             <td class="badge-r">R</td>
-            <td class="badge-r">R</td>
+            <td class="badge-rw">R/W</td>
             <td class="badge-rw">R/W</td>
             <td class="badge-r">R*</td>
             <td class="badge-r">R*</td>
@@ -872,7 +1056,7 @@ td:first-child {
             <td class="badge-none">—</td>
             <td class="badge-r">R*</td>
             <td class="badge-none">—</td>
-            <td class="badge-rw">R/W°</td>
+            <td class="badge-none">—</td>
           </tr>
           <tr>
             <td>SPD-Berichte</td>
@@ -951,6 +1135,236 @@ td:first-child {
       <strong>💡 PUPIL-Konfiguration:</strong> Wenn ein Ordner in den <a href="https://dokumentation.pupil.ch/article/u4v28cvol2-januar-2022-dossier-in-master-data" target="_blank">Personendossier-Einstellungen</a> bei einer Rolle <strong>nicht als Standard gesetzt</strong> wird und auch keine Lese-/Schreibberechtigung erhält, ist dieser Ordner für diese Rolle unsichtbar (Data Hiding). PUPIL unterstützt auch die Feldsichtbarkeit pro Rolle über <code><a href="https://dokumentation.pupil.ch/article/6n59cjoeh6-rolle-feldberechtigungen" target="_blank">Rolle/Feldberechtigungen</a></code> — z.B. Gesundheitsdaten nur für bestimmte Rollen einblenden.
     </div>
   </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon red">👥</div>
+      <div>
+        <div class="card-title">Spezialfall: Doppelrollen / «angestellte Eltern»</div>
+        <div class="card-label">Häufig unterschätzt, datenschutzrechtlich heikel</div>
+      </div>
+    </div>
+    <p>Eine Person kann in PUPIL gleichzeitig mehrere Rollen haben — z.B. Erziehungsberechtigte UND Lehrperson, oder Unterrichtsassistenz UND Elternteil. Das Berechtigungssystem muss sicherstellen, dass Elternrechte nicht mit LP-Rechten vermischt werden.</p>
+    <ul style="margin-top:12px">
+      <li><strong>Standardverhalten:</strong> Benutzer*innen mit Doppelrollen sehen nur Daten aus ihrer eigenen Schuleinheit.</li>
+      <li><strong>Problem:</strong> Eine LP, die auch Elternteil eines SuS an derselben Schule ist, sieht ggf. Daten anderer SuS, die sie als Elternteil nicht sehen sollte.</li>
+      <li><strong>Lösung:</strong> Über «Zugriff auf Rollen» in der Schuleinheit kann gesteuert werden, welche zusätzlichen Schuleinheiten eine Person sieht.</li>
+    </ul>
+    <div class="pupil-tip" style="margin-top:12px">
+      <strong>💡 PUPIL:</strong> In <a href="https://dokumentation.pupil.ch/article/yfye9izyw0-schuleinheit" target="_blank">Schuleinheiten</a> wird der Spezialfall unter «Zugriff auf Rollen» (Feld F) geregelt. Dokumentation: <em>«Benutzer/innen mit Doppelrollen sehen standardmässig nur Daten aus ihrer Schuleinheit. Über "Zugriff auf Rollen" können ihnen weitere Schuleinheiten geöffnet werden.»</em>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- SECTION: PUPIL IM DETAIL                    -->
+<!-- ═══════════════════════════════════════════ -->
+<section class="section" id="pupil">
+  <h2 class="section-title">PUPIL im Detail</h2>
+  <p class="section-subtitle">Alle datenschutzrelevanten Module und Features in PUPIL — mit Konfigurationshinweisen und Verlinkungen zur Dokumentation.</p>
+
+  <!-- MOCKUP: Personendossier Einstellungen -->
+  <div class="mockup-container">
+    <div class="mockup-header">
+      <span class="mockup-dot r"></span><span class="mockup-dot y"></span><span class="mockup-dot g"></span>
+      PUPIL — Schulverwaltung → Personendossier Einstellungen
+    </div>
+    <div class="mockup-body">
+      <svg viewBox="0 0 800 340" xmlns="http://www.w3.org/2000/svg" style="font-family:'DM Sans',sans-serif;background:white">
+        <!-- Sidebar hint -->
+        <rect x="0" y="0" width="180" height="340" fill="#F8F8F6"/>
+        <rect x="0" y="0" width="180" height="36" fill="#2C3E50"/>
+        <text x="16" y="23" fill="white" font-size="12" font-weight="600">☰ Schulverwaltung</text>
+        <text x="16" y="60" fill="#2D5A27" font-size="11" font-weight="600">▸ Personendossier Einst.</text>
+        <text x="16" y="82" fill="#8A8A8A" font-size="11">  Fallführung</text>
+        <text x="16" y="104" fill="#8A8A8A" font-size="11">  Dokumentenverwaltung</text>
+        <text x="16" y="126" fill="#8A8A8A" font-size="11">  Inventarisierung</text>
+        <!-- Main content -->
+        <text x="200" y="30" fill="#1A1A1A" font-size="14" font-weight="700">Personendossier — Stammordner</text>
+        <rect x="196" y="42" width="100" height="24" rx="4" fill="#2D5A27"/>
+        <text x="216" y="58" fill="white" font-size="10" font-weight="600">+ Neuer Stammordner</text>
+        <!-- Folder rows -->
+        <rect x="196" y="78" width="590" height="44" rx="6" fill="#F6FBF5" stroke="#E0DDD5"/>
+        <text x="216" y="96" fill="#1A1A1A" font-size="12" font-weight="600">📁 Berichte &amp; Korrespondenz</text>
+        <text x="216" y="112" fill="#8A8A8A" font-size="10">Standard für: SuS, Erziehungsberechtigte, LP</text>
+        <text x="540" y="96" fill="#2D5A27" font-size="10" font-weight="600">Lesen: SL, KLP, SV</text>
+        <text x="540" y="112" fill="#B8860B" font-size="10" font-weight="600">Schreiben: SL, KLP</text>
+
+        <rect x="196" y="130" width="590" height="44" rx="6" fill="#FFFCF0" stroke="#E0DDD5"/>
+        <text x="216" y="148" fill="#1A1A1A" font-size="12" font-weight="600">📁 Fördermassnahmen / NTA</text>
+        <text x="216" y="164" fill="#8A8A8A" font-size="10">Standard für: SuS</text>
+        <text x="540" y="148" fill="#2D5A27" font-size="10" font-weight="600">Lesen: SL, KLP, SHP</text>
+        <text x="540" y="164" fill="#B8860B" font-size="10" font-weight="600">Schreiben: KLP, SHP</text>
+
+        <rect x="196" y="182" width="590" height="44" rx="6" fill="#FFF5F3" stroke="#E0DDD5"/>
+        <text x="216" y="200" fill="#1A1A1A" font-size="12" font-weight="600">🔒 Gesundheitsdaten</text>
+        <text x="216" y="216" fill="#8A8A8A" font-size="10">Standard für: SuS · ⚠ Data Hiding für FLP</text>
+        <text x="540" y="200" fill="#2D5A27" font-size="10" font-weight="600">Lesen: SL, KLP</text>
+        <text x="540" y="216" fill="#B8860B" font-size="10" font-weight="600">Schreiben: SV</text>
+
+        <rect x="196" y="234" width="590" height="44" rx="6" fill="#FFF5F3" stroke="#E0DDD5"/>
+        <text x="216" y="252" fill="#1A1A1A" font-size="12" font-weight="600">🔒 SPD / Abklärungen</text>
+        <text x="216" y="268" fill="#8A8A8A" font-size="10">Standard für: SuS · ⚠ Data Hiding für alle ausser SL, SPD</text>
+        <text x="540" y="252" fill="#2D5A27" font-size="10" font-weight="600">Lesen: SL (eingeschr.)</text>
+        <text x="540" y="268" fill="#B8860B" font-size="10" font-weight="600">Schreiben: SPD</text>
+
+        <rect x="196" y="286" width="590" height="44" rx="6" fill="white" stroke="#E0DDD5"/>
+        <text x="216" y="304" fill="#1A1A1A" font-size="12" font-weight="600">📁 Disziplinarisches</text>
+        <text x="216" y="320" fill="#8A8A8A" font-size="10">Standard für: SuS · Ablaufdatum aktiv</text>
+        <text x="540" y="304" fill="#2D5A27" font-size="10" font-weight="600">Lesen: SL, KLP</text>
+        <text x="540" y="320" fill="#B8860B" font-size="10" font-weight="600">Schreiben: SL, KLP</text>
+      </svg>
+    </div>
+    <div class="mockup-note">Schematische Darstellung der empfohlenen Ordnerstruktur in den Personendossier-Einstellungen. Farbcodierung: 🟢 Stufe 1 · 🟡 Stufe 2 · 🔴 Stufe 3. <a href="https://dokumentation.pupil.ch/article/u4v28cvol2-januar-2022-dossier-in-master-data" target="_blank">→ Doku: Personendossier</a></div>
+  </div>
+
+  <!-- MOCKUP: Schuleinheiten -->
+  <div class="mockup-container" style="margin-top:24px">
+    <div class="mockup-header">
+      <span class="mockup-dot r"></span><span class="mockup-dot y"></span><span class="mockup-dot g"></span>
+      PUPIL — Master Data → Schulen/Klassen/Gruppen → Schuleinheiten
+    </div>
+    <div class="mockup-body">
+      <svg viewBox="0 0 800 290" xmlns="http://www.w3.org/2000/svg" style="font-family:'DM Sans',sans-serif;background:white">
+        <text x="20" y="30" fill="#1A1A1A" font-size="14" font-weight="700">Schuleinheit aktualisieren</text>
+        <!-- Fields -->
+        <text x="20" y="62" fill="#5A5A5A" font-size="11" font-weight="600">A | Name</text>
+        <rect x="140" y="48" width="300" height="26" rx="4" fill="white" stroke="#E0DDD5"/>
+        <text x="150" y="66" fill="#1A1A1A" font-size="11">Zyklus 1 – Schulhaus West</text>
+
+        <text x="20" y="100" fill="#5A5A5A" font-size="11" font-weight="600">B | Schule</text>
+        <rect x="140" y="86" width="300" height="26" rx="4" fill="white" stroke="#E0DDD5"/>
+        <text x="150" y="104" fill="#1A1A1A" font-size="11">PS Schulhaus West</text>
+
+        <text x="20" y="138" fill="#2D5A27" font-size="11" font-weight="700">C | Zugriff alle SuS</text>
+        <rect x="140" y="124" width="300" height="26" rx="4" fill="#E8F0E6" stroke="#2D5A27" stroke-opacity="0.3"/>
+        <text x="150" y="142" fill="#2D5A27" font-size="11">M. Müller (SV), K. Schmidt (SV)</text>
+
+        <text x="20" y="176" fill="#B8860B" font-size="11" font-weight="700">D | Schulleitung</text>
+        <rect x="140" y="162" width="300" height="26" rx="4" fill="#FFF8E7" stroke="#B8860B" stroke-opacity="0.3"/>
+        <text x="150" y="180" fill="#B8860B" font-size="11">A. Weber (SL)</text>
+
+        <text x="20" y="214" fill="#5A5A5A" font-size="11" font-weight="600">E | Personalführung</text>
+        <rect x="140" y="200" width="300" height="26" rx="4" fill="white" stroke="#E0DDD5"/>
+        <text x="150" y="218" fill="#8A8A8A" font-size="11">R. Keller (SV)</text>
+
+        <text x="20" y="252" fill="#8B2500" font-size="11" font-weight="700">F | Zugriff auf Rollen</text>
+        <rect x="140" y="238" width="300" height="26" rx="4" fill="#FFF0EC" stroke="#8B2500" stroke-opacity="0.3"/>
+        <text x="150" y="256" fill="#8B2500" font-size="11">KLP, FLP, SHP</text>
+
+        <!-- Right side: explanation -->
+        <rect x="480" y="48" width="300" height="225" rx="8" fill="#F8F8F6" stroke="#E0DDD5"/>
+        <text x="496" y="72" fill="#1A1A1A" font-size="11" font-weight="700">Wirkung der Felder:</text>
+        <text x="496" y="94" fill="#5A5A5A" font-size="10">C → Sieht alle SuS + GV dieser SE</text>
+        <text x="496" y="112" fill="#5A5A5A" font-size="10">D → Wie C + Noten/Zeugnisse + Absenzen</text>
+        <text x="496" y="130" fill="#5A5A5A" font-size="10">       visieren + MA-Rollen (via F)</text>
+        <text x="496" y="152" fill="#5A5A5A" font-size="10">E → Sieht MA-Personendossiers (via F)</text>
+        <text x="496" y="174" fill="#5A5A5A" font-size="10">F → Definiert, welche MA-Rollen für</text>
+        <text x="496" y="190" fill="#5A5A5A" font-size="10">       D und E sichtbar werden</text>
+        <text x="496" y="218" fill="#8B2500" font-size="10" font-weight="600">⚠ Doppelrolle (Eltern+LP):</text>
+        <text x="496" y="234" fill="#5A5A5A" font-size="10">Standardmässig nur eigene SE.</text>
+        <text x="496" y="250" fill="#5A5A5A" font-size="10">Weitere SE via «Zugriff auf Rollen».</text>
+      </svg>
+    </div>
+    <div class="mockup-note">Schematische Darstellung der Schuleinheiten-Konfiguration mit Feldern A–F. <a href="https://dokumentation.pupil.ch/article/yfye9izyw0-schuleinheit" target="_blank">→ Doku: Schuleinheiten</a></div>
+  </div>
+
+  <!-- Feature Cards -->
+  <h3 style="font-size:18px; font-weight:700; margin:36px 0 16px">Datenschutzrelevante PUPIL-Module</h3>
+
+  <div class="feature-grid">
+    <div class="feature-card">
+      <h4>🔐 Rolle / Feldberechtigungen</h4>
+      <p>Pro Rolle definieren, welche Datenfelder sichtbar, bearbeitbar oder ausgeblendet sind. Besonders relevant für Gesundheitsdaten (Allergien, Medikamente, Ernährungsbedürfnisse), die nur ausgewählten Rollen angezeigt werden sollen.</p>
+      <span class="tag"><a href="https://dokumentation.pupil.ch/article/6n59cjoeh6-rolle-feldberechtigungen" target="_blank" style="color:inherit;text-decoration:none">→ Doku: Feldberechtigungen</a></span>
+    </div>
+    <div class="feature-card">
+      <h4>📋 Kundenfelder</h4>
+      <p>Individuelle, schulspezifische Datenfelder — z.B. «Instrument MSL», «Transportform». Können bestimmten Rollen zugewiesen und nach Kategorien gruppiert werden. Auch hier gilt: nur aktivieren, was benötigt wird.</p>
+      <span class="tag"><a href="https://dokumentation.pupil.ch/article/1exhho97nm-personen-kundenfelder" target="_blank" style="color:inherit;text-decoration:none">→ Doku: Kundenfelder</a></span>
+    </div>
+    <div class="feature-card">
+      <h4>📂 Eigenes Dossier (Lesen/Schreiben)</h4>
+      <p>Mitarbeitende können pro Ordner Lese- oder Schreibrechte auf <strong>ihr eigenes Dossier</strong> erhalten. Beispiel: LP sieht ihre eigenen Weiterbildungszertifikate, aber nicht die anderer LP.</p>
+      <span class="tag"><a href="https://dokumentation.pupil.ch/article/onbqd8cpzx-personen-su-s-gv-lp-sv-ma-sb" target="_blank" style="color:inherit;text-decoration:none">→ Doku: Personen</a></span>
+    </div>
+    <div class="feature-card">
+      <h4>📄 Versionierung</h4>
+      <p>Dokumente im Dossier können versioniert werden — neue Versionen hochladen, ältere Versionen anzeigen und bei Bedarf wiederherstellen. Wichtig für die Nachvollziehbarkeit bei sich ändernden Dokumenten.</p>
+      <span class="tag"><a href="https://youtu.be/AfY1WFXHrTg" target="_blank" style="color:inherit;text-decoration:none">→ Video: Arbeiten im Dossier</a></span>
+    </div>
+    <div class="feature-card">
+      <h4>⏰ Ablaufdatum</h4>
+      <p>Dokumente können mit einem Ablaufdatum versehen werden — nach Ablauf wird das Dokument automatisch gelöscht. Ideal für disziplinarische Massnahmen, temporäre NTA-Vereinbarungen oder befristete Arztatteste.</p>
+      <span class="tag"><a href="https://youtu.be/AfY1WFXHrTg" target="_blank" style="color:inherit;text-decoration:none">→ Video: Ablaufdatum setzen</a></span>
+    </div>
+    <div class="feature-card">
+      <h4>🔄 Stammdatenüberprüfung</h4>
+      <p>Erziehungsberechtigte erhalten per QR-Code/Link einen Zugang zur Prüfung und Korrektur der erfassten Stammdaten. Erfüllt die datenschutzrechtliche Berichtigungspflicht und hält Daten aktuell.</p>
+      <span class="tag"><a href="https://dokumentation.pupil.ch/article/sva2d0tlld-stammdatenueberpruefung" target="_blank" style="color:inherit;text-decoration:none">→ Doku: Stammdatenüberprüfung</a></span>
+    </div>
+    <div class="feature-card">
+      <h4>📱 PUPIL Connect / Elternportal</h4>
+      <p>Erziehungsberechtigte sehen im Elternportal nur Daten <strong>ihrer eigenen Kinder</strong>: Absenzen, Mitteilungen, Termine, Stammdaten. Keine Einsicht in das Personendossier oder die Daten anderer SuS. Kommunikation verschlüsselt — nicht via WhatsApp.</p>
+      <span class="tag"><a href="https://dokumentation.pupil.ch/category/pkxoqi75bz-appconnect-appmessenger" target="_blank" style="color:inherit;text-decoration:none">→ Doku: Connect / Elternportal</a></span>
+    </div>
+    <div class="feature-card">
+      <h4>📊 Zugriffsgruppen-Matrix</h4>
+      <p>PUPIL stellt alle Zugriffsrechte in einer übersichtlichen Matrix dar: Zeilen = Module, Spalten = Zugriffsgruppen. So sehen Admins auf einen Blick, welche Gruppe welche Modulrechte hat. Basis für das Berechtigungskonzept-Dokument.</p>
+      <span class="tag"><a href="https://dokumentation.pupil.ch/article/3r20uqfnct-februar-2022-zugriffsrechte-neu-dargestellt-in-einer-bersichtlichen-matrix" target="_blank" style="color:inherit;text-decoration:none">→ Doku: Zugriffsrechte-Matrix</a></span>
+    </div>
+    <div class="feature-card">
+      <h4>📝 Fallführung (SSA / SPD)</h4>
+      <p>Separates Modul mit eigenem Berechtigungskonzept: Dienststellen, Dossiers pro Leistungsempfänger, individuelle Lese-/Schreibrechte pro Dossier. Arbeitet unabhängig vom Personendossier — SSA-Daten sind nicht über das Dossier einsehbar.</p>
+      <span class="tag"><a href="https://dokumentation.pupil.ch/article/4vdla44h0e-fallfuhrung-konfigurieren" target="_blank" style="color:inherit;text-decoration:none">→ Doku: Fallführung konfigurieren</a></span>
+    </div>
+    <div class="feature-card">
+      <h4>📈 Förderplaner</h4>
+      <p>Förderdossiers mit Lernzielen und Lernberichten. Eigene Rollenkonfiguration (welche Rollen sehen/bearbeiten Förderdossiers). Lernberichte können direkt ins Zeugnis übernommen werden. Berechtigungen getrennt vom Personendossier.</p>
+      <span class="tag"><a href="https://dokumentation.pupil.ch/category/9k8by7x0du-f-rderplaner" target="_blank" style="color:inherit;text-decoration:none">→ Doku: Förderplaner</a></span>
+    </div>
+    <div class="feature-card">
+      <h4>📓 Journal</h4>
+      <p>Dokumentation von Beobachtungen, Gesprächen und Regelverstössen. KLP sieht Einträge der eigenen Klasse. Konfigurierbare Kategorien/Unterkategorien. Druckausgabe für Standortgespräche. Nicht zu verwechseln mit dem Personendossier.</p>
+      <span class="tag"><a href="https://dokumentation.pupil.ch/article/ulo572tpc1-journal" target="_blank" style="color:inherit;text-decoration:none">→ Doku: Journal</a></span>
+    </div>
+    <div class="feature-card">
+      <h4>🔧 Weitere Massnahmen</h4>
+      <p>Flexible Erfassung schulspezifischer Massnahmen. Statusbasierte Zugriffsbeschränkung: Pro Status können Rollen für Lesen/Schreiben zugewiesen werden. Felder und Massnahmearten frei konfigurierbar.</p>
+      <span class="tag"><a href="https://dokumentation.pupil.ch/article/ygskkq16bf-weitere-massnahmen" target="_blank" style="color:inherit;text-decoration:none">→ Doku: Weitere Massnahmen</a></span>
+    </div>
+  </div>
+
+  <div class="warning-box" style="margin-top:24px">
+    <strong>📸 Echte Screenshots:</strong> Die obigen Darstellungen sind schematische Mockups. Für aktuelle Screenshots der Oberfläche konsultieren Sie die <a href="https://dokumentation.pupil.ch" target="_blank" style="color:inherit">PUPIL Dokumentation</a> oder kontaktieren Sie Ihre PUPIL-Ansprechperson für einen Zugang zum Demosystem.
+  </div>
+
+  <h3 style="font-size:18px; font-weight:700; margin:36px 0 16px">Abgrenzung der Module</h3>
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon blue">🧩</div>
+      <div><div class="card-title">Welches Modul wofür?</div>
+      <div class="card-label">Personendossier vs. Fallführung vs. Journal vs. Förderplaner vs. Weitere Massnahmen</div></div>
+    </div>
+    <div class="matrix-wrapper">
+      <table>
+        <thead>
+          <tr><th>Zweck</th><th>Modul</th><th>Berechtigungslogik</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Dokumente & Unterlagen ablegen</td><td><strong>Personendossier</strong></td><td>Ordnerbasiert (Lesen/Schreiben pro Rolle)</td></tr>
+          <tr><td>Beobachtungen & Gespräche notieren</td><td><strong>Journal</strong></td><td>Klassen-/Gruppenbasiert</td></tr>
+          <tr><td>Förderziele & Lernberichte</td><td><strong>Förderplaner</strong></td><td>Eigene Rollenkonfiguration</td></tr>
+          <tr><td>SSA/SPD-Begleitung</td><td><strong>Fallführung</strong></td><td>Dienststellen + individuelle Dossierrechte</td></tr>
+          <tr><td>Weitere Massnahmen erfassen</td><td><strong>Weitere Massnahmen</strong></td><td>Statusbasiert (Lesen/Schreiben pro Status)</td></tr>
+          <tr><td>Stammdaten an GV zur Prüfung</td><td><strong>Stammdatenüberprüfung</strong></td><td>Individueller QR-Code/Link pro Person</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="pupil-tip" style="margin-top:12px">
+      <strong>💡 Wichtig:</strong> Jedes Modul hat sein eigenes Berechtigungskonzept. Die Ordnerberechtigungen im Personendossier beeinflussen <strong>nicht</strong> die Zugriffsrechte in Fallführung, Journal oder Förderplaner. Konfigurieren Sie jedes Modul einzeln!
+    </div>
+  </div>
 </section>
 
 <!-- ═══════════════════════════════════════════ -->
@@ -1006,8 +1420,9 @@ td:first-child {
       <li><span class="check-icon" onclick="toggleCheck(this)"></span>Schuleinheiten sind sinnvoll gegliedert (nach Standort, Zyklus oder Kombination)</li>
       <li><span class="check-icon" onclick="toggleCheck(this)"></span>Schulleitungen sind in der korrekten Schuleinheit eingetragen (Feld D)</li>
       <li><span class="check-icon" onclick="toggleCheck(this)"></span>«Zugriff auf Rollen» ist bewusst eingeschränkt (nur nötige Rollen)</li>
-      <li><span class="check-icon" onclick="toggleCheck(this)"></span>Spezialfall «angestellte Eltern» / Doppelrollen ist berücksichtigt</li>
+      <li><span class="check-icon" onclick="toggleCheck(this)"></span>Spezialfall «angestellte Eltern» / Doppelrollen ist berücksichtigt und getestet</li>
       <li><span class="check-icon" onclick="toggleCheck(this)"></span>Master Data Admin ist auf minimal nötige Personen beschränkt</li>
+      <li><span class="check-icon" onclick="toggleCheck(this)"></span>Kundenfelder sind nur den relevanten Rollen zugewiesen</li>
     </ul>
   </div>
 
@@ -1023,6 +1438,9 @@ td:first-child {
       <li><span class="check-icon" onclick="toggleCheck(this)"></span>Aufbewahrungsfristen sind bekannt und werden eingehalten</li>
       <li><span class="check-icon" onclick="toggleCheck(this)"></span>Lehrpersonen und Mitarbeitende sind über den korrekten Umgang mit dem Dossier informiert</li>
       <li><span class="check-icon" onclick="toggleCheck(this)"></span>Es ist geregelt, wer bei Schulübertritt welche Dossier-Inhalte weitergibt</li>
+      <li><span class="check-icon" onclick="toggleCheck(this)"></span>Stammdatenüberprüfung wird regelmässig durchgeführt (Berichtigungspflicht)</li>
+      <li><span class="check-icon" onclick="toggleCheck(this)"></span>Fallführung, Förderplaner und Journal sind separat konfiguriert (eigene Berechtigungen)</li>
+      <li><span class="check-icon" onclick="toggleCheck(this)"></span>Elternportal (PUPIL Connect) zeigt nur freigegebene Daten — kein Dossierin-Zugang</li>
     </ul>
   </div>
 
