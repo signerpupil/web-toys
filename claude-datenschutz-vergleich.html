@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Datenschutz-Vergleich — Wann welche Lösung?</title>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,300;0,400;0,600;0,700;1,400&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #FAFAF8;
+  --bg-card: #FFFFFF;
+  --bg-subtle: #F3F2EE;
+  --text: #1A1A1A;
+  --text-secondary: #5A5A5A;
+  --text-muted: #8A8A8A;
+  --accent: #2D5A27;
+  --accent-light: #E8F0E6;
+  --accent-hover: #3D7A35;
+  --warning: #B8860B;
+  --warning-light: #FFF8E7;
+  --danger: #8B2500;
+  --danger-light: #FFF0EC;
+  --info: #1B4F72;
+  --info-light: #EBF5FB;
+  --blue: #2D4A8A;
+  --blue-light: #EBF0FA;
+  --border: #E0DDD5;
+  --border-strong: #C8C4B8;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+  --shadow-lg: 0 8px 30px rgba(0,0,0,0.10);
+  --radius: 8px;
+  --radius-lg: 14px;
+  --font-serif: 'Source Serif 4', Georgia, serif;
+  --font-sans: 'DM Sans', -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #111110;
+    --bg-card: #1A1A18;
+    --bg-subtle: #222220;
+    --text: #E8E6E0;
+    --text-secondary: #A8A6A0;
+    --text-muted: #6A6860;
+    --accent: #5DAA54;
+    --accent-light: #1A2E18;
+    --warning: #D4A017;
+    --warning-light: #2A2410;
+    --danger: #C44830;
+    --danger-light: #2A1510;
+    --info: #4A8ABF;
+    --info-light: #142030;
+    --blue: #6A8AD4;
+    --blue-light: #1A2040;
+    --border: #333330;
+    --border-strong: #444440;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.2);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.25);
+    --shadow-lg: 0 8px 30px rgba(0,0,0,0.3);
+  }
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.65;
+  font-size: 15px;
+  -webkit-font-smoothing: antialiased;
+}
+
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 48px 24px 64px;
+}
+
+/* ── HEADER ── */
+header {
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+header .tag {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+  background: var(--accent-light);
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  padding: 4px 14px;
+  margin-bottom: 16px;
+  opacity: 0.8;
+}
+
+header h1 {
+  font-family: var(--font-serif);
+  font-size: clamp(28px, 5vw, 42px);
+  font-weight: 700;
+  line-height: 1.15;
+  margin-bottom: 12px;
+  letter-spacing: -0.5px;
+}
+
+header p {
+  font-size: 16px;
+  color: var(--text-secondary);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* ── COMPARISON CARDS ── */
+.cards {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+  margin-bottom: 48px;
+}
+
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.card-header {
+  padding: 24px 28px 16px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.card-icon {
+  width: 52px;
+  height: 52px;
+  min-width: 52px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+}
+
+.card-icon.green { background: var(--accent-light); }
+.card-icon.blue { background: var(--blue-light); }
+.card-icon.orange { background: var(--warning-light); }
+
+.card-header h2 {
+  font-family: var(--font-serif);
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.3px;
+}
+
+.card-header .subtitle {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.card-body {
+  padding: 0 28px 24px;
+}
+
+/* ── PROPERTIES ── */
+.props {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.prop {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 14px;
+  background: var(--bg-subtle);
+  border-radius: var(--radius);
+  font-size: 14px;
+}
+
+.prop-icon {
+  font-size: 16px;
+  min-width: 22px;
+  text-align: center;
+  padding-top: 1px;
+}
+
+.prop-label {
+  font-weight: 600;
+  min-width: 130px;
+  color: var(--text);
+}
+
+.prop-value {
+  color: var(--text-secondary);
+  flex: 1;
+}
+
+/* ── BADGES ── */
+.badge {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.03em;
+  padding: 3px 10px;
+  border-radius: 5px;
+  font-weight: 500;
+}
+
+.badge.safe {
+  background: var(--accent-light);
+  color: var(--accent);
+  border: 1px solid var(--accent);
+}
+
+.badge.caution {
+  background: var(--warning-light);
+  color: var(--warning);
+  border: 1px solid var(--warning);
+}
+
+.badge.risk {
+  background: var(--danger-light);
+  color: var(--danger);
+  border: 1px solid var(--danger);
+}
+
+/* ── USE CASES ── */
+.use-cases {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.use-cases h3 {
+  font-size: 12px;
+  font-family: var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+}
+
+.use-case {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--text-secondary);
+  padding: 4px 0;
+}
+
+.use-case::before {
+  content: '>';
+  font-family: var(--font-mono);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* ── COMPARISON TABLE ── */
+.table-section {
+  margin-bottom: 48px;
+}
+
+.table-section h2 {
+  font-family: var(--font-serif);
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.comparison-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  font-size: 14px;
+}
+
+.comparison-table thead th {
+  background: var(--bg-subtle);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding: 14px 18px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  font-weight: 500;
+}
+
+.comparison-table tbody td {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+  color: var(--text-secondary);
+}
+
+.comparison-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.comparison-table tbody td:first-child {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.comparison-table tbody tr:hover {
+  background: var(--bg-subtle);
+}
+
+/* ── DECISION FLOW ── */
+.decision {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: 32px;
+  margin-bottom: 48px;
+}
+
+.decision h2 {
+  font-family: var(--font-serif);
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.flow-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.flow-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 16px 20px;
+  background: var(--bg-subtle);
+  border-radius: var(--radius);
+  border-left: 3px solid var(--border-strong);
+}
+
+.flow-step.recommended {
+  border-left-color: var(--accent);
+  background: var(--accent-light);
+}
+
+.flow-step.ok {
+  border-left-color: var(--blue);
+  background: var(--blue-light);
+}
+
+.flow-step.careful {
+  border-left-color: var(--warning);
+  background: var(--warning-light);
+}
+
+.flow-num {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 600;
+  min-width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+}
+
+.flow-content strong {
+  display: block;
+  font-size: 15px;
+  margin-bottom: 4px;
+}
+
+.flow-content span {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+/* ── FOOTER NOTE ── */
+.footer-note {
+  text-align: center;
+  font-size: 13px;
+  color: var(--text-muted);
+  padding: 24px;
+  border-top: 1px solid var(--border);
+}
+
+.footer-note a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.footer-note a:hover {
+  text-decoration: underline;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 600px) {
+  .container { padding: 32px 16px 48px; }
+  .card-header { padding: 18px 20px 12px; }
+  .card-body { padding: 0 20px 20px; }
+  .prop { flex-direction: column; gap: 4px; }
+  .prop-label { min-width: auto; }
+  .comparison-table { font-size: 12px; }
+  .comparison-table thead th,
+  .comparison-table tbody td { padding: 10px 12px; }
+  .decision { padding: 24px 18px; }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <header>
+    <span class="tag">Datenschutz-Guide</span>
+    <h1>Claude richtig einsetzen</h1>
+    <p>Wie werden Daten in den verschiedenen Claude-Produkten verarbeitet — und wann eignet sich welche Lösung?</p>
+  </header>
+
+  <!-- ══════════ CLAUDE CODE ══════════ -->
+  <div class="cards">
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon green">&#9654;</div>
+        <div>
+          <h2>Claude Code</h2>
+          <div class="subtitle">CLI-Tool — lokal auf deinem Rechner</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="props">
+          <div class="prop">
+            <span class="prop-icon">&#128274;</span>
+            <span class="prop-label">Datenspeicherung</span>
+            <span class="prop-value"><span class="badge safe">0 Tage</span> — Daten werden nach der Antwort nicht gespeichert</span>
+          </div>
+          <div class="prop">
+            <span class="prop-icon">&#129504;</span>
+            <span class="prop-label">Modelltraining</span>
+            <span class="prop-value"><span class="badge safe">Nein</span> — Daten werden nie zum Training verwendet</span>
+          </div>
+          <div class="prop">
+            <span class="prop-icon">&#128187;</span>
+            <span class="prop-label">Ausführung</span>
+            <span class="prop-value">Lokal auf deinem Rechner. Dateien verlassen das Gerät nur, wenn du es explizit auslöst (z.B. git push)</span>
+          </div>
+          <div class="prop">
+            <span class="prop-icon">&#128225;</span>
+            <span class="prop-label">Datenübertragung</span>
+            <span class="prop-value">Prompts werden an die Anthropic-API gesendet, aber <strong>nicht gespeichert</strong></span>
+          </div>
+        </div>
+        <div class="use-cases">
+          <h3>Empfohlen für</h3>
+          <div class="use-case">Arbeit mit sensiblen Daten (Schülerdossiers, Personaldaten)</div>
+          <div class="use-case">Code-Projekte mit internen Repositories</div>
+          <div class="use-case">Datenschutzkonforme Schulumgebungen</div>
+          <div class="use-case">Automatisierung mit lokalen Dateien</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ CLAUDE AI FREE / PRO ══════════ -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon orange">&#9729;</div>
+        <div>
+          <h2>Claude AI — Free / Pro</h2>
+          <div class="subtitle">Web-App unter claude.ai</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="props">
+          <div class="prop">
+            <span class="prop-icon">&#128274;</span>
+            <span class="prop-label">Datenspeicherung</span>
+            <span class="prop-value"><span class="badge caution">Ja</span> — Gespräche werden auf Anthropic-Servern gespeichert</span>
+          </div>
+          <div class="prop">
+            <span class="prop-icon">&#129504;</span>
+            <span class="prop-label">Modelltraining</span>
+            <span class="prop-value"><span class="badge caution">Möglich</span> — Kann für Training verwendet werden. Opt-out in den Einstellungen möglich</span>
+          </div>
+          <div class="prop">
+            <span class="prop-icon">&#128187;</span>
+            <span class="prop-label">Ausführung</span>
+            <span class="prop-value">Cloud-basiert — alles läuft auf Anthropic-Servern</span>
+          </div>
+          <div class="prop">
+            <span class="prop-icon">&#9881;</span>
+            <span class="prop-label">Opt-out</span>
+            <span class="prop-value">Unter Einstellungen &rarr; Datenschutz &rarr; «Improve Claude» deaktivieren</span>
+          </div>
+        </div>
+        <div class="use-cases">
+          <h3>Geeignet für</h3>
+          <div class="use-case">Allgemeine Fragen und Recherche</div>
+          <div class="use-case">Brainstorming und Textentwürfe ohne sensible Daten</div>
+          <div class="use-case">Lernen und Experimentieren</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ CLAUDE AI TEAM / ENTERPRISE ══════════ -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon blue">&#127970;</div>
+        <div>
+          <h2>Claude AI — Team / Enterprise</h2>
+          <div class="subtitle">Verwaltete Organisationskonten</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="props">
+          <div class="prop">
+            <span class="prop-icon">&#128274;</span>
+            <span class="prop-label">Datenspeicherung</span>
+            <span class="prop-value"><span class="badge caution">Ja</span> — Gespräche werden gespeichert, aber mit erweiterten Kontrollen</span>
+          </div>
+          <div class="prop">
+            <span class="prop-icon">&#129504;</span>
+            <span class="prop-label">Modelltraining</span>
+            <span class="prop-value"><span class="badge safe">Nein</span> — Standardmässig nicht für Training verwendet</span>
+          </div>
+          <div class="prop">
+            <span class="prop-icon">&#128187;</span>
+            <span class="prop-label">Ausführung</span>
+            <span class="prop-value">Cloud-basiert mit erweiterten Sicherheits- und Compliance-Funktionen</span>
+          </div>
+          <div class="prop">
+            <span class="prop-icon">&#128101;</span>
+            <span class="prop-label">Verwaltung</span>
+            <span class="prop-value">Admin-Kontrollen, SSO, Audit-Logs, Datenresidenz-Optionen</span>
+          </div>
+        </div>
+        <div class="use-cases">
+          <h3>Geeignet für</h3>
+          <div class="use-case">Organisationen mit Compliance-Anforderungen</div>
+          <div class="use-case">Teams mit geteilten Projekten</div>
+          <div class="use-case">Bedingt für sensible Daten (mit Admin-Kontrollen)</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══════════ VERGLEICHSTABELLE ══════════ -->
+  <div class="table-section">
+    <h2>Vergleich auf einen Blick</h2>
+    <table class="comparison-table">
+      <thead>
+        <tr>
+          <th>Kriterium</th>
+          <th>Claude Code</th>
+          <th>AI Free/Pro</th>
+          <th>AI Team/Enterprise</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Datenaufbewahrung</td>
+          <td>0 Tage</td>
+          <td>Gespeichert</td>
+          <td>Gespeichert (kontrolliert)</td>
+        </tr>
+        <tr>
+          <td>Training mit Daten</td>
+          <td>Nie</td>
+          <td>Ja (Opt-out)</td>
+          <td>Nein</td>
+        </tr>
+        <tr>
+          <td>Ausführungsort</td>
+          <td>Lokal + API-Call</td>
+          <td>Cloud</td>
+          <td>Cloud</td>
+        </tr>
+        <tr>
+          <td>Dateizugriff</td>
+          <td>Lokal (voll)</td>
+          <td>Upload nötig</td>
+          <td>Upload nötig</td>
+        </tr>
+        <tr>
+          <td>Sensible Daten</td>
+          <td>Geeignet</td>
+          <td>Nicht empfohlen</td>
+          <td>Bedingt geeignet</td>
+        </tr>
+        <tr>
+          <td>Tool-Integration</td>
+          <td>CLI, Git, MCP, etc.</td>
+          <td>Begrenzte Integrationen</td>
+          <td>Begrenzte Integrationen</td>
+        </tr>
+        <tr>
+          <td>Kosten</td>
+          <td>API-basiert (nutzungsabhängig)</td>
+          <td>Gratis / 20 USD/Mt.</td>
+          <td>Ab 25 USD/Nutzer/Mt.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ══════════ ENTSCHEIDUNGSHILFE ══════════ -->
+  <div class="decision">
+    <h2>Welche Lösung passt?</h2>
+    <div class="flow-steps">
+      <div class="flow-step recommended">
+        <span class="flow-num">1</span>
+        <div class="flow-content">
+          <strong>Sensible oder personenbezogene Daten?</strong>
+          <span>&rarr; <strong>Claude Code</strong> verwenden. Daten bleiben lokal, 0-Tage-Retention, kein Training.</span>
+        </div>
+      </div>
+      <div class="flow-step ok">
+        <span class="flow-num">2</span>
+        <div class="flow-content">
+          <strong>Team-Arbeit mit Compliance-Anforderungen?</strong>
+          <span>&rarr; <strong>Claude Team/Enterprise</strong> prüfen. Kein Training, Admin-Kontrollen, aber Daten in der Cloud.</span>
+        </div>
+      </div>
+      <div class="flow-step careful">
+        <span class="flow-num">3</span>
+        <div class="flow-content">
+          <strong>Allgemeine Aufgaben ohne sensible Daten?</strong>
+          <span>&rarr; <strong>Claude AI Free/Pro</strong> reicht aus. Opt-out für Training aktivieren.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ WICHTIG ══════════ -->
+  <div class="card" style="border-left: 3px solid var(--warning);">
+    <div class="card-header">
+      <div class="card-icon orange">&#9888;</div>
+      <div>
+        <h2>Wichtig zu wissen</h2>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="props">
+        <div class="prop">
+          <span class="prop-icon">1</span>
+          <span class="prop-value"><strong>Auch Claude Code ist nicht offline</strong> — Prompts werden zur Verarbeitung an die API gesendet. Passwörter und API-Keys nie direkt im Chat teilen.</span>
+        </div>
+        <div class="prop">
+          <span class="prop-icon">2</span>
+          <span class="prop-value"><strong>0-Tage-Retention ≠ keine Übertragung</strong> — Die Daten werden übertragen, aber nicht gespeichert. Bei hochsensiblen Daten (z.B. Gesundheitsdaten) rechtliche Prüfung empfohlen.</span>
+        </div>
+        <div class="prop">
+          <span class="prop-icon">3</span>
+          <span class="prop-value"><strong>Opt-out bei Claude AI</strong> — Bei Free/Pro-Plänen unbedingt in den Einstellungen das Training mit eigenen Daten deaktivieren.</span>
+        </div>
+        <div class="prop">
+          <span class="prop-icon">4</span>
+          <span class="prop-value"><strong>Stand: März 2025</strong> — Anthropic kann Richtlinien ändern. Aktuelle Informationen immer unter anthropic.com/privacy prüfen.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer class="footer-note">
+  Erstellt als Orientierungshilfe — keine Rechtsberatung. Bei datenschutzrechtlichen Fragen eine Fachperson konsultieren.
+</footer>
+
+</body>
+</html>
