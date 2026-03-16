@@ -464,7 +464,7 @@ header p {
           <div class="prop">
             <span class="prop-icon">&#128274;</span>
             <span class="prop-label">Datenspeicherung</span>
-            <span class="prop-value"><span class="badge safe">0 Tage</span> — Daten werden nach der Antwort nicht gespeichert</span>
+            <span class="prop-value"><span class="badge safe">7 Tage</span> — API-Logs werden nach 7 Tagen automatisch gelöscht (seit Sept. 2025)</span>
           </div>
           <div class="prop">
             <span class="prop-icon">&#129504;</span>
@@ -479,7 +479,7 @@ header p {
           <div class="prop">
             <span class="prop-icon">&#128225;</span>
             <span class="prop-label">Datenübertragung</span>
-            <span class="prop-value">Prompts werden an die Anthropic-API gesendet, aber <strong>nicht gespeichert</strong></span>
+            <span class="prop-value">Prompts werden an die Anthropic-API gesendet und max. 7 Tage gespeichert. Enterprise-Kunden können <strong>Zero Data Retention (ZDR)</strong> aktivieren</span>
           </div>
         </div>
         <div class="use-cases">
@@ -506,12 +506,12 @@ header p {
           <div class="prop">
             <span class="prop-icon">&#128274;</span>
             <span class="prop-label">Datenspeicherung</span>
-            <span class="prop-value"><span class="badge caution">Ja</span> — Gespräche werden auf Anthropic-Servern gespeichert</span>
+            <span class="prop-value"><span class="badge caution">30 Tage / 5 Jahre</span> — 30 Tage bei Opt-out, bis zu 5 Jahre bei Opt-in für Modelltraining</span>
           </div>
           <div class="prop">
             <span class="prop-icon">&#129504;</span>
             <span class="prop-label">Modelltraining</span>
-            <span class="prop-value"><span class="badge caution">Möglich</span> — Kann für Training verwendet werden. Opt-out in den Einstellungen möglich</span>
+            <span class="prop-value"><span class="badge caution">Opt-in</span> — Wenn aktiviert, werden Daten de-identifiziert für Training genutzt. Opt-out jederzeit in den Einstellungen möglich</span>
           </div>
           <div class="prop">
             <span class="prop-icon">&#128187;</span>
@@ -519,9 +519,14 @@ header p {
             <span class="prop-value">Cloud-basiert — alles läuft auf Anthropic-Servern</span>
           </div>
           <div class="prop">
+            <span class="prop-icon">&#128373;</span>
+            <span class="prop-label">Inkognito-Modus</span>
+            <span class="prop-value">Gespräche im Inkognito-Modus werden nicht für Training genutzt und haben eine kürzere Aufbewahrungsfrist</span>
+          </div>
+          <div class="prop">
             <span class="prop-icon">&#9881;</span>
             <span class="prop-label">Opt-out</span>
-            <span class="prop-value">Unter Einstellungen &rarr; Datenschutz &rarr; «Improve Claude» deaktivieren</span>
+            <span class="prop-value">Unter Einstellungen &rarr; Datenschutz &rarr; «Improve Claude» deaktivieren. Gelöschte Chats werden nicht für Training verwendet</span>
           </div>
         </div>
         <div class="use-cases">
@@ -547,7 +552,7 @@ header p {
           <div class="prop">
             <span class="prop-icon">&#128274;</span>
             <span class="prop-label">Datenspeicherung</span>
-            <span class="prop-value"><span class="badge caution">Ja</span> — Gespräche werden gespeichert, aber mit erweiterten Kontrollen</span>
+            <span class="prop-value"><span class="badge caution">Min. 30 Tage</span> — Individuelle Aufbewahrungsfristen konfigurierbar, Minimum 30 Tage</span>
           </div>
           <div class="prop">
             <span class="prop-icon">&#129504;</span>
@@ -557,7 +562,12 @@ header p {
           <div class="prop">
             <span class="prop-icon">&#128187;</span>
             <span class="prop-label">Ausführung</span>
-            <span class="prop-value">Cloud-basiert mit erweiterten Sicherheits- und Compliance-Funktionen</span>
+            <span class="prop-value">Cloud-basiert mit SOC 2 Type II, ISO 27001, AES-256-Verschlüsselung. BYOK (Bring Your Own Key) ab H1 2026 geplant</span>
+          </div>
+          <div class="prop">
+            <span class="prop-icon">&#9889;</span>
+            <span class="prop-label">Zero Data Retention</span>
+            <span class="prop-value"><span class="badge safe">Verfügbar</span> — ZDR löscht Daten innerhalb von Minuten nach Sicherheitsprüfung. Aktivierung pro Organisation über das Account-Team</span>
           </div>
           <div class="prop">
             <span class="prop-icon">&#128101;</span>
@@ -591,9 +601,9 @@ header p {
       <tbody>
         <tr>
           <td>Datenaufbewahrung</td>
-          <td>0 Tage</td>
-          <td>Gespeichert</td>
-          <td>Gespeichert (kontrolliert)</td>
+          <td>7 Tage (API)</td>
+          <td>30 Tage / 5 Jahre</td>
+          <td>Min. 30 Tage (ZDR möglich)</td>
         </tr>
         <tr>
           <td>Training mit Daten</td>
@@ -643,14 +653,14 @@ header p {
         <span class="flow-num">1</span>
         <div class="flow-content">
           <strong>Sensible oder personenbezogene Daten?</strong>
-          <span>&rarr; <strong>Claude Code</strong> verwenden. Daten bleiben lokal, 0-Tage-Retention, kein Training.</span>
+          <span>&rarr; <strong>Claude Code</strong> verwenden. Daten bleiben lokal, 7-Tage-API-Retention, kein Training.</span>
         </div>
       </div>
       <div class="flow-step ok">
         <span class="flow-num">2</span>
         <div class="flow-content">
           <strong>Team-Arbeit mit Compliance-Anforderungen?</strong>
-          <span>&rarr; <strong>Claude Team/Enterprise</strong> prüfen. Kein Training, Admin-Kontrollen, aber Daten in der Cloud.</span>
+          <span>&rarr; <strong>Claude Team/Enterprise</strong> prüfen. Kein Training, Admin-Kontrollen, ZDR-Option verfügbar.</span>
         </div>
       </div>
       <div class="flow-step careful">
@@ -675,19 +685,23 @@ header p {
       <div class="props">
         <div class="prop">
           <span class="prop-icon">1</span>
-          <span class="prop-value"><strong>Auch Claude Code ist nicht offline</strong> — Prompts werden zur Verarbeitung an die API gesendet. Passwörter und API-Keys nie direkt im Chat teilen.</span>
+          <span class="prop-value"><strong>Auch Claude Code ist nicht offline</strong> — Prompts werden zur Verarbeitung an die API gesendet und 7 Tage gespeichert. Passwörter und API-Keys nie direkt im Chat teilen.</span>
         </div>
         <div class="prop">
           <span class="prop-icon">2</span>
-          <span class="prop-value"><strong>0-Tage-Retention ≠ keine Übertragung</strong> — Die Daten werden übertragen, aber nicht gespeichert. Bei hochsensiblen Daten (z.B. Gesundheitsdaten) rechtliche Prüfung empfohlen.</span>
+          <span class="prop-value"><strong>7-Tage-Retention ≠ kein Datenschutz</strong> — Die Daten werden übertragen und kurzzeitig gespeichert, aber nie für Training genutzt. Bei hochsensiblen Daten (z.B. Gesundheitsdaten) rechtliche Prüfung empfohlen.</span>
         </div>
         <div class="prop">
           <span class="prop-icon">3</span>
-          <span class="prop-value"><strong>Opt-out bei Claude AI</strong> — Bei Free/Pro-Plänen unbedingt in den Einstellungen das Training mit eigenen Daten deaktivieren.</span>
+          <span class="prop-value"><strong>Opt-out bei Claude AI</strong> — Bei Free/Pro/Max-Plänen unbedingt «Improve Claude» deaktivieren, sonst werden Daten bis zu 5 Jahre aufbewahrt. Gelöschte Chats werden nicht für Training verwendet.</span>
         </div>
         <div class="prop">
           <span class="prop-icon">4</span>
-          <span class="prop-value"><strong>Stand: März 2025</strong> — Anthropic kann Richtlinien ändern. Aktuelle Informationen immer unter anthropic.com/privacy prüfen.</span>
+          <span class="prop-value"><strong>Inkognito-Modus nutzen</strong> — In Claude AI sind Inkognito-Gespräche vom Training ausgeschlossen und haben kürzere Aufbewahrungsfristen.</span>
+        </div>
+        <div class="prop">
+          <span class="prop-icon">5</span>
+          <span class="prop-value"><strong>Stand: März 2026</strong> — Anthropic kann Richtlinien ändern. Aktuelle Informationen unter <a href="https://privacy.anthropic.com" style="color: var(--accent);">privacy.anthropic.com</a> prüfen.</span>
         </div>
       </div>
     </div>
