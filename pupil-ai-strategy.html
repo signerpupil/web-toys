@@ -1,0 +1,1328 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PUPIL KI-Strategie 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Fraunces:ital,wght@0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0c0f14;
+  --bg-card: #151921;
+  --bg-card-hover: #1a2030;
+  --bg-elevated: #1e2436;
+  --border: #2a3148;
+  --border-accent: #3d4f7c;
+  --text: #e4e8f1;
+  --text-muted: #8892a8;
+  --text-dim: #5c6580;
+  --accent: #6c8cff;
+  --accent-glow: #4a6ef5;
+  --accent-soft: rgba(108,140,255,0.12);
+  --green: #34d399;
+  --green-soft: rgba(52,211,153,0.12);
+  --yellow: #fbbf24;
+  --yellow-soft: rgba(251,191,36,0.12);
+  --red: #f87171;
+  --red-soft: rgba(248,113,113,0.12);
+  --orange: #fb923c;
+  --orange-soft: rgba(251,146,60,0.12);
+  --purple: #a78bfa;
+  --purple-soft: rgba(167,139,250,0.12);
+  --cyan: #22d3ee;
+  --cyan-soft: rgba(34,211,238,0.12);
+  --radius: 12px;
+  --radius-sm: 8px;
+  --shadow: 0 4px 24px rgba(0,0,0,0.3);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─── Layout ─── */
+.container { max-width: 1280px; margin: 0 auto; padding: 0 32px; }
+
+header {
+  padding: 48px 0 0;
+  position: relative;
+  overflow: hidden;
+}
+header::before {
+  content: '';
+  position: absolute;
+  top: -200px; right: -200px;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(108,140,255,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.header-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.logo-area { display: flex; align-items: center; gap: 14px; }
+.logo-mark {
+  width: 44px; height: 44px;
+  background: linear-gradient(135deg, var(--accent), #a78bfa);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Fraunces', serif;
+  font-weight: 800; font-size: 20px; color: white;
+}
+.logo-text { font-family: 'Fraunces', serif; font-weight: 700; font-size: 22px; letter-spacing: -0.5px; }
+.logo-sub { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
+
+.meta-badges { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 14px; border-radius: 100px;
+  font-size: 12px; font-weight: 600; letter-spacing: 0.3px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+}
+.badge .dot { width: 6px; height: 6px; border-radius: 50%; }
+.badge .dot.live { background: var(--green); box-shadow: 0 0 8px var(--green); }
+.badge .dot.draft { background: var(--yellow); }
+
+/* ─── Navigation Tabs ─── */
+nav {
+  margin-top: 36px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  gap: 0;
+}
+.nav-tab {
+  padding: 14px 24px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+  user-select: none;
+  background: none;
+  border-top: none; border-left: none; border-right: none;
+  font-family: inherit;
+}
+.nav-tab:hover { color: var(--text); }
+.nav-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+.nav-tab .tab-count {
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 11px; font-weight: 700;
+  padding: 2px 8px; border-radius: 100px; margin-left: 8px;
+}
+
+/* ─── Sections ─── */
+.view { display: none; padding: 40px 0 80px; }
+.view.active { display: block; }
+
+h1 {
+  font-family: 'Fraunces', serif;
+  font-weight: 800;
+  font-size: 40px;
+  letter-spacing: -1.5px;
+  line-height: 1.15;
+  margin-bottom: 16px;
+  background: linear-gradient(135deg, var(--text), var(--accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+h2 {
+  font-family: 'Fraunces', serif;
+  font-weight: 700;
+  font-size: 26px;
+  letter-spacing: -0.8px;
+  margin: 48px 0 20px;
+  display: flex; align-items: center; gap: 12px;
+}
+h2 .h2-icon {
+  width: 32px; height: 32px; border-radius: var(--radius-sm);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+}
+
+h3 {
+  font-size: 17px;
+  font-weight: 700;
+  margin: 28px 0 10px;
+  color: var(--text);
+}
+
+p { margin-bottom: 14px; color: var(--text-muted); font-size: 15px; }
+p.lead { font-size: 17px; color: var(--text); line-height: 1.7; }
+
+/* ─── Stats Row ─── */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin: 32px 0;
+}
+.stat-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+}
+.stat-card::after {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 3px;
+}
+.stat-card.red::after { background: linear-gradient(90deg, var(--red), var(--orange)); }
+.stat-card.yellow::after { background: linear-gradient(90deg, var(--yellow), var(--orange)); }
+.stat-card.blue::after { background: linear-gradient(90deg, var(--accent), var(--cyan)); }
+.stat-card.green::after { background: linear-gradient(90deg, var(--green), var(--cyan)); }
+.stat-value {
+  font-family: 'Fraunces', serif;
+  font-size: 36px; font-weight: 800; letter-spacing: -1px;
+  margin-bottom: 4px;
+}
+.stat-card.red .stat-value { color: var(--red); }
+.stat-card.yellow .stat-value { color: var(--yellow); }
+.stat-card.blue .stat-value { color: var(--accent); }
+.stat-card.green .stat-value { color: var(--green); }
+.stat-label { font-size: 13px; color: var(--text-muted); font-weight: 500; }
+.stat-source { font-size: 11px; color: var(--text-dim); margin-top: 8px; }
+.stat-source a { color: var(--accent); text-decoration: none; }
+.stat-source a:hover { text-decoration: underline; }
+
+/* ─── Role Cards ─── */
+.role-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+  gap: 20px;
+  margin: 24px 0;
+}
+.role-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+  transition: border-color 0.2s, transform 0.2s;
+}
+.role-card:hover { border-color: var(--border-accent); transform: translateY(-2px); }
+.role-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+.role-icon {
+  width: 40px; height: 40px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+}
+.role-title { font-weight: 700; font-size: 16px; }
+.role-subtitle { font-size: 12px; color: var(--text-muted); }
+.pain-list { list-style: none; }
+.pain-list li {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 14px;
+  color: var(--text-muted);
+}
+.pain-list li:last-child { border-bottom: none; }
+.pain-pct {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 600; font-size: 13px;
+  color: var(--red);
+  min-width: 40px;
+}
+
+/* ─── Module Cards ─── */
+.module-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+  margin: 20px 0;
+  transition: border-color 0.2s;
+}
+.module-card:hover { border-color: var(--border-accent); }
+.module-header {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  margin-bottom: 16px; flex-wrap: wrap; gap: 12px;
+}
+.module-name {
+  font-family: 'Fraunces', serif;
+  font-weight: 700; font-size: 20px; letter-spacing: -0.5px;
+}
+.module-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+.tag {
+  display: inline-flex; align-items: center;
+  padding: 4px 10px; border-radius: 100px;
+  font-size: 11px; font-weight: 600; letter-spacing: 0.2px;
+}
+.tag.impact-high { background: var(--red-soft); color: var(--red); }
+.tag.impact-mid { background: var(--yellow-soft); color: var(--yellow); }
+.tag.impact-low { background: var(--green-soft); color: var(--green); }
+.tag.role-lp { background: var(--purple-soft); color: var(--purple); }
+.tag.role-sv { background: var(--cyan-soft); color: var(--cyan); }
+.tag.role-sl { background: var(--orange-soft); color: var(--orange); }
+
+.module-desc { font-size: 14px; color: var(--text-muted); margin-bottom: 16px; line-height: 1.6; }
+
+.feature-list { display: grid; gap: 10px; }
+.feature-item {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 16px 18px;
+}
+.feature-name { font-weight: 700; font-size: 14px; margin-bottom: 6px; color: var(--text); }
+.feature-desc { font-size: 13px; color: var(--text-muted); line-height: 1.55; }
+.feature-ref {
+  margin-top: 8px; font-size: 12px;
+}
+.feature-ref a {
+  color: var(--accent);
+  text-decoration: none;
+  border-bottom: 1px dashed rgba(108,140,255,0.3);
+}
+.feature-ref a:hover { border-bottom-color: var(--accent); }
+
+/* ─── Phase Timeline ─── */
+.timeline { position: relative; margin: 32px 0; padding-left: 32px; }
+.timeline::before {
+  content: '';
+  position: absolute; left: 12px; top: 0; bottom: 0;
+  width: 2px;
+  background: linear-gradient(180deg, var(--accent), var(--purple), var(--green), var(--cyan));
+  border-radius: 2px;
+}
+.phase-block {
+  position: relative;
+  margin-bottom: 32px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+}
+.phase-block::before {
+  content: '';
+  position: absolute; left: -26px; top: 28px;
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  border: 2px solid var(--accent);
+  background: var(--bg);
+}
+.phase-block:nth-child(2)::before { border-color: var(--purple); }
+.phase-block:nth-child(3)::before { border-color: var(--green); }
+.phase-block:nth-child(4)::before { border-color: var(--cyan); }
+.phase-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; font-weight: 600; letter-spacing: 0.5px;
+  color: var(--accent); margin-bottom: 6px;
+  text-transform: uppercase;
+}
+.phase-block:nth-child(2) .phase-label { color: var(--purple); }
+.phase-block:nth-child(3) .phase-label { color: var(--green); }
+.phase-block:nth-child(4) .phase-label { color: var(--cyan); }
+.phase-title {
+  font-family: 'Fraunces', serif;
+  font-weight: 700; font-size: 19px; letter-spacing: -0.4px;
+  margin-bottom: 12px;
+}
+.phase-items { list-style: none; }
+.phase-items li {
+  padding: 6px 0;
+  font-size: 14px;
+  color: var(--text-muted);
+  display: flex; align-items: baseline; gap: 8px;
+}
+.phase-items li::before {
+  content: '';
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--text-dim);
+  flex-shrink: 0;
+  margin-top: 7px;
+}
+
+/* ─── Competitor Section ─── */
+.competitor-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+  margin: 20px 0;
+}
+.comp-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 22px;
+}
+.comp-name { font-weight: 700; font-size: 15px; margin-bottom: 4px; }
+.comp-reach { font-size: 12px; color: var(--text-dim); margin-bottom: 10px; }
+.comp-status {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 10px; border-radius: 100px;
+  font-size: 11px; font-weight: 600;
+}
+.comp-status.has-ai { background: var(--red-soft); color: var(--red); }
+.comp-status.no-ai { background: rgba(255,255,255,0.05); color: var(--text-dim); }
+.comp-desc { font-size: 13px; color: var(--text-muted); margin-top: 10px; line-height: 1.5; }
+
+/* ═══════════════════════════════════════ */
+/* ─── VIEW 2: ICE Feature Matrix ─── */
+/* ═══════════════════════════════════════ */
+
+.controls-bar {
+  display: flex; gap: 12px; flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: 24px;
+  padding: 16px 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.controls-bar label {
+  font-size: 13px; font-weight: 600; color: var(--text-muted); margin-right: 4px;
+}
+.controls-bar select, .controls-bar input[type=text] {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 8px 14px;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 13px;
+  outline: none;
+}
+.controls-bar select:focus, .controls-bar input:focus { border-color: var(--accent); }
+
+.ice-legend {
+  display: flex; gap: 20px; flex-wrap: wrap;
+  margin-bottom: 20px;
+  font-size: 13px; color: var(--text-muted);
+}
+.ice-legend span { display: flex; align-items: center; gap: 6px; }
+.legend-dot {
+  width: 10px; height: 10px; border-radius: 3px;
+}
+
+.feature-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-card);
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+thead th {
+  text-align: left;
+  padding: 14px 16px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-elevated);
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+}
+thead th:hover { color: var(--text); }
+thead th .sort-arrow { margin-left: 4px; font-size: 10px; opacity: 0.5; }
+thead th.sorted .sort-arrow { opacity: 1; color: var(--accent); }
+
+tbody tr {
+  border-bottom: 1px solid var(--border);
+  transition: background 0.15s;
+}
+tbody tr:hover { background: var(--bg-card-hover); }
+tbody tr:last-child { border-bottom: none; }
+td { padding: 14px 16px; vertical-align: top; }
+td.feature-name-cell { font-weight: 600; color: var(--text); min-width: 200px; }
+td.module-cell { color: var(--text-muted); white-space: nowrap; }
+td.desc-cell { color: var(--text-muted); max-width: 320px; line-height: 1.5; }
+
+.score-bar {
+  display: flex; align-items: center; gap: 6px;
+}
+.score-fill {
+  height: 8px;
+  border-radius: 4px;
+  min-width: 12px;
+  transition: width 0.3s;
+}
+.score-val {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; font-weight: 600;
+  min-width: 20px;
+}
+
+.ice-total {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 15px; font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 6px;
+  display: inline-block;
+}
+.ice-total.tier-1 { background: var(--red-soft); color: var(--red); }
+.ice-total.tier-2 { background: var(--orange-soft); color: var(--orange); }
+.ice-total.tier-3 { background: var(--yellow-soft); color: var(--yellow); }
+.ice-total.tier-4 { background: rgba(255,255,255,0.05); color: var(--text-dim); }
+
+.phase-badge {
+  display: inline-flex; padding: 3px 10px; border-radius: 100px;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.3px;
+}
+.phase-badge.p1 { background: var(--accent-soft); color: var(--accent); }
+.phase-badge.p2 { background: var(--purple-soft); color: var(--purple); }
+.phase-badge.p3 { background: var(--green-soft); color: var(--green); }
+.phase-badge.p4 { background: var(--cyan-soft); color: var(--cyan); }
+
+/* ─── Responsive ─── */
+@media (max-width: 768px) {
+  .container { padding: 0 16px; }
+  h1 { font-size: 28px; }
+  h2 { font-size: 21px; }
+  .stats-row { grid-template-columns: 1fr 1fr; }
+  .role-grid { grid-template-columns: 1fr; }
+  .nav-tab { padding: 12px 14px; font-size: 13px; }
+  table { font-size: 12px; }
+  td, th { padding: 10px 12px; }
+}
+
+/* ─── Scroll to top ─── */
+.scroll-top {
+  position: fixed; bottom: 32px; right: 32px;
+  width: 44px; height: 44px;
+  background: var(--accent);
+  color: white;
+  border: none; border-radius: 50%;
+  cursor: pointer;
+  font-size: 20px;
+  display: none;
+  align-items: center; justify-content: center;
+  box-shadow: 0 4px 16px rgba(108,140,255,0.4);
+  transition: transform 0.2s;
+  z-index: 100;
+}
+.scroll-top:hover { transform: scale(1.1); }
+.scroll-top.visible { display: flex; }
+
+/* ─── Print ─── */
+@media print {
+  body { background: white; color: #1a1a1a; }
+  .nav-tab, .controls-bar, .scroll-top { display: none !important; }
+  .view { display: block !important; }
+  .module-card, .stat-card, .role-card, .comp-card, .phase-block { break-inside: avoid; }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <div class="header-inner">
+      <div>
+        <div class="logo-area">
+          <div class="logo-mark">P</div>
+          <div>
+            <div class="logo-text">PUPIL KI-Strategie</div>
+            <div class="logo-sub">Wo KI am meisten Zeit spart — Deep Dive 2026</div>
+          </div>
+        </div>
+      </div>
+      <div class="meta-badges">
+        <span class="badge"><span class="dot draft"></span> Draft</span>
+        <span class="badge">März 2026</span>
+        <span class="badge">45+ Module analysiert</span>
+      </div>
+    </div>
+
+    <nav>
+      <button class="nav-tab active" data-view="strategy" onclick="switchView('strategy')">
+        Strategie-Übersicht
+      </button>
+      <button class="nav-tab" data-view="features" onclick="switchView('features')">
+        KI-Feature Matrix <span class="tab-count" id="feature-count">35</span>
+      </button>
+    </nav>
+  </header>
+
+  <!-- ════════════════════════════════════════ -->
+  <!-- VIEW 1: STRATEGY OVERVIEW              -->
+  <!-- ════════════════════════════════════════ -->
+  <div class="view active" id="view-strategy">
+
+    <h1>Zeit zurückgeben — mit gezielter KI-Integration</h1>
+    <p class="lead">
+      Lehrpersonen in der Schweiz verbringen nur noch ein Drittel ihrer Arbeitszeit mit dem eigentlichen Unterricht.
+      Der Rest fliesst in Administration, Dokumentation und Kommunikation. PUPIL kann als integrierte Plattform mit 45+ Modulen
+      gezielt dort ansetzen, wo die grössten Zeitfresser lauern — und mit KI-Features echte Stunden zurückgeben.
+    </p>
+
+    <!-- Key Stats -->
+    <div class="stats-row">
+      <div class="stat-card red">
+        <div class="stat-value">46h</div>
+        <div class="stat-label">Wochenarbeitszeit CH-Lehrpersonen (Schulzeit)</div>
+        <div class="stat-source"><a href="https://www.bbeval.ch/post/copy-of-design-a-stunning-blog" target="_blank">Arbeitszeiterhebung CH →</a></div>
+      </div>
+      <div class="stat-card yellow">
+        <div class="stat-value">55h</div>
+        <div class="stat-label">Wochenarbeitszeit Schulleitungen (SLMS 2023)</div>
+        <div class="stat-source"><a href="https://www.vslch.ch/themen/%EF%82%A7slms-schulleitungsmonitor/" target="_blank">Schulleitungsmonitor →</a></div>
+      </div>
+      <div class="stat-card blue">
+        <div class="stat-value">54%</div>
+        <div class="stat-label">Lehrpersonen: Elternkommunikation = Zeitfresser #1</div>
+        <div class="stat-source"><a href="https://deutsches-schulportal.de/bildungswesen/unterrichtsferne-aufgaben-was-gehoert-dazu-und-wobei-kann-es-entlastung-geben/" target="_blank">Deutsches Schulportal →</a></div>
+      </div>
+      <div class="stat-card green">
+        <div class="stat-value">31%</div>
+        <div class="stat-label">Anteil Unterricht an Gesamtarbeitszeit (vs. 45% in 1960er)</div>
+        <div class="stat-source"><a href="https://www.lch.ch/fileadmin/user_upload_lch/Verband/Grundlagen/Berufsauftrag_LCH.pdf" target="_blank">LCH Berufsauftrag →</a></div>
+      </div>
+    </div>
+
+    <!-- Zeitfresser nach Rolle -->
+    <h2><span class="h2-icon" style="background:var(--red-soft);color:var(--red)">⏱</span> Zeitfresser nach Rolle</h2>
+
+    <div class="role-grid">
+      <div class="role-card">
+        <div class="role-header">
+          <div class="role-icon" style="background:var(--purple-soft)">🧑‍🏫</div>
+          <div>
+            <div class="role-title">Lehrpersonen</div>
+            <div class="role-subtitle">46h/Woche · 9–16% unbezahlte Überzeit</div>
+          </div>
+        </div>
+        <ul class="pain-list">
+          <li><span class="pain-pct">54%</span> Korrespondenz mit Eltern und Behörden</li>
+          <li><span class="pain-pct">54%</span> Formulare und Statistiken ausfüllen</li>
+          <li><span class="pain-pct">51%</span> Fehlzeiten erfassen und nachverfolgen</li>
+          <li><span class="pain-pct">47%</span> Dokumentation von Schülerleistungen</li>
+          <li><span class="pain-pct">43%</span> Organisation von Veranstaltungen/Ausflügen</li>
+        </ul>
+        <div class="stat-source" style="margin-top:12px">
+          <a href="https://deutsches-schulportal.de/bildungswesen/unterrichtsferne-aufgaben-was-gehoert-dazu-und-wobei-kann-es-entlastung-geben/" target="_blank">Quelle: Deutsches Schulportal 2023, n=1'059 →</a>
+        </div>
+      </div>
+
+      <div class="role-card">
+        <div class="role-header">
+          <div class="role-icon" style="background:var(--cyan-soft)">🏢</div>
+          <div>
+            <div class="role-title">Schulverwaltung / Sekretariat</div>
+            <div class="role-subtitle">Permanente Datenpflege · Systembrüche</div>
+          </div>
+        </div>
+        <ul class="pain-list">
+          <li><span class="pain-pct">●</span> Semesterübergänge (Einschreibungen, Stundenpläne)</li>
+          <li><span class="pain-pct">●</span> BISTA-Datenexporte und kantonale Statistiken</li>
+          <li><span class="pain-pct">●</span> Rechnungsverarbeitung im Zwei-System-Workflow</li>
+          <li><span class="pain-pct">●</span> Manuelle Datenabgleiche mit Einwohnerkontrolle</li>
+          <li><span class="pain-pct">●</span> Serienbriefe und Dokumentvorlagen pflegen</li>
+        </ul>
+        <div class="stat-source" style="margin-top:12px">
+          <a href="https://link.springer.com/chapter/10.1007/978-3-658-38651-1_4" target="_blank">Quelle: Springer 2023 – «Digital ist besser?» →</a>
+        </div>
+      </div>
+
+      <div class="role-card">
+        <div class="role-header">
+          <div class="role-icon" style="background:var(--orange-soft)">👔</div>
+          <div>
+            <div class="role-title">Schulleitung</div>
+            <div class="role-subtitle">55h/Woche · 74% haben zu wenig Zeit</div>
+          </div>
+        </div>
+        <ul class="pain-list">
+          <li><span class="pain-pct">24%</span> Reine Verwaltungstätigkeiten</li>
+          <li><span class="pain-pct">23%</span> Personalführung</li>
+          <li><span class="pain-pct">●</span> Stellvertretungsorganisation</li>
+          <li><span class="pain-pct">●</span> Stundenplanerstellung und -anpassung</li>
+          <li><span class="pain-pct">●</span> Schulentwicklung wird systematisch verdrängt</li>
+        </ul>
+        <div class="stat-source" style="margin-top:12px">
+          <a href="https://www.radix.ch/media/icnhxaqb/schulleitungsmonitor-schweiz-2021-kurzbericht.pdf" target="_blank">Quelle: SLMS 2021/2023 →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Module Deep Dives -->
+    <h2><span class="h2-icon" style="background:var(--accent-soft);color:var(--accent)">🧩</span> KI-Chancen pro Modul</h2>
+
+    <div class="module-card">
+      <div class="module-header">
+        <div class="module-name">📝 Noten &amp; Zeugnisse</div>
+        <div class="module-tags">
+          <span class="tag impact-low">Impact: Niedrig</span>
+          <span class="tag role-lp">Lehrpersonen</span>
+        </div>
+      </div>
+      <div class="module-desc">
+        Verwaltung des Zeugnisprozesses — Notensammlung, Prädikate, Generierung und Druck kantonaler Zeugnisse.
+        <strong>Wenig KI-Potenzial:</strong> In allen PUPIL-Kantonen (AG, SG, ZH, SZ, TG) basieren Zeugnisse und Zwischenberichte auf <strong>Noten + vordefinierten Prädikaten</strong> (vierstufige Skala), nicht auf Freitexten.
+        Einzige Freitext-Bereiche: Bericht angepasste Lernziele (AG, nur bei SuS mit angepassten LZ), Lernbericht 1. Klasse (AG).
+        Diese betreffen eine kleine Population und gehören thematisch eher zum Förderplaner.
+      </div>
+      <div class="feature-list">
+        <div class="feature-item">
+          <div class="feature-name">Konsistenzprüfung Noten ↔ Prädikate</div>
+          <div class="feature-desc">KI erkennt Widersprüche zwischen Fachnotendurchschnitt und Prädikaten im Arbeits-/Sozialverhalten und warnt die Lehrperson.</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-name">Bericht angepasste Lernziele (AG)</div>
+          <div class="feature-desc">Für SuS mit angepassten Lernzielen: KI generiert narrative Beurteilungstexte aus Förderplandaten. Kleine Zielgruppe, aber hoher Zeitaufwand pro Bericht.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="module-card">
+      <div class="module-header">
+        <div class="module-name">🎯 Förderplaner</div>
+        <div class="module-tags">
+          <span class="tag impact-high">Impact: Hoch</span>
+          <span class="tag role-lp">Lehrpersonen</span>
+        </div>
+      </div>
+      <div class="module-desc">
+        Verwaltung von Förderdossiers für SuS mit besonderem Bildungsbedarf. In den USA nutzen bereits 57% der Sonderpädagog:innen KI für IEP-Dokumentation —
+        mit einer Reduktion der Schreibzeit von <strong>3–4 Stunden auf 20 Minuten</strong> pro Plan.
+      </div>
+      <div class="feature-list">
+        <div class="feature-item">
+          <div class="feature-name">SMART-Zielgenerierung</div>
+          <div class="feature-desc">KI formuliert spezifische, messbare Förderziele basierend auf Diagnose, bisherigem Verlauf und LP21-Kompetenzstufe. Spart 30–60 Min. pro Dossier.</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-name">Automatisierte Verlaufsberichte</div>
+          <div class="feature-desc">Aus laufenden Journal-Einträgen und Beurteilungsdaten generiert die KI narrative Fortschrittsberichte für SSG-Gespräche.</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-name">Kantonale Berichtsformate</div>
+          <div class="feature-desc">Automatische Befüllung kantonsspezifischer Vorlagen (SSG-Berichte, Lernberichte TG) aus erfassten Daten.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="module-card">
+      <div class="module-header">
+        <div class="module-name">💬 PUPIL Connect &amp; Elternportal</div>
+        <div class="module-tags">
+          <span class="tag impact-high">Impact: Hoch</span>
+          <span class="tag role-lp">Lehrpersonen</span>
+          <span class="tag role-sv">Schulverwaltung</span>
+        </div>
+      </div>
+      <div class="module-desc">
+        Messenger-App für Eltern-Schule-Kommunikation. Elternkorrespondenz ist mit 54% der #1 Zeitfresser.
+        <a href="https://dokumentation.pupil.ch/article/9dtyf60ctw-pupil-connect-fuer-lehrpersonen" target="_blank">PUPIL Connect Doku →</a>
+      </div>
+      <div class="feature-list">
+        <div class="feature-item">
+          <div class="feature-name">Elternbrief-Generator</div>
+          <div class="feature-desc">KI erstellt Entwürfe für Briefe, Einladungen und Informationsschreiben basierend auf Stichworten. Wählbarer Ton (formell/informell).</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-name">Automatische Antwortvorschläge</div>
+          <div class="feature-desc">Bei häufigen Elternfragen (Materiallisten, Termine) schlägt die KI Antworten vor — ein Klick zum Senden.</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-name">FAQ-Chatbot im Elternportal</div>
+          <div class="feature-desc">Automatisierte Beantwortung häufiger Fragen (Stundenplan, Ferienplan, Schulregeln).</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="module-card">
+      <div class="module-header">
+        <div class="module-name">📊 Absenzen</div>
+        <div class="module-tags">
+          <span class="tag impact-high">Impact: Hoch</span>
+          <span class="tag role-lp">Lehrpersonen</span>
+          <span class="tag role-sl">Schulleitung</span>
+        </div>
+      </div>
+      <div class="module-desc">
+        Absenzerfassung mit Workflow (erstellt → gelesen → visiert → Journal). 51% der LP nennen Fehlzeitenerfassung als Top-Zeitfresser.
+        <a href="https://dokumentation.pupil.ch/article/h3xwfk0hf7-absenzen-erstellen-verwalten" target="_blank">PUPIL Absenzen Doku →</a>
+      </div>
+      <div class="feature-list">
+        <div class="feature-item">
+          <div class="feature-name">Anomalie-Erkennung</div>
+          <div class="feature-desc">Erkennung ungewöhnlicher Muster (steigende Häufigkeit, Montags-/Freitagshäufung, Cluster vor Prüfungen). Frühwarnung an LP/SL.</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-name">Batch-Visierung mit KI-Prüfung</div>
+          <div class="feature-desc">KI prüft eingereichte Absenzen, flaggt auffällige Einträge — Sammelfreigabe für unproblematische Fälle.</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-name">Auto-Kategorisierung aus Elternchats</div>
+          <div class="feature-desc">Aus PUPIL Connect Nachrichten extrahiert die KI automatisch Absenzgrund und schlägt Kategorisierung vor.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="module-card">
+      <div class="module-header">
+        <div class="module-name">📅 Stundenplanung</div>
+        <div class="module-tags">
+          <span class="tag impact-high">Impact: Hoch</span>
+          <span class="tag role-sl">Schulleitung</span>
+          <span class="tag role-sv">Schulverwaltung</span>
+        </div>
+      </div>
+      <div class="module-desc">
+        Stundenpläne mit kantonaler Stundentafel, Teilzeitpensen, Raumzuweisung. Bindet Schulleitungen über Wochen.
+        <a href="https://dokumentation.pupil.ch/article/xds10caret-stundenplan" target="_blank">PUPIL Stundenplan Doku →</a>
+        · Sdui AI Timetable Planner bereits im Konzern vorhanden.
+      </div>
+      <div class="feature-list">
+        <div class="feature-item">
+          <div class="feature-name">Automatische Stundenplangenerierung</div>
+          <div class="feature-desc">KI-Algorithmus erstellt optimierte Pläne unter Berücksichtigung aller Constraints (Pensen, Räume, Blockzeiten, kantonale Vorgaben).</div>
+          <div class="feature-ref">Vorbild: <a href="https://www.timetablemaster.com/timetable-generator-ai" target="_blank">TimetableMaster AI</a> · <a href="https://sdui.de/ki-stundenplaner/" target="_blank">Sdui KI-Stundenplaner</a></div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-name">Stellvertretungsvorschläge</div>
+          <div class="feature-desc">Bei LP-Ausfall: automatische Identifikation verfügbarer Vertretungen basierend auf Pensum, Fach und Belastung.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="module-card">
+      <div class="module-header">
+        <div class="module-name">✏️ Beurteilungen (formativ, mit Freitext)</div>
+        <div class="module-tags">
+          <span class="tag impact-high">Impact: Hoch</span>
+          <span class="tag role-lp">Lehrpersonen</span>
+        </div>
+      </div>
+      <div class="module-desc">
+        <strong>Hier liegt das grösste KI-Textpotenzial im Beurteilungsbereich.</strong>
+        PUPIL bietet «Beurteilung mit Freitext» als eigenständige Variante neben Prädikaten und Noten — <a href="https://dokumentation.pupil.ch/article/upiapp8hqs-01-beobachten-und-beurteilen" target="_blank">PUPIL Beurteilungen Doku →</a>.
+        Lehrpersonen schreiben hier formative Textbeurteilungen pro Schüler:in während des Semesters (v.a. Primarstufe). Im Gegensatz zum Zeugnis (Noten/Prädikate) enthält dieser Bereich echten, individualisierten Freitext — für jedes Kind, jedes Fach, mehrmals pro Semester.
+      </div>
+      <div class="feature-list">
+        <div class="feature-item">
+          <div class="feature-name">KI-Textvervollständigung bei Freitext-Beurteilungen</div>
+          <div class="feature-desc">Kontextbezogene Formulierungsvorschläge basierend auf Notentrend, LP21-Kompetenzen und bisherigen Einträgen. LP tippt Stichworte → KI generiert vollständigen Beurteilungstext. Geschätzte Einsparung: 3–6h pro Semester für LP mit Freitextbeurteilungen.</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-name">Pattern-Erkennung Leistungsentwicklung</div>
+          <div class="feature-desc">KI identifiziert auffällige Leistungsveränderungen über mehrere Beurteilungen hinweg und informiert die LP proaktiv.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="module-card">
+      <div class="module-header">
+        <div class="module-name">🗣 Elterngespräche</div>
+        <div class="module-tags">
+          <span class="tag impact-high">Impact: Hoch</span>
+          <span class="tag role-lp">Lehrpersonen</span>
+        </div>
+      </div>
+      <div class="module-desc">
+        Digitale Terminplanung und Dokumentation von Elterngesprächen. <strong>Elterngespräche sind einer der zeitintensivsten Bereiche</strong> — die Vorbereitung (Daten zusammentragen) und Nachbereitung (Protokoll) erfordern erheblichen Freitext-Aufwand.
+        <a href="https://dokumentation.pupil.ch/article/e2k5jko7kr-elterngespraeche" target="_blank">PUPIL Elterngespräche Doku →</a>
+      </div>
+      <div class="feature-list">
+        <div class="feature-item">
+          <div class="feature-name">Gesprächsvorbereitungs-Assistent</div>
+          <div class="feature-desc">KI erstellt für jede:n Schüler:in eine kompakte Gesprächsvorbereitung auf einer Seite: Notenverlauf, Beurteilungstrends, Absenzenmuster, Journal-Zusammenfassung, offene Fördermassnahmen, Stärken und Entwicklungsbereiche.</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-name">Gesprächsprotokoll-Assistent</div>
+          <div class="feature-desc">Nach dem Gespräch: aus Stichworten generiert die KI ein strukturiertes Protokoll mit Beobachtungen, Vereinbarungen und nächsten Schritten.</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-name">Voice Input für Beratungsgespräche</div>
+          <div class="feature-desc">Sprachaufnahme während SSG-/Beratungsgesprächen → KI transkribiert und erstellt strukturiertes Protokoll mit extrahierten Aufgaben.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="module-card">
+      <div class="module-header">
+        <div class="module-name">📓 Journal · Schulplaner</div>
+        <div class="module-tags">
+          <span class="tag impact-mid">Impact: Mittel</span>
+          <span class="tag role-lp">Lehrpersonen</span>
+        </div>
+      </div>
+      <div class="module-desc">
+        <a href="https://dokumentation.pupil.ch/article/d7tg1rgu18-05-journal" target="_blank">Journal →</a> ·
+        <a href="https://dokumentation.pupil.ch/article/5hkelq0zst-schulplaner" target="_blank">Schulplaner →</a>
+      </div>
+      <div class="feature-list">
+        <div class="feature-item">
+          <div class="feature-name">Sprach-zu-Text Journaleinträge</div>
+          <div class="feature-desc">Lehrpersonen diktieren Beobachtungen — KI transkribiert, strukturiert und kategorisiert automatisch.</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-name">Zusammenfassungen für Gespräche</div>
+          <div class="feature-desc">KI erstellt aus allen Journal-/Beurteilungs-Einträgen eine kompakte Gesprächsvorbereitung pro Schüler:in.</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-name">LP21-Lektionsvorschläge im Schulplaner</div>
+          <div class="feature-desc">Basierend auf Fach, Stufe und Kompetenzbereich schlägt die KI Lektionsinhalte und Lernziele vor.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="module-card">
+      <div class="module-header">
+        <div class="module-name">📂 Personal · Statistiken · Dokumente · Tagesstrukturen</div>
+        <div class="module-tags">
+          <span class="tag impact-mid">Impact: Mittel</span>
+          <span class="tag role-sl">Schulleitung</span>
+          <span class="tag role-sv">Schulverwaltung</span>
+        </div>
+      </div>
+      <div class="module-desc">
+        <a href="https://dokumentation.pupil.ch/article/x06e5uhsr3-2022-10-personalabsenzen" target="_blank">Personalabsenzen →</a> ·
+        <a href="https://dokumentation.pupil.ch/article/fqykse0h5k-berufsauftrag" target="_blank">Berufsauftrag →</a> ·
+        <a href="https://dokumentation.pupil.ch/article/5tt34q4hkg-statistiken-bista" target="_blank">BISTA →</a> ·
+        <a href="https://dokumentation.pupil.ch/article/cbr4wnyef6-dokumentenverwaltung-oyc" target="_blank">Dokumentenverwaltung →</a> ·
+        <a href="https://dokumentation.pupil.ch/article/2997sk3928-tagesstruktur-b-registrierung-und-anmeldung-2024" target="_blank">Tagesstruktur →</a>
+      </div>
+      <div class="feature-list">
+        <div class="feature-item">
+          <div class="feature-name">Natural Language Data Querying</div>
+          <div class="feature-desc">Schulleitungen fragen ihre Daten in natürlicher Sprache ab: «Wie viele DaZ-Schüler in der Mittelstufe?» — KI generiert die Auswertung.</div>
+          <div class="feature-ref">Vorbild: <a href="https://www.whichmis.com/mis-functionality-reporting-and-analytics/" target="_blank">Arbor «Ask Arbor» (11'500+ Schulen UK)</a></div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-name">Automatische Stellvertretungszuweisung</div>
+          <div class="feature-desc">Bei LP-Absenz passende Vertretungen vorschlagen basierend auf Fachkompetenz, Verfügbarkeit und Belastung. Spart 15–30 Min. pro Fall.</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-name">BISTA-Validierungsassistent</div>
+          <div class="feature-desc">KI prüft Bildungsstatistik-Daten proaktiv auf Vollständigkeit und Plausibilität vor kantonaler Einreichung.</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-name">Template-Generator für Serienbriefe</div>
+          <div class="feature-desc">KI erstellt Dokumentvorlagen aus Kurzbeschreibung und schlägt automatisch die richtigen Platzhalter vor.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NEW: Features from Miro Board -->
+    <div class="module-card" style="border-left: 3px solid var(--yellow)">
+      <div class="module-header">
+        <div class="module-name">🤖 In-App KI-Hilfeassistent <span class="badge" style="font-size:10px;vertical-align:middle;margin-left:8px"><span class="dot draft"></span> Neu (Miro)</span></div>
+        <div class="module-tags">
+          <span class="tag impact-high">Impact: Hoch</span>
+          <span class="tag role-lp">Lehrpersonen</span>
+          <span class="tag role-sv">Schulverwaltung</span>
+          <span class="tag role-sl">Schulleitung</span>
+        </div>
+      </div>
+      <div class="module-desc">
+        Ein KI-Chatbot direkt in PUPIL, der auf der gesamten <a href="https://dokumentation.pupil.ch" target="_blank">dokumentation.pupil.ch</a>, dem internen Confluence und dem Codebase-Wissen basiert.
+        Nutzer stellen Fragen wie «Wie erstelle ich ein Zeugnis im Kanton SG?» und erhalten sofort kontextuelle Antworten — statt minutenlang die Dokumentation zu durchsuchen.
+      </div>
+      <div class="feature-list">
+        <div class="feature-item">
+          <div class="feature-name">PUPIL Doku-Assistent</div>
+          <div class="feature-desc">RAG-basierter Chatbot, der dokumentation.pupil.ch und Confluence durchsucht und kontextbezogene Antworten liefert. Versteht kantonale Unterschiede und gibt korrekte Anleitungen pro Kanton.</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-name">Kontextuelle Hilfe im Modul</div>
+          <div class="feature-desc">Der Assistent weiss, in welchem Modul sich der User befindet und liefert proaktive Hinweise. Z.B. im N&Z-Modul: «Für den Kanton TG muss der Lernbericht Lza als Zeugnisbericht im Förderdossier definiert sein.»</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="module-card" style="border-left: 3px solid var(--yellow)">
+      <div class="module-header">
+        <div class="module-name">📅 Elterngespräche — Magic Allocation <span class="badge" style="font-size:10px;vertical-align:middle;margin-left:8px"><span class="dot draft"></span> Neu (Miro)</span></div>
+        <div class="module-tags">
+          <span class="tag impact-mid">Impact: Mittel</span>
+          <span class="tag role-lp">Lehrpersonen</span>
+        </div>
+      </div>
+      <div class="module-desc">
+        KI-optimierte automatische Terminzuteilung bei Elterngesprächen. Geht über den bestehenden manuellen/automatischen Modus hinaus.
+        <a href="https://dokumentation.pupil.ch/article/e2k5jko7kr-elterngespraeche" target="_blank">PUPIL Elterngespräche Doku →</a>
+      </div>
+      <div class="feature-list">
+        <div class="feature-item">
+          <div class="feature-name">Magic Allocation Elterngespräche</div>
+          <div class="feature-desc">KI weist Termine automatisch optimal zu unter Berücksichtigung aller Constraints: Geschwisterkinder (gleiche Eltern → aufeinanderfolgende Slots), LP-Verfügbarkeit über mehrere Klassen, Elternwünsche (Zeitpräferenzen), Pufferzeiten, und Priorisierung (z.B. SuS mit Förderbedarf zuerst).</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="module-card" style="border-left: 3px solid var(--yellow)">
+      <div class="module-header">
+        <div class="module-name">📓 Journal — Intern → Öffentlich <span class="badge" style="font-size:10px;vertical-align:middle;margin-left:8px"><span class="dot draft"></span> Neu (Miro)</span></div>
+        <div class="module-tags">
+          <span class="tag impact-mid">Impact: Mittel</span>
+          <span class="tag role-lp">Lehrpersonen</span>
+        </div>
+      </div>
+      <div class="module-desc">
+        KI transformiert interne, vertrauliche Journaleinträge in eine teilbare, elterngerechte Version.
+        <a href="https://dokumentation.pupil.ch/article/d7tg1rgu18-05-journal" target="_blank">PUPIL Journal Doku →</a>
+      </div>
+      <div class="feature-list">
+        <div class="feature-item">
+          <div class="feature-name">Öffentliche Notiz aus interner Notiz</div>
+          <div class="feature-desc">Lehrperson schreibt interne Beobachtung (z.B. «Schüler X hat wieder gestört, Eltern reagieren nicht auf Nachrichten»). KI generiert daraus eine neutrale, konstruktive öffentliche Version für die Elternkommunikation (z.B. «Wir beobachten, dass X sich manchmal schwer konzentrieren kann. Ein Austausch wäre hilfreich.»). Teacher-in-the-Loop: LP prüft und passt an vor dem Teilen.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Competitor Landscape -->
+    <h2><span class="h2-icon" style="background:var(--orange-soft);color:var(--orange)">🏁</span> Wettbewerbslandschaft</h2>
+
+    <div class="competitor-grid">
+      <div class="comp-card">
+        <div class="comp-name">CMI Bildung</div>
+        <div class="comp-reach">2'400+ Schulen · 22+ Kantone</div>
+        <span class="comp-status has-ai">● KI+ lanciert (Sep 2025)</span>
+        <div class="comp-desc">
+          KI+ basiert auf Open-Source-LLMs, Schweizer Hosting. Textformulierung, kontextuelle Suche, Zusammenfassungen.
+          <a href="https://cmi.ch/ki/ki-von-cmi-sicher-smart-und-integriert/" target="_blank" style="color:var(--accent)">cmi.ch/ki →</a>
+        </div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-name">Escola</div>
+        <div class="comp-reach">~400 Schulen</div>
+        <span class="comp-status no-ai">○ Keine KI-Features</span>
+        <div class="comp-desc">Web-basierte Plattform mit schneller Feature-Entwicklung. Keine öffentliche KI-Roadmap.</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-name">Klapp</div>
+        <div class="comp-reach">1'600+ Schulen</div>
+        <span class="comp-status no-ai">○ Nur Übersetzung</span>
+        <div class="comp-desc">Kommunikations-App (CMI-Ökosystem). Integrierte Übersetzung als einziges KI-nahes Feature.</div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-name">PowerSchool (int.)</div>
+        <div class="comp-reach">60 Mio. Schüler · 90 Länder</div>
+        <span class="comp-status has-ai">● PowerBuddy AI</span>
+        <div class="comp-desc">
+          KI-gestützte Datenanalyse, Berichterstellung und IEP-Generierung. Zeigt, was in 12–24 Monaten CH-Standard wird.
+          <a href="https://www.powerschool.com/news/powerschool-launches-contextual-ai-solutions-to-transform-college-and-career-planning-and-streamline-access-to-district-information/" target="_blank" style="color:var(--accent)">PowerSchool AI →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Roadmap -->
+    <h2><span class="h2-icon" style="background:var(--green-soft);color:var(--green)">🗺</span> Priorisierte Roadmap</h2>
+
+    <div class="timeline">
+      <div class="phase-block">
+        <div class="phase-label">Phase 1 — 0–6 Monate</div>
+        <div class="phase-title">«KI-Textassistent» — Quick Wins</div>
+        <ul class="phase-items">
+          <li>Modulübergreifender KI-Textassistent für jedes Freitextfeld</li>
+          <li>Prio 1: Freitext-Beurteilungen KI-Textvervollständigung (4–8h Einsparung/LP/Periode)</li>
+          <li>Prio 2: Gesprächsvorbereitungs-Assistent (alle SuS-Daten auf einer Seite)</li>
+          <li>Prio 3: Förderplandokumentation (SMART-Ziele, Verlaufsberichte)</li>
+          <li>Technische Basis: LLM in Schweizer Rechenzentrum, Teacher-in-the-Loop</li>
+          <li>In-App KI-Hilfeassistent (RAG auf dokumentation.pupil.ch + Confluence)</li>
+        </ul>
+      </div>
+      <div class="phase-block">
+        <div class="phase-label">Phase 2 — 6–12 Monate</div>
+        <div class="phase-title">«Intelligenter Workflow» — Smart Automation</div>
+        <ul class="phase-items">
+          <li>Absenzen-Anomalieerkennung und Batch-Visierung</li>
+          <li>Elternbriefe und Mitteilungen in PUPIL Connect</li>
+          <li>Gesprächsprotokoll-Assistent + Voice Input für Beratungsgespräche</li>
+          <li>Magic Allocation Elterngespräche (KI-optimierte Terminzuteilung)</li>
+          <li>Journal: Interne → Öffentliche Notiz (KI-Transformation für Elternkommunikation)</li>
+        </ul>
+      </div>
+      <div class="phase-block">
+        <div class="phase-label">Phase 3 — 12–18 Monate</div>
+        <div class="phase-title">«KI-Optimierung» — Intelligente Planung</div>
+        <ul class="phase-items">
+          <li>KI-Stundenplangenerierung (Sdui-Technologie als Basis)</li>
+          <li>Natural Language Data Querying für Schulleitung</li>
+          <li>Automatische Stellvertretungszuweisung bei LP-Ausfällen</li>
+        </ul>
+      </div>
+      <div class="phase-block">
+        <div class="phase-label">Phase 4 — 18–24 Monate</div>
+        <div class="phase-title">«Proaktive KI» — Plattform-Intelligence</div>
+        <ul class="phase-items">
+          <li>Datenqualitäts-Engine für Stammdaten (Duplikaterkennung, Smart Import)</li>
+          <li>Tarifvalidierung Tagesstrukturen</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ════════════════════════════════════════ -->
+  <!-- VIEW 2: ICE FEATURE MATRIX             -->
+  <!-- ════════════════════════════════════════ -->
+  <div class="view" id="view-features">
+
+    <h1>KI-Feature Matrix — ICE Scoring</h1>
+    <p class="lead">
+      Alle identifizierten KI-Features bewertet nach dem <strong>ICE-Framework</strong>:
+      <strong>I</strong>mpact (Zeitersparnis × Nutzerreichweite),
+      <strong>C</strong>onfidence (Wie sicher sind wir, dass es funktioniert?),
+      <strong>E</strong>ase (Technische Umsetzbarkeit). Score = I × C × E / 100, Max = 10.
+    </p>
+
+    <div class="ice-legend">
+      <span><span class="legend-dot" style="background:var(--red)"></span> Impact</span>
+      <span><span class="legend-dot" style="background:var(--yellow)"></span> Confidence</span>
+      <span><span class="legend-dot" style="background:var(--green)"></span> Ease</span>
+      <span style="margin-left:24px">ICE Score: <span style="color:var(--red)">≥7 Top-Prio</span> · <span style="color:var(--orange)">5–7 Hoch</span> · <span style="color:var(--yellow)">3–5 Mittel</span> · <span style="color:var(--text-dim)">&lt;3 Niedrig</span></span>
+    </div>
+
+    <div class="controls-bar">
+      <div>
+        <label>Modul:</label>
+        <select id="filter-module" onchange="filterFeatures()">
+          <option value="">Alle Module</option>
+        </select>
+      </div>
+      <div>
+        <label>Rolle:</label>
+        <select id="filter-role" onchange="filterFeatures()">
+          <option value="">Alle Rollen</option>
+          <option value="LP">Lehrpersonen</option>
+          <option value="SV">Schulverwaltung</option>
+          <option value="SL">Schulleitung</option>
+        </select>
+      </div>
+      <div>
+        <label>Phase:</label>
+        <select id="filter-phase" onchange="filterFeatures()">
+          <option value="">Alle Phasen</option>
+          <option value="1">Phase 1 (0–6M)</option>
+          <option value="2">Phase 2 (6–12M)</option>
+          <option value="3">Phase 3 (12–18M)</option>
+          <option value="4">Phase 4 (18–24M)</option>
+        </select>
+      </div>
+      <div>
+        <label>Suche:</label>
+        <input type="text" id="filter-search" placeholder="Feature-Name…" oninput="filterFeatures()">
+      </div>
+    </div>
+
+    <div class="feature-table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th onclick="sortTable(0)">Feature <span class="sort-arrow">↕</span></th>
+            <th onclick="sortTable(1)">Modul <span class="sort-arrow">↕</span></th>
+            <th onclick="sortTable(2)">Rolle <span class="sort-arrow">↕</span></th>
+            <th onclick="sortTable(3)" class="sorted" style="min-width:70px">ICE <span class="sort-arrow">↓</span></th>
+            <th onclick="sortTable(4)" style="min-width:60px">I <span class="sort-arrow">↕</span></th>
+            <th onclick="sortTable(5)" style="min-width:60px">C <span class="sort-arrow">↕</span></th>
+            <th onclick="sortTable(6)" style="min-width:60px">E <span class="sort-arrow">↕</span></th>
+            <th onclick="sortTable(7)">Phase <span class="sort-arrow">↕</span></th>
+          </tr>
+        </thead>
+        <tbody id="feature-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+// ─── DATA ───
+const features = [
+  // Noten & Zeugnisse (Noten + Prädikate, kaum Freitext)
+  { name: "Konsistenzprüfung Noten ↔ Prädikate", module: "Noten & Zeugnisse", roles: ["LP"], I: 3, C: 8, E: 8, phase: 2, desc: "Erkennung von Widersprüchen zwischen Fachnotenschnitt und Prädikaten. Geringer Zeitgewinn" },
+  { name: "Bericht angepasste Lernziele (AG)", module: "Noten & Zeugnisse", roles: ["LP"], I: 3, C: 7, E: 7, phase: 2, desc: "KI-Freitext für SuS mit angepassten Lernzielen — kleine Zielgruppe, hoher Aufwand pro Bericht" },
+
+  // Förderplaner (nur Förder-LP/SHP — kleinere Zielgruppe, aber hoher Aufwand pro Dossier)
+  { name: "SMART-Zielgenerierung", module: "Förderplaner", roles: ["LP"], I: 7, C: 8, E: 8, phase: 1, desc: "Förderziele aus Diagnose und LP21 generieren. Spart 30–60 Min. pro Dossier. Nur SHP/Förder-LP" },
+  { name: "Automatisierte Verlaufsberichte", module: "Förderplaner", roles: ["LP"], I: 7, C: 7, E: 7, phase: 1, desc: "Fortschrittsberichte aus Journal/Beurteilungsdaten. Spart 1–2h pro SSG. Nur Förder-LP" },
+  { name: "Massnahmenvorschläge", module: "Förderplaner", roles: ["LP"], I: 5, C: 6, E: 7, phase: 2, desc: "Massnahmen basierend auf Diagnose/Zielen. Hilfreich, aber LP wählen meist selbst" },
+  { name: "Kantonale Berichtsformate befüllen", module: "Förderplaner", roles: ["LP", "SV"], I: 6, C: 7, E: 5, phase: 2, desc: "Auto-Befüllung SSG-Berichte. Komplex wegen kantonaler Unterschiede AG/SG/ZH/SZ/TG" },
+
+  // PUPIL Connect (alle LP, täglich — hoher Impact durch Frequenz)
+  { name: "Elternbrief-Generator", module: "PUPIL Connect", roles: ["LP"], I: 8, C: 9, E: 9, phase: 1, desc: "KI-Entwürfe für Elternbriefe aus Stichworten. Spart 15–30 Min. pro Brief, mehrfach pro Woche" },
+  { name: "Automatische Antwortvorschläge", module: "PUPIL Connect", roles: ["LP"], I: 7, C: 8, E: 8, phase: 1, desc: "Ein-Klick-Antworten auf häufige Elternfragen. Wenige Minuten pro Antwort, aber sehr hohe Frequenz" },
+  { name: "Intelligente Schulübersetzung", module: "PUPIL Connect", roles: ["LP", "SV"], I: 5, C: 7, E: 6, phase: 2, desc: "Kontextangepasste Übersetzung mit CH-Schulbegriffen (Schnupperlehre, Übertritt etc.)" },
+  { name: "FAQ-Chatbot Elternportal", module: "PUPIL Connect", roles: ["SV"], I: 5, C: 6, E: 5, phase: 3, desc: "Automatische Beantwortung häufiger Elternfragen. Entlastet Sekretariat, aber Setup-Aufwand hoch" },
+
+  // Absenzen (alle KLP, täglich)
+  { name: "Batch-Visierung mit KI-Prüfung", module: "Absenzen", roles: ["LP"], I: 7, C: 8, E: 8, phase: 2, desc: "Sammelfreigabe statt Einzelvisierung. Spart 5–10 Min./Tag für KLP. Hohe Frequenz" },
+  { name: "Anomalie-Erkennung Absenzen", module: "Absenzen", roles: ["LP", "SL"], I: 5, C: 7, E: 7, phase: 2, desc: "Erkennung auffälliger Muster (Mo/Fr-Häufung). Spart keine direkte Zeit, verbessert aber Früherkennung" },
+  { name: "Auto-Kategorisierung aus Elternchats", module: "Absenzen", roles: ["LP"], I: 6, C: 7, E: 6, phase: 2, desc: "Absenzgrund aus Connect-Nachricht extrahieren. Spart Tipparbeit, mässiger Gesamteffekt" },
+
+  // Stundenplanung (wenige SL, aber enormer Zeitblock 1–2x/Jahr)
+  { name: "Automatische Stundenplangenerierung", module: "Stundenplanung", roles: ["SL", "SV"], I: 8, C: 7, E: 4, phase: 3, desc: "KI-Algorithmus mit CH-Constraints (Blockzeiten, Pensen, Stundentafeln). Spart Wochen, kleine Zielgruppe, technisch komplex" },
+  { name: "Stellvertretungsvorschläge", module: "Stundenplanung", roles: ["SL"], I: 7, C: 7, E: 5, phase: 3, desc: "Passende Vertretungen bei LP-Ausfall identifizieren. Spart 15–30 Min. pro Fall" },
+  { name: "One-Click-Anpassung Stundenplan", module: "Stundenplanung", roles: ["SL"], I: 5, C: 6, E: 4, phase: 3, desc: "Automatische Plananpassung bei Änderungen. Nützlich, aber seltene Events" },
+
+  // Journal (alle LP, regelmässig)
+  { name: "Journal-Zusammenfassungen für Gespräche", module: "Journal", roles: ["LP"], I: 7, C: 8, E: 8, phase: 2, desc: "Kompakte SuS-Zusammenfassung aus allen Einträgen. Spart 20–30 Min. Vorbereitung pro Kind" },
+  { name: "Sprach-zu-Text Journaleinträge", module: "Journal", roles: ["LP"], I: 6, C: 7, E: 7, phase: 2, desc: "Beobachtungen diktieren statt tippen. Spart ca. 5 Min./Eintrag, besonders mobil nützlich" },
+  { name: "Öffentliche Notiz aus interner Notiz", module: "Journal", roles: ["LP"], I: 6, C: 7, E: 8, phase: 2, desc: "KI transformiert vertrauliche Beobachtung in neutrale, teilbare Version für Eltern" },
+
+  // Beurteilungen (formativ, Freitext — v.a. Primarstufe)
+  { name: "KI-Textvervollständigung Freitext-Beurteilungen", module: "Beurteilungen", roles: ["LP"], I: 8, C: 8, E: 8, phase: 1, desc: "Formulierungsvorschläge bei Freitext-Beurteilungen (v.a. Primarstufe). LP tippt Stichworte → KI generiert Text. Spart 3–6h pro Semester" },
+  { name: "Pattern-Erkennung Leistungsentwicklung", module: "Beurteilungen", roles: ["LP"], I: 4, C: 6, E: 6, phase: 3, desc: "Info bei auffälligen Leistungsveränderungen. Nice-to-have, spart kaum direkte Zeit" },
+
+  // Schulplaner
+  { name: "LP21-Lektionsvorschläge", module: "Schulplaner", roles: ["LP"], I: 5, C: 6, E: 6, phase: 2, desc: "Lektionsinhalte basierend auf Fach/Stufe/Kompetenz. Hilfreich für neue LP, erfahrene nutzen eigene Materialien" },
+
+  // Dokumentenverwaltung
+  { name: "Template-Generator Serienbriefe", module: "Dokumentenverwaltung", roles: ["SV"], I: 5, C: 8, E: 8, phase: 2, desc: "Vorlagen aus Kurzbeschreibung mit Platzhaltern. Spart 15–30 Min. pro Template, selten genutzt" },
+
+  // Statistiken / BISTA
+  { name: "Natural Language Data Querying", module: "Statistiken / BISTA", roles: ["SL"], I: 6, C: 6, E: 4, phase: 3, desc: "Datenabfragen in natürlicher Sprache. Nützlich für SL, aber kleine Zielgruppe und technisch anspruchsvoll" },
+  { name: "BISTA-Validierungsassistent", module: "Statistiken / BISTA", roles: ["SV"], I: 5, C: 7, E: 7, phase: 2, desc: "Prüfung der Bildungsstatistik auf Vollständigkeit. Spart Nacharbeit, nur 1–2x/Jahr relevant" },
+
+  // Stammdaten
+  { name: "Duplikaterkennung Personen", module: "Stammdaten", roles: ["SV"], I: 5, C: 8, E: 8, phase: 4, desc: "Erkennung Doppelerfassungen. Verhindert Folgefehler, spart Bereinigungsaufwand" },
+  { name: "Smart Import Feldmapping", module: "Stammdaten", roles: ["SV"], I: 4, C: 7, E: 7, phase: 4, desc: "Automatische Feldmapping-Erkennung bei Datenimport. Spart Setup-Zeit" },
+
+  // Personalabsenzen
+  { name: "Automatische Stellvertretungszuweisung", module: "Personalabsenzen", roles: ["SL"], I: 7, C: 6, E: 5, phase: 3, desc: "Passende Vertretungen bei LP-Absenz vorschlagen. Spart 15–30 Min. pro Fall, unsichere Datenbasis" },
+
+  // Elterngespräche (alle KLP, 2–4x/Jahr pro Kind)
+  { name: "Gesprächsvorbereitungs-Assistent", module: "Elterngespräche", roles: ["LP"], I: 8, C: 9, E: 8, phase: 1, desc: "Alle SuS-Daten auf einer Seite: Noten, Beurteilungen, Absenzen, Journal, Massnahmen. Spart 20–45 Min. pro Kind" },
+  { name: "Gesprächsprotokoll-Assistent", module: "Elterngespräche", roles: ["LP"], I: 6, C: 7, E: 7, phase: 2, desc: "Aus Stichworten strukturiertes Protokoll mit Vereinbarungen. Spart 10–15 Min. pro Gespräch" },
+  { name: "Magic Allocation Elterngespräche", module: "Elterngespräche", roles: ["LP"], I: 6, C: 8, E: 7, phase: 2, desc: "KI-optimierte Terminzuteilung (Geschwister, LP-Verfügbarkeit, Elternwünsche). Spart 30–60 Min. Orga" },
+  { name: "Voice Input für Beratungsgespräche", module: "Elterngespräche", roles: ["LP"], I: 5, C: 6, E: 5, phase: 3, desc: "Sprachaufnahme → Protokoll. Nützlich bei SSG, aber Einverständnis aller Beteiligten nötig" },
+
+  // Tagesstrukturen
+  { name: "Intelligente Tarifvalidierung", module: "Tagesstrukturen", roles: ["SV"], I: 3, C: 7, E: 8, phase: 4, desc: "Plausibilitätsprüfung Tarifdaten. Verhindert Fehler, seltener Anwendungsfall" },
+
+  // In-App KI-Assistent
+  { name: "PUPIL Doku-Assistent (RAG-Chatbot)", module: "In-App KI-Assistent", roles: ["LP", "SV", "SL"], I: 7, C: 7, E: 6, phase: 1, desc: "KI-Chatbot auf dokumentation.pupil.ch + Confluence. Reduziert Support-Anfragen, hilft allen Nutzern sofort" },
+  { name: "Kontextuelle Hilfe im Modul", module: "In-App KI-Assistent", roles: ["LP", "SV", "SL"], I: 4, C: 6, E: 5, phase: 2, desc: "Proaktive Hinweise je nach Modul/Kanton. Nice-to-have, nicht kritisch" },
+];
+
+// Calculate ICE score
+features.forEach(f => {
+  f.ice = Math.round((f.I * f.C * f.E) / 100 * 10) / 10;
+});
+features.sort((a, b) => b.ice - a.ice);
+
+// Populate module filter
+const modules = [...new Set(features.map(f => f.module))].sort();
+const modSelect = document.getElementById('filter-module');
+modules.forEach(m => {
+  const opt = document.createElement('option');
+  opt.value = m; opt.textContent = m;
+  modSelect.appendChild(opt);
+});
+
+function iceClass(score) {
+  if (score >= 7) return 'tier-1';
+  if (score >= 5) return 'tier-2';
+  if (score >= 3) return 'tier-3';
+  return 'tier-4';
+}
+
+function scoreBar(val, maxVal, color) {
+  const pct = (val / maxVal) * 100;
+  return `<div class="score-bar">
+    <div class="score-fill" style="width:${pct}%;background:${color};"></div>
+    <span class="score-val" style="color:${color}">${val}</span>
+  </div>`;
+}
+
+function roleLabel(roles) {
+  return roles.map(r => {
+    if (r === 'LP') return '<span class="tag role-lp" style="font-size:10px;padding:2px 7px">LP</span>';
+    if (r === 'SV') return '<span class="tag role-sv" style="font-size:10px;padding:2px 7px">SV</span>';
+    if (r === 'SL') return '<span class="tag role-sl" style="font-size:10px;padding:2px 7px">SL</span>';
+    return r;
+  }).join(' ');
+}
+
+function phaseLabel(p) {
+  return `<span class="phase-badge p${p}">Phase ${p}</span>`;
+}
+
+function renderTable(data) {
+  const tbody = document.getElementById('feature-tbody');
+  tbody.innerHTML = data.map(f => `
+    <tr>
+      <td class="feature-name-cell">${f.name}<br><span style="font-weight:400;font-size:12px;color:var(--text-dim)">${f.desc}</span></td>
+      <td class="module-cell">${f.module}</td>
+      <td>${roleLabel(f.roles)}</td>
+      <td><span class="ice-total ${iceClass(f.ice)}">${f.ice.toFixed(1)}</span></td>
+      <td>${scoreBar(f.I, 10, 'var(--red)')}</td>
+      <td>${scoreBar(f.C, 10, 'var(--yellow)')}</td>
+      <td>${scoreBar(f.E, 10, 'var(--green)')}</td>
+      <td>${phaseLabel(f.phase)}</td>
+    </tr>
+  `).join('');
+  document.getElementById('feature-count').textContent = data.length;
+}
+
+function filterFeatures() {
+  const mod = document.getElementById('filter-module').value;
+  const role = document.getElementById('filter-role').value;
+  const phase = document.getElementById('filter-phase').value;
+  const search = document.getElementById('filter-search').value.toLowerCase();
+
+  let filtered = features.filter(f => {
+    if (mod && f.module !== mod) return false;
+    if (role && !f.roles.includes(role)) return false;
+    if (phase && f.phase !== parseInt(phase)) return false;
+    if (search && !f.name.toLowerCase().includes(search) && !f.desc.toLowerCase().includes(search)) return false;
+    return true;
+  });
+  renderTable(filtered);
+}
+
+// ─── Sorting ───
+let sortCol = 3; // ICE by default
+let sortDir = -1; // desc
+
+function sortTable(col) {
+  if (sortCol === col) { sortDir *= -1; } else { sortCol = col; sortDir = -1; }
+  const keys = ['name', 'module', 'roles', 'ice', 'I', 'C', 'E', 'phase'];
+  const key = keys[col];
+  features.sort((a, b) => {
+    let va = key === 'roles' ? a[key].join(',') : a[key];
+    let vb = key === 'roles' ? b[key].join(',') : b[key];
+    if (typeof va === 'string') return va.localeCompare(vb) * sortDir;
+    return (va - vb) * sortDir;
+  });
+  filterFeatures();
+}
+
+// ─── Tab Navigation ───
+function switchView(viewId) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('view-' + viewId).classList.add('active');
+  document.querySelector(`[data-view="${viewId}"]`).classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ─── Scroll to top button ───
+window.addEventListener('scroll', () => {
+  document.getElementById('scrollTop').classList.toggle('visible', window.scrollY > 400);
+});
+
+// ─── Init ───
+renderTable(features);
+</script>
+</body>
+</html>
