@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PUPIL Stundenplan – Dokumentation</title>
+  <style>
+    :root {
+      --bg: #07111f;
+      --surface: rgba(255,255,255,.06);
+      --surface2: rgba(255,255,255,.1);
+      --border: rgba(255,255,255,.1);
+      --text: #eef4ff;
+      --muted: #94a3b8;
+      --accent: #60a5fa;
+      --accent2: #34d399;
+      --accent3: #f59e0b;
+      --accent4: #a78bfa;
+      --danger: #f87171;
+      --radius: 14px;
+      --max: 1140px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+      font-size: 15px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* NAV */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      backdrop-filter: blur(20px);
+      background: rgba(7,17,31,.85);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: var(--max); margin: 0 auto;
+      padding: 0 24px;
+      display: flex; align-items: center; gap: 6px;
+      overflow-x: auto; scrollbar-width: none;
+    }
+    .nav-inner::-webkit-scrollbar { display: none; }
+    .nav-brand {
+      font-weight: 800; font-size: 15px;
+      color: var(--accent); white-space: nowrap;
+      padding: 14px 16px 14px 0;
+      border-right: 1px solid var(--border);
+      margin-right: 6px;
+    }
+    .nav-inner a {
+      color: var(--muted); text-decoration: none;
+      font-size: 13px; padding: 14px 12px;
+      white-space: nowrap; border-radius: 6px;
+      transition: color .2s, background .2s;
+    }
+    .nav-inner a:hover { color: var(--text); background: var(--surface); }
+
+    /* HERO */
+    .hero {
+      background:
+        radial-gradient(ellipse 80% 60% at 20% -10%, rgba(96,165,250,.14) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 80% 110%, rgba(52,211,153,.08) 0%, transparent 50%);
+      padding: 80px 24px 64px;
+      text-align: center;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(96,165,250,.12); border: 1px solid rgba(96,165,250,.25);
+      color: var(--accent); font-size: 12px; font-weight: 600;
+      padding: 5px 14px; border-radius: 999px; margin-bottom: 24px;
+      letter-spacing: .04em; text-transform: uppercase;
+    }
+    .hero h1 {
+      font-size: clamp(28px, 5vw, 52px);
+      font-weight: 800; letter-spacing: -.03em;
+      line-height: 1.1; margin-bottom: 20px;
+    }
+    .hero h1 span { color: var(--accent); }
+    .hero p {
+      font-size: 17px; color: var(--muted);
+      max-width: 640px; margin: 0 auto 32px;
+    }
+    .source-badges {
+      display: flex; flex-wrap: wrap; gap: 10px;
+      justify-content: center; margin-bottom: 8px;
+    }
+    .badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 11px; font-weight: 600; letter-spacing: .04em;
+      padding: 4px 12px; border-radius: 999px;
+      border: 1px solid; text-transform: uppercase;
+    }
+    .badge-confluence { color: #60a5fa; border-color: rgba(96,165,250,.3); background: rgba(96,165,250,.08); }
+    .badge-github     { color: #a78bfa; border-color: rgba(167,139,250,.3); background: rgba(167,139,250,.08); }
+    .badge-docs       { color: #34d399; border-color: rgba(52,211,153,.3);  background: rgba(52,211,153,.08); }
+
+    /* LAYOUT */
+    .wrap { max-width: var(--max); margin: 0 auto; padding: 0 24px; }
+    section { padding: 64px 0; border-top: 1px solid var(--border); }
+    .section-label {
+      font-size: 11px; font-weight: 700; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--accent); margin-bottom: 10px;
+    }
+    .section-title {
+      font-size: clamp(22px, 3vw, 32px);
+      font-weight: 800; letter-spacing: -.02em; margin-bottom: 12px;
+    }
+    .section-sub {
+      color: var(--muted); max-width: 680px; margin-bottom: 40px; font-size: 15px;
+    }
+
+    /* CARDS */
+    .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      transition: border-color .2s, background .2s;
+    }
+    .card:hover { border-color: rgba(96,165,250,.3); background: var(--surface2); }
+    .card-icon { font-size: 28px; margin-bottom: 14px; }
+    .card h3 { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
+    .card p  { font-size: 14px; color: var(--muted); line-height: 1.6; }
+
+    /* WORKFLOW STEPS */
+    .steps { display: flex; flex-direction: column; gap: 0; }
+    .step {
+      display: grid; grid-template-columns: 56px 1fr;
+      gap: 0 20px; position: relative;
+    }
+    .step:not(:last-child)::before {
+      content: '';
+      position: absolute; left: 27px; top: 52px; bottom: 0;
+      width: 2px; background: var(--border);
+    }
+    .step-num {
+      width: 44px; height: 44px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 14px;
+      border: 2px solid var(--accent); color: var(--accent);
+      background: rgba(96,165,250,.1); flex-shrink: 0;
+      margin-top: 4px; position: relative; z-index: 1;
+    }
+    .step-body { padding-bottom: 32px; }
+    .step-body h3 { font-size: 16px; font-weight: 700; margin-bottom: 6px; line-height: 1.3; }
+    .step-body p  { font-size: 14px; color: var(--muted); }
+    .step-body ul { margin: 8px 0 0 16px; }
+    .step-body ul li { font-size: 13px; color: var(--muted); margin-bottom: 3px; }
+
+    /* ARCH FLOW */
+    .arch-flow {
+      display: flex; align-items: center; flex-wrap: wrap; gap: 0;
+      margin: 32px 0;
+    }
+    .arch-box {
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 20px 24px;
+      flex: 1; min-width: 180px;
+    }
+    .arch-box .arch-label {
+      font-size: 10px; font-weight: 700; letter-spacing: .08em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 6px;
+    }
+    .arch-box h4 { font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+    .arch-box p  { font-size: 13px; color: var(--muted); }
+    .arch-arrow {
+      font-size: 22px; color: var(--accent); padding: 0 16px;
+      flex-shrink: 0;
+    }
+
+    /* TABLE */
+    .data-table { width: 100%; border-collapse: collapse; margin: 24px 0; }
+    .data-table th {
+      text-align: left; font-size: 11px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .06em;
+      color: var(--muted); padding: 10px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .data-table td {
+      padding: 12px 16px; font-size: 14px;
+      border-bottom: 1px solid rgba(255,255,255,.05);
+    }
+    .data-table tr:hover td { background: var(--surface); }
+    .data-table td:first-child { font-weight: 600; color: var(--text); }
+    .data-table td:not(:first-child) { color: var(--muted); }
+
+    /* TAG */
+    .tag {
+      display: inline-block; font-size: 11px; font-weight: 600;
+      padding: 2px 10px; border-radius: 999px;
+      border: 1px solid;
+    }
+    .tag-green { color: var(--accent2); border-color: rgba(52,211,153,.3); background: rgba(52,211,153,.08); }
+    .tag-blue  { color: var(--accent);  border-color: rgba(96,165,250,.3);  background: rgba(96,165,250,.08); }
+    .tag-amber { color: var(--accent3); border-color: rgba(245,158,11,.3);  background: rgba(245,158,11,.08); }
+    .tag-red   { color: var(--danger);  border-color: rgba(248,113,113,.3); background: rgba(248,113,113,.08); }
+    .tag-purple{ color: var(--accent4); border-color: rgba(167,139,250,.3); background: rgba(167,139,250,.08); }
+
+    /* TWO-COL */
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    @media(max-width: 700px) { .two-col { grid-template-columns: 1fr; } }
+
+    /* INFO BOX */
+    .info-box {
+      background: rgba(96,165,250,.07);
+      border: 1px solid rgba(96,165,250,.2);
+      border-left: 3px solid var(--accent);
+      border-radius: var(--radius); padding: 16px 20px;
+      font-size: 14px; color: var(--muted); margin: 20px 0;
+    }
+    .info-box strong { color: var(--text); }
+
+    .warn-box {
+      background: rgba(245,158,11,.07);
+      border: 1px solid rgba(245,158,11,.2);
+      border-left: 3px solid var(--accent3);
+      border-radius: var(--radius); padding: 16px 20px;
+      font-size: 14px; color: var(--muted); margin: 20px 0;
+    }
+
+    /* QUICK LINKS */
+    .links-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
+    .link-card {
+      display: flex; align-items: center; gap: 14px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 16px 20px;
+      text-decoration: none; color: var(--text);
+      transition: border-color .2s, background .2s;
+    }
+    .link-card:hover { border-color: var(--accent); background: var(--surface2); }
+    .link-card .link-icon { font-size: 24px; flex-shrink: 0; }
+    .link-card .link-title { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+    .link-card .link-sub { font-size: 12px; color: var(--muted); }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 24px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    footer a { color: var(--accent); text-decoration: none; }
+
+    /* COMPARE CARDS */
+    .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    @media(max-width: 600px) { .compare-grid { grid-template-columns: 1fr; } }
+    .compare-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 24px; position: relative;
+    }
+    .compare-card.featured { border-color: rgba(96,165,250,.4); }
+    .compare-card h3 { font-size: 16px; font-weight: 800; margin-bottom: 16px; }
+    .compare-card ul { list-style: none; padding: 0; }
+    .compare-card ul li {
+      font-size: 14px; color: var(--muted);
+      padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,.05);
+      display: flex; align-items: flex-start; gap: 8px;
+    }
+    .compare-card ul li:last-child { border-bottom: none; }
+    .check { color: var(--accent2); flex-shrink: 0; }
+    .dot   { color: var(--muted); flex-shrink: 0; }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <div class="nav-brand">📅 PUPIL Stundenplan</div>
+    <a href="#overview">Übersicht</a>
+    <a href="#features">Funktionen</a>
+    <a href="#roles">Rollen</a>
+    <a href="#workflow">Workflow</a>
+    <a href="#architecture">Architektur</a>
+    <a href="#royal-schedule">KI-Stundenplaner</a>
+    <a href="#improvements">Roadmap</a>
+    <a href="#strategy">Strategie</a>
+    <a href="#links">Links</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge">Interne Dokumentation · Stand März 2026</div>
+  <h1>PUPIL <span>Stundenplan</span><br>Dokumentation</h1>
+  <p>Vollständige Referenz für das PUPIL Stundenplan-Modul – für Selbststudium und Kundenpräsentationen. Zusammengestellt aus Confluence, GitHub und dokumentation.pupil.ch.</p>
+  <div class="source-badges">
+    <span class="badge badge-confluence">📘 Confluence</span>
+    <span class="badge badge-github">🐙 GitHub PUPILAG/PUPIL</span>
+    <span class="badge badge-docs">📗 dokumentation.pupil.ch</span>
+  </div>
+</div>
+
+<!-- OVERVIEW -->
+<section id="overview">
+  <div class="wrap">
+    <div class="section-label">Modul-Übersicht</div>
+    <div class="section-title">Was ist der PUPIL Stundenplan?</div>
+    <p class="section-sub">
+      Das Stundenplan-Modul ermöglicht die digitale Erstellung von Stundenplänen von A bis Z – basierend auf kantonalen Lehrplänen, unter Berücksichtigung von Teilzeitanstellungen und Raumzuweisungen.
+    </p>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon">🗂️</div>
+        <h3>Kantonsbasiert</h3>
+        <p>Stundenpläne werden auf Basis kantonaler Lektionentabellen erstellt. Jede Klasse erhält automatisch die korrekten Lektionen pro Fach und Stufe.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔁</div>
+        <h3>Automatische Synchronisation</h3>
+        <p>Kantonstabelle → Lektioneneintrag → Stundenplaneintrag. Änderungen in der Stundentafel werden automatisch in offene Einträge synchronisiert.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🖱️</div>
+        <h3>Drag & Drop</h3>
+        <p>Lektionen werden per Drag & Drop aus dem Arbeitsvorrat in die Wochenübersicht gezogen. Konflikte werden automatisch erkannt und markiert.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">👥</div>
+        <h3>Gruppen & Klassen</h3>
+        <p>Planung von Gruppenlektionen (Halbklassen, Niveaugruppen, Wahlfachgruppen) parallel zur normalen Klassenplanung.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📄</div>
+        <h3>Publikation</h3>
+        <p>PDF-Druck, Elternportal (PUPIL Connect), Schulplaner-Verknüpfung und Anonymisierung für datenschutzkonforme Veröffentlichung.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🤖</div>
+        <h3>KI-Integration</h3>
+        <p>Optionale Integration mit Royal Schedule (KI-Stundenplaner) für vollautomatische Stundenplanerstellung per KI-Algorithmus.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="wrap">
+    <div class="section-label">Funktionen</div>
+    <div class="section-title">Funktionen im Detail</div>
+    <p class="section-sub">Alle Kernfunktionen des PUPIL Stundenplan-Moduls im Überblick.</p>
+
+    <div class="two-col">
+      <div>
+        <h3 style="margin-bottom:16px; font-size:15px; color:var(--accent)">📐 Planungsfunktionen</h3>
+        <table class="data-table">
+          <tr><td>Wiederkehrende Lektionen</td><td>Intervallbasierte Erstellung</td></tr>
+          <tr><td>Drag & Drop</td><td>Manuelle Einplanung per Maus</td></tr>
+          <tr><td>Klassen-Perspektive</td><td>Ansicht pro Klasse</td></tr>
+          <tr><td>LP-Perspektive</td><td>Ansicht pro Lehrperson</td></tr>
+          <tr><td>Raum-Perspektive</td><td>Ansicht pro Zimmer</td></tr>
+          <tr><td>Gruppenlektionen</td><td>Halbklassen, Niveau, Wahlfach</td></tr>
+          <tr><td>Konflikt-Erkennung</td><td>Automatisch, farblich markiert</td></tr>
+          <tr><td>Statistiken</td><td>Lektionenanzahl pro LP/Klasse</td></tr>
+        </table>
+      </div>
+      <div>
+        <h3 style="margin-bottom:16px; font-size:15px; color:var(--accent2)">📤 Publikationsoptionen</h3>
+        <table class="data-table">
+          <tr><td>PDF-Druck</td><td>Klasse, LP, Raum, Schule</td></tr>
+          <tr><td>PUPIL Connect</td><td>Elternportal-Integration</td></tr>
+          <tr><td>Schulplaner</td><td>Verknüpfung mit Schulplaner-Modul</td></tr>
+          <tr><td>Anonymisierung</td><td>LP-Name ausblendbar</td></tr>
+          <tr><td>Freigabe-Steuerung</td><td>Per Semester und Klasse</td></tr>
+          <tr><td>Fächerstundenplan</td><td>Ansicht nach Fach (geplant)</td></tr>
+          <tr><td>Mehrwochenpläne</td><td>14-täglich, monatlich (geplant)</td></tr>
+          <tr><td>Schulleitung-Ansicht</td><td>Nur eigene Schuleinheiten</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="info-box" style="margin-top:24px">
+      <strong>Neu (2025):</strong> Gruppenlektionen werden bei der Klassen-Planung angezeigt, auch ohne zugewiesene Stufe – vereinfacht die Planung für Wahlfach- und Mehrstufenklassen. Schulleitungen sehen nur noch ihre eigenen Schuleinheiten in der Bearbeitungsansicht.
+    </div>
+  </div>
+</section>
+
+<!-- ROLES -->
+<section id="roles">
+  <div class="wrap">
+    <div class="section-label">Nutzerrollen</div>
+    <div class="section-title">Wer arbeitet mit dem Stundenplan?</div>
+    <p class="section-sub">Das Modul ist primär für die Schulleitung, aber Lehrpersonen und Eltern sind ebenfalls eingebunden.</p>
+
+    <div class="card-grid">
+      <div class="card" style="border-color:rgba(96,165,250,.3)">
+        <div class="card-icon">🏫</div>
+        <h3>Schulleitung <span class="tag tag-blue">Primär</span></h3>
+        <p>Vollzugriff: Erstellt und publiziert Stundenpläne, konfiguriert Zeiten, verwaltet die Lektionentabelle, gibt Pläne frei. Sieht nur eigene Schuleinheiten.</p>
+      </div>
+      <div class="card" style="border-color:rgba(52,211,153,.2)">
+        <div class="card-icon">👩‍🏫</div>
+        <h3>Lehrperson <span class="tag tag-green">Sekundär</span></h3>
+        <p>Kann zugewiesene Lektionen nach 2024-03 Update bearbeiten. Sieht eigenen Stundenplan, kann PDF drucken. Kein Zugriff auf die gesamte Konfiguration.</p>
+      </div>
+      <div class="card" style="border-color:rgba(245,158,11,.2)">
+        <div class="card-icon">👨‍👩‍👧</div>
+        <h3>Eltern <span class="tag tag-amber">Read-only</span></h3>
+        <p>Lesezugriff via PUPIL Connect (Elternportal). Sehen freigegebene Stundenpläne mit konfigurierbaren Datenschutzeinstellungen (Vollansicht, Raumangabe, Vorlage).</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WORKFLOW -->
+<section id="workflow">
+  <div class="wrap">
+    <div class="section-label">Schritt-für-Schritt</div>
+    <div class="section-title">Stundenplan erstellen – Schritt für Schritt</div>
+    <p class="section-sub">Von der Datenvorbereitung bis zur Publikation – der vollständige Ablauf für die Schulleitung.</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <h3>Datenvorbereitung</h3>
+          <p>Grunddaten prüfen und einrichten, bevor der Stundenplan erstellt werden kann:</p>
+          <ul>
+            <li>Semester anlegen und aktivieren</li>
+            <li>Klassendaten prüfen (Stufe, Klassenschlüssel)</li>
+            <li>Räume mit Abkürzung anlegen</li>
+            <li>Lehrpersonencodes vergeben</li>
+            <li>Klassenzimmer zuweisen</li>
+            <li>Fächer mit Farbe und Code definieren</li>
+            <li>Klassenlehrpersonen zuweisen</li>
+          </ul>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <h3>Lektionentabelle konfigurieren</h3>
+          <p>Kantonale Stundentafel definieren: Welche Klassen erhalten wie viele Lektionen pro Fach?</p>
+          <ul>
+            <li>Kantonseintrag setzen (Fach × Stufe → Anzahl Lektionen)</li>
+            <li>Gruppen-Lektionen spezifizieren (Halbklassen, Niveaus)</li>
+            <li>Synchronisation auslösen → Lektionseinträge werden automatisch erstellt oder aktualisiert</li>
+          </ul>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <h3>Systemkonfiguration</h3>
+          <p>Zeitraster und Sonderregeln definieren:</p>
+          <ul>
+            <li>Lektionszeiten festlegen (Start/Ende pro Zeile)</li>
+            <li>Anzahl Lektionen pro Stufe/Klasse konfigurieren</li>
+            <li>Gesperrte Zeiten / freie Zeiten festlegen</li>
+            <li>Mittagspausen markieren</li>
+            <li>Schulbus / Schulplaner-Anbindung konfigurieren</li>
+          </ul>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <h3>Stundenplan erstellen</h3>
+          <p>Lektionen aus dem Arbeitsvorrat in das Wochengitter einplanen:</p>
+          <ul>
+            <li>Drag & Drop: Lektionen in Zeitslots ziehen</li>
+            <li>Konflikte werden sofort farblich markiert</li>
+            <li>Perspektivwechsel: Klasse / LP / Raum</li>
+            <li>Fixe Lektionen setzen (z.B. Sport, TTG)</li>
+            <li>Gruppenverknüpfungen beachten (parallele Gruppen)</li>
+          </ul>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">5</div>
+        <div class="step-body">
+          <h3>Freigabe & Publikation</h3>
+          <p>Fertige Stundenpläne publizieren:</p>
+          <ul>
+            <li>Stundenplan sperren (schützt gegen versehentliche Änderungen)</li>
+            <li>PDF-Druck für Verteilung</li>
+            <li>Freigabe im Elternportal (PUPIL Connect)</li>
+            <li>LP-Zugriff aktivieren</li>
+            <li>Anonymisierungsoptionen setzen</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ARCHITECTURE -->
+<section id="architecture">
+  <div class="wrap">
+    <div class="section-label">Technischer Aufbau</div>
+    <div class="section-title">Backend-Prozess: Datenfluss</div>
+    <p class="section-sub">Wie der PUPIL Stundenplan intern funktioniert – von der Kantonstabelle bis zum sichtbaren Eintrag. Quelle: CODEFELLAS Confluence.</p>
+
+    <div class="arch-flow">
+      <div class="arch-box" style="border-color:rgba(96,165,250,.3)">
+        <div class="arch-label">Schritt 1</div>
+        <h4>🗃️ Kantonseintrag</h4>
+        <p>Admin definiert Fach × Stufe → Anzahl Lektionen. Tabellenansicht, inline editierbar.</p>
+      </div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-box" style="border-color:rgba(52,211,153,.3)">
+        <div class="arch-label">Schritt 2</div>
+        <h4>📋 Lektionseintrag</h4>
+        <p>Pro Klasse/Gruppe wird automatisch ein Lektionseintrag (Fach + LP + Raum + Anzahl) generiert oder aktualisiert.</p>
+      </div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-box" style="border-color:rgba(245,158,11,.3)">
+        <div class="arch-label">Schritt 3</div>
+        <h4>📅 Stundenplaneintrag</h4>
+        <p>Pro Lektionsanzahl werden entsprechend viele offene Stundenplaneinträge erstellt (z.B. 4 Lektionen Mathe → 4 Einträge).</p>
+      </div>
+    </div>
+
+    <div class="two-col" style="margin-top:32px">
+      <div class="card">
+        <h3 style="margin-bottom:12px">🔁 Klassen-Synchronisation</h3>
+        <ul style="list-style:none; padding:0">
+          <li style="font-size:14px; color:var(--muted); padding:5px 0; border-bottom:1px solid rgba(255,255,255,.05)">1. Alle Klassen der Stufe finden</li>
+          <li style="font-size:14px; color:var(--muted); padding:5px 0; border-bottom:1px solid rgba(255,255,255,.05)">2. Existierenden Lektionseintrag prüfen</li>
+          <li style="font-size:14px; color:var(--muted); padding:5px 0; border-bottom:1px solid rgba(255,255,255,.05)">3. Erstellen oder aktualisieren (LP, Raum)</li>
+          <li style="font-size:14px; color:var(--muted); padding:5px 0">4. Hauptlehrperson nach Fachzuweisung bestimmen</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3 style="margin-bottom:12px">📊 Stundenplan-Prozessor</h3>
+        <ul style="list-style:none; padding:0">
+          <li style="font-size:14px; color:var(--muted); padding:5px 0; border-bottom:1px solid rgba(255,255,255,.05)"><span class="tag tag-green" style="margin-right:6px">=</span> Gleich: nur offene Einträge aktualisieren</li>
+          <li style="font-size:14px; color:var(--muted); padding:5px 0; border-bottom:1px solid rgba(255,255,255,.05)"><span class="tag tag-amber" style="margin-right:6px">&gt;</span> Mehr: offene löschen, neu erstellen</li>
+          <li style="font-size:14px; color:var(--muted); padding:5px 0; border-bottom:1px solid rgba(255,255,255,.05)"><span class="tag tag-blue" style="margin-right:6px">&lt;</span> Weniger: neue offene erstellen</li>
+          <li style="font-size:14px; color:var(--muted); padding:5px 0"><span class="tag tag-red" style="margin-right:6px">🔒</span> Geplante Einträge werden nie verändert</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="warn-box">
+      <strong>⚠️ Wichtig:</strong> Geplante (scheduled) Stundenplaneinträge werden durch die Synchronisation <strong>nie überschrieben</strong>. Nur offene (open) Einträge werden bei Änderungen aktualisiert. Wenn mehr geplante Einträge existieren als die neue Lektionenzahl erlaubt, wird die Lektion gar nicht verarbeitet.
+    </div>
+
+    <h3 style="margin: 32px 0 16px; font-size:16px">📦 Technische Modulstruktur (GitHub: PUPILAG/PUPIL)</h3>
+    <div class="card-grid">
+      <div class="card"><div class="card-icon">🧩</div><h3>Model</h3><p>TimetableEntry, TimetableSettings, SettingHourConfig, TimetableSemesterRelease, BlockedCells u.a.</p></div>
+      <div class="card"><div class="card-icon">⚙️</div><h3>Processor</h3><p>TimetableProcessor, SchoolplanerProcessor, UpdateLessonsProcessor, Print-Prozessoren (PDF/ZIP)</p></div>
+      <div class="card"><div class="card-icon">🔌</div><h3>API</h3><p>REST-Endpunkte für Stundenplan-Einträge, Einstellungen, anonymisierte Ausgabe (für PUPIL Connect)</p></div>
+      <div class="card"><div class="card-icon">🔒</div><h3>Anonymous</h3><p>Anonymisierungs-Handler für LP-Daten im Elternportal. Konfigurierbar pro Semester.</p></div>
+      <div class="card"><div class="card-icon">✅</div><h3>Validity</h3><p>Konflikt-Validierung: Raum-Doppelbelegung, LP-Überschneidung, Zeit-Konflikte.</p></div>
+      <div class="card"><div class="card-icon">🖨️</div><h3>PdfGenerator / Print</h3><p>PDF-Ausgabe pro Klasse/LP/Raum. Druck-Filter, ZIP-Erstellung für Massendownload.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ROYAL SCHEDULE -->
+<section id="royal-schedule">
+  <div class="wrap">
+    <div class="section-label">KI-Stundenplaner / Royal Schedule</div>
+    <div class="section-title">Royal Schedule – KI-Stundenplaner</div>
+    <p class="section-sub">Royal Schedule ist eine externe KI-basierte Stundenplanungslösung, die über Import/Export mit PUPIL integriert ist. Aktuell laufen Pilotprojekte an Schweizer Schulen.</p>
+
+    <div class="compare-grid">
+      <div class="compare-card">
+        <h3>🏫 PUPIL Stundenplan (nativ)</h3>
+        <ul>
+          <li><span class="check">✓</span> Vollständig in PUPIL integriert</li>
+          <li><span class="check">✓</span> Direkte Verknüpfung mit Stammdaten (LP, Räume, Fächer)</li>
+          <li><span class="check">✓</span> Sofort-Synchronisation mit Lektionentabelle</li>
+          <li><span class="check">✓</span> Elternportal-Freigabe direkt in PUPIL</li>
+          <li><span class="check">✓</span> Kostenlos im PUPIL-Paket inbegriffen</li>
+          <li><span class="dot">·</span> Manuelles Drag & Drop (kein KI-Algorithmus)</li>
+          <li><span class="dot">·</span> Zeitkonflikte manuell lösen</li>
+        </ul>
+      </div>
+      <div class="compare-card featured">
+        <h3>🤖 Royal Schedule (KI-Stundenplaner)</h3>
+        <ul>
+          <li><span class="check">✓</span> Vollautomatische Erstellung per KI</li>
+          <li><span class="check">✓</span> Berücksichtigt Wünsche/Sperrzeiten der LP</li>
+          <li><span class="check">✓</span> Optimiert Räume, Gruppen, parallele Kurse</li>
+          <li><span class="check">✓</span> Konfliktfreie Ergebnisse in Minuten</li>
+          <li><span class="dot">·</span> Separates System (planner.sdui.app)</li>
+          <li><span class="dot">·</span> Import/Export mit PUPIL nötig (Klassenschlüssel)</li>
+          <li><span class="dot">·</span> Zusatzkosten und Onboarding-Aufwand</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3 style="margin: 40px 0 16px; font-size:16px">⚙️ Royal Schedule – Onboarding-Prozess</h3>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num" style="border-color:var(--accent2); color:var(--accent2); background:rgba(52,211,153,.1)">1</div>
+        <div class="step-body">
+          <h3>Zugangsdaten & Aktivierung</h3>
+          <p>Schule erhält persönlichen Aktivierungslink. Einmalige Registrierung, dann direkter Zugang zu <code>planner.sdui.app</code>.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num" style="border-color:var(--accent2); color:var(--accent2); background:rgba(52,211,153,.1)">2</div>
+        <div class="step-body">
+          <h3>Stammdaten eingeben</h3>
+          <p>Klassen, Lehrpersonen, Räume und Kurse in Royal Schedule erfassen. Verbotene Zeiten, Pausenzeiten und LP-Wünsche definieren.</p>
+          <ul>
+            <li>Lehrpersonen: erlaubte Tage, verbotene Zeiten, Zeitrahmen</li>
+            <li>Räume: erlaubte Tage, verbotene Zeiten</li>
+            <li>Kurse: Standard-Lektionszeiten erfassen (via Kalender-Icon)</li>
+          </ul>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num" style="border-color:var(--accent2); color:var(--accent2); background:rgba(52,211,153,.1)">3</div>
+        <div class="step-body">
+          <h3>Kurse konfigurieren</h3>
+          <p>Parallele Kurse verknüpfen, Farben setzen, LP zuweisen (i.d.R. 1 LP pro Gruppe), Räume festlegen, fixe Lektionen setzen.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num" style="border-color:var(--accent2); color:var(--accent2); background:rgba(52,211,153,.1)">4</div>
+        <div class="step-body">
+          <h3>KI-Stundenplan erstellen</h3>
+          <p>Royal Schedule berechnet automatisch einen konfliktfreien Stundenplan. Ergebnis prüfen, bei Bedarf manuell anpassen.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num" style="border-color:var(--accent2); color:var(--accent2); background:rgba(52,211,153,.1)">5</div>
+        <div class="step-body">
+          <h3>Export nach PUPIL</h3>
+          <p>Fertiger Stundenplan wird aus Royal Schedule exportiert und in PUPIL importiert. Wichtig: Klassenschlüssel für jedes Semester korrekt setzen.</p>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="margin: 40px 0 16px; font-size:16px">🏫 Pilotschulen</h3>
+    <table class="data-table">
+      <thead><tr><th>Schule</th><th>Status</th><th>Notizen</th></tr></thead>
+      <tbody>
+        <tr><td>Kloten Sekundar</td><td><span class="tag tag-green">Pilot abgeschlossen</span></td><td>RS-Pilot 2025, Feedback von Bettina Petralli (Kloten)</td></tr>
+        <tr><td>BSK Immensee/Küssnacht</td><td><span class="tag tag-blue">Pilot läuft</span></td><td>Samuele Simonetto testet für Immensee</td></tr>
+        <tr><td>Wartau</td><td><span class="tag tag-amber">Planung</span></td><td>Geplant für Schuljahr 2026/27</td></tr>
+        <tr><td>Urdorf</td><td><span class="tag tag-amber">Interessiert</span></td><td>Verzögert auf 2026/27 (Personalwechsel)</td></tr>
+        <tr><td>Gaiserwald</td><td><span class="tag tag-amber">Wartend</span></td><td>Startet nach erfolgreichem RS-Test, via Bettina Wagner</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- IMPROVEMENTS -->
+<section id="improvements">
+  <div class="wrap">
+    <div class="section-label">Geplante Entwicklungen</div>
+    <div class="section-title">Geplante Verbesserungen</div>
+    <p class="section-sub">Bekannte Bugs, UI-Verbesserungen und funktionale Erweiterungen aus der Confluence-Roadmap. Stand: März 2026.</p>
+
+    <div class="two-col">
+      <div>
+        <h3 style="color:var(--danger); font-size:15px; margin-bottom:12px">🐛 Bekannte Bugs</h3>
+        <div class="card" style="border-color:rgba(248,113,113,.2)">
+          <ul style="list-style:none; padding:0">
+            <li style="padding:8px 0; border-bottom:1px solid rgba(255,255,255,.05); font-size:14px; color:var(--muted)">Timeout bei Synchronisation <code>/synchronize_all_entries</code></li>
+            <li style="padding:8px 0; border-bottom:1px solid rgba(255,255,255,.05); font-size:14px; color:var(--muted)">Alte Lektionen/LP vom Vorjahr werden beim Semesterwechsel kopiert → betrifft Kloten, Oberengstringen, Nollen</li>
+            <li style="padding:8px 0; font-size:14px; color:var(--muted)">Lektionen werden erstellt auch wenn Stundenzahl = 0</li>
+          </ul>
+        </div>
+
+        <h3 style="color:var(--accent3); font-size:15px; margin:24px 0 12px">🎨 UI-Verbesserungen</h3>
+        <div class="card" style="border-color:rgba(245,158,11,.2)">
+          <ul style="list-style:none; padding:0">
+            <li style="padding:8px 0; border-bottom:1px solid rgba(255,255,255,.05); font-size:14px; color:var(--muted)">Zeitkonfiguration: Zeilen im UI hinzufügen/entfernen (statt neuen Eintrag erstellen)</li>
+            <li style="padding:8px 0; border-bottom:1px solid rgba(255,255,255,.05); font-size:14px; color:var(--muted)">Mehrere Klassen gleichzeitig anpassen</li>
+            <li style="padding:8px 0; border-bottom:1px solid rgba(255,255,255,.05); font-size:14px; color:var(--muted)">Standardwerte zurücksetzen</li>
+            <li style="padding:8px 0; border-bottom:1px solid rgba(255,255,255,.05); font-size:14px; color:var(--muted)">Farben aufhellen (PUPIL-Blau für Gruppenlektionen)</li>
+            <li style="padding:8px 0; font-size:14px; color:var(--muted)">Tabellenansicht mit Pagination (Ladezeiten)</li>
+          </ul>
+        </div>
+      </div>
+
+      <div>
+        <h3 style="color:var(--accent); font-size:15px; margin-bottom:12px">🚀 Funktionale Erweiterungen</h3>
+        <div class="card" style="border-color:rgba(96,165,250,.2)">
+          <ul style="list-style:none; padding:0">
+            <li style="padding:8px 0; border-bottom:1px solid rgba(255,255,255,.05); font-size:14px; color:var(--muted)">Lektionen nach Zeiten planen (statt nach Zeilennummer) → wie Royal Schedule</li>
+            <li style="padding:8px 0; border-bottom:1px solid rgba(255,255,255,.05); font-size:14px; color:var(--muted)">Fächerstundenplan (Turnen, TTG, …) nach Fach darstellen</li>
+            <li style="padding:8px 0; border-bottom:1px solid rgba(255,255,255,.05); font-size:14px; color:var(--muted)">Mehrere Lehrpersonen pro Lektion (&gt;3, Co-Teaching)</li>
+            <li style="padding:8px 0; border-bottom:1px solid rgba(255,255,255,.05); font-size:14px; color:var(--muted)">Mehrere Räume pro Lektion</li>
+            <li style="padding:8px 0; border-bottom:1px solid rgba(255,255,255,.05); font-size:14px; color:var(--muted)">Synchronisation sperren (manuelle Änderungen schützen)</li>
+            <li style="padding:8px 0; border-bottom:1px solid rgba(255,255,255,.05); font-size:14px; color:var(--muted)">Elternportal: Anonymisierung nur im Portal, LP kann trotzdem drucken</li>
+            <li style="padding:8px 0; font-size:14px; color:var(--muted)">Mehrwochenstundenplan (14-täglich, monatlich)</li>
+          </ul>
+        </div>
+
+        <h3 style="color:var(--accent2); font-size:15px; margin:24px 0 12px">🖨️ Druck-Verbesserungen</h3>
+        <div class="card" style="border-color:rgba(52,211,153,.2)">
+          <ul style="list-style:none; padding:0">
+            <li style="padding:8px 0; border-bottom:1px solid rgba(255,255,255,.05); font-size:14px; color:var(--muted)">Footer "Erstellt mit PUPIL"</li>
+            <li style="padding:8px 0; border-bottom:1px solid rgba(255,255,255,.05); font-size:14px; color:var(--muted)">Dynamische Tabelle (mehr als 2 Lektionen pro Zelle)</li>
+            <li style="padding:8px 0; border-bottom:1px solid rgba(255,255,255,.05); font-size:14px; color:var(--muted)">Schriftgrösse im Druckdialog anpassen</li>
+            <li style="padding:8px 0; border-bottom:1px solid rgba(255,255,255,.05); font-size:14px; color:var(--muted)">Legende ja/nein, Raumname ja/nein, LP-Name ja/nein</li>
+            <li style="padding:8px 0; font-size:14px; color:var(--muted)">Schulhaus-Info aus LP-Druck entfernen</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STRATEGY -->
+<section id="strategy">
+  <div class="wrap">
+    <div class="section-label">Strategie</div>
+    <div class="section-title">Strategische Ausrichtung</div>
+    <p class="section-sub">Zusammenfassung des Strategie-Meetings vom 13. März 2026 (Arvo Wagner, Sebastian, Lukas Lehmann).</p>
+
+    <div class="card-grid">
+      <div class="card" style="border-color:rgba(248,113,113,.2)">
+        <div class="card-icon">⚠️</div>
+        <h3>Aktuelles Problem: Skalierung</h3>
+        <p>Fast alle Stundenplan-Arbeit hängt an einer Person (Lukas Lehmann). Das limitiert Wachstum. Aktuell nur ca. <strong>1–2 neue Schulen pro Jahr</strong>.</p>
+      </div>
+      <div class="card" style="border-color:rgba(52,211,153,.2)">
+        <div class="card-icon">🎯</div>
+        <h3>Ziel: Skalierung</h3>
+        <p>Strukturierter Onboarding-Prozess, Wissensverteilung, klare Rollenverteilung. Präsentation der aktuellen Fähigkeiten für interne Transparenz.</p>
+      </div>
+      <div class="card" style="border-color:rgba(245,158,11,.2)">
+        <div class="card-icon">🤔</div>
+        <h3>Offene Frage: KI-Lösung</h3>
+        <p>Strategische Entscheidung ausstehend: <strong>Royal Schedule</strong> (bestehend) oder <strong>Educa AI Timetable</strong> (neu, KI-basiert)? Klare Richtung für weitere Entwicklung nötig.</p>
+      </div>
+    </div>
+
+    <div class="info-box" style="margin-top:32px">
+      <strong>Nächste Schritte (aus Confluence, Stand 13. März 2026):</strong><br>
+      Timetable-Fähigkeiten-Präsentation organisieren (Lukas Lehmann) · Ressourcenplanung mit Lucas Wunderling besprechen · Skalierbaren Onboarding-Prozess definieren · Royal Schedule vs. Educa AI evaluieren.
+    </div>
+  </div>
+</section>
+
+<!-- LINKS -->
+<section id="links">
+  <div class="wrap">
+    <div class="section-label">Ressourcen</div>
+    <div class="section-title">Weiterführende Links</div>
+    <p class="section-sub">Alle relevanten Quellen auf einen Blick.</p>
+
+    <div class="links-grid">
+      <a class="link-card" href="https://dokumentation.pupil.ch/article/xds10caret-stundenplan" target="_blank">
+        <span class="link-icon">📗</span>
+        <div>
+          <div class="link-title">User-Dokumentation</div>
+          <div class="link-sub">dokumentation.pupil.ch — Stundenplan</div>
+        </div>
+      </a>
+      <a class="link-card" href="https://pupilag.atlassian.net/wiki/spaces/PO/pages/143589397/Timetable" target="_blank">
+        <span class="link-icon">📘</span>
+        <div>
+          <div class="link-title">Confluence Hub</div>
+          <div class="link-sub">Timetable – Übersicht (PO Space)</div>
+        </div>
+      </a>
+      <a class="link-card" href="https://pupilag.atlassian.net/wiki/spaces/PO/pages/432570483" target="_blank">
+        <span class="link-icon">🗺️</span>
+        <div>
+          <div class="link-title">Roadmap & Next Steps</div>
+          <div class="link-sub">PUPIL Timetable – Next Steps</div>
+        </div>
+      </a>
+      <a class="link-card" href="https://pupilag.atlassian.net/wiki/spaces/PO/pages/284033028" target="_blank">
+        <span class="link-icon">🔧</span>
+        <div>
+          <div class="link-title">Verbesserungen Detail</div>
+          <div class="link-sub">PUPIL timetable improvements</div>
+        </div>
+      </a>
+      <a class="link-card" href="https://pupilag.atlassian.net/wiki/spaces/CODEFELLAS/pages/451346477/Timetable" target="_blank">
+        <span class="link-icon">⚙️</span>
+        <div>
+          <div class="link-title">Backend-Prozess</div>
+          <div class="link-sub">Canton Planning → Lesson → Timetable</div>
+        </div>
+      </a>
+      <a class="link-card" href="https://pupilag.atlassian.net/wiki/spaces/PO/pages/361070593/Royal+Schedule" target="_blank">
+        <span class="link-icon">🤖</span>
+        <div>
+          <div class="link-title">Royal Schedule</div>
+          <div class="link-sub">Onboarding, Import/Export, Kloten</div>
+        </div>
+      </a>
+      <a class="link-card" href="https://pupilag.atlassian.net/wiki/spaces/PO/pages/916684802" target="_blank">
+        <span class="link-icon">📋</span>
+        <div>
+          <div class="link-title">Strategie-Meeting</div>
+          <div class="link-sub">Timetable Process – 13. März 2026</div>
+        </div>
+      </a>
+      <a class="link-card" href="https://github.com/PUPILAG/PUPIL/tree/main/src/Timetable" target="_blank">
+        <span class="link-icon">🐙</span>
+        <div>
+          <div class="link-title">GitHub: Timetable Module</div>
+          <div class="link-sub">PUPILAG/PUPIL — src/Timetable</div>
+        </div>
+      </a>
+      <a class="link-card" href="https://planner.sdui.app/" target="_blank">
+        <span class="link-icon">🗓️</span>
+        <div>
+          <div class="link-title">Royal Schedule Login</div>
+          <div class="link-sub">planner.sdui.app</div>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>Zusammengestellt aus <a href="https://pupilag.atlassian.net" target="_blank">Confluence</a>, <a href="https://github.com/PUPILAG/PUPIL" target="_blank">GitHub PUPILAG/PUPIL</a> und <a href="https://dokumentation.pupil.ch" target="_blank">dokumentation.pupil.ch</a> · Stand März 2026 · Intern</p>
+</footer>
+
+</body>
+</html>
