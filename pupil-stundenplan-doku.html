@@ -4,6 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PUPIL Stundenplan – Dokumentation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg: #07111f;
@@ -23,7 +26,7 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
     body {
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, sans-serif;
+      font-family: 'Nunito', ui-sans-serif, system-ui, -apple-system, sans-serif;
       background: var(--bg);
       color: var(--text);
       line-height: 1.65;
@@ -266,6 +269,68 @@
     .compare-card ul li:last-child { border-bottom: none; }
     .check { color: var(--accent2); flex-shrink: 0; }
     .dot   { color: var(--muted); flex-shrink: 0; }
+
+    /* SCREENSHOTS */
+    .screenshot-group {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 16px; margin: 28px 0;
+    }
+    .screenshot {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: border-color .2s, transform .2s;
+    }
+    .screenshot:hover {
+      border-color: rgba(96,165,250,.4);
+      transform: translateY(-2px);
+    }
+    .screenshot img {
+      width: 100%; display: block;
+      border-bottom: 1px solid var(--border);
+    }
+    .screenshot-caption {
+      padding: 12px 16px;
+      font-size: 13px; color: var(--muted);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .screenshot-caption strong { color: var(--text); font-weight: 600; }
+    .screenshot-single {
+      max-width: 720px; margin: 24px 0;
+    }
+    .screenshot-single img {
+      width: 100%; display: block;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+    }
+    .screenshot-single .screenshot-caption {
+      padding: 10px 4px;
+    }
+
+    /* LIGHTBOX */
+    .lightbox-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,.88);
+      backdrop-filter: blur(12px);
+      z-index: 999; cursor: zoom-out;
+      justify-content: center; align-items: center;
+      padding: 40px;
+    }
+    .lightbox-overlay.active { display: flex; }
+    .lightbox-overlay img {
+      max-width: 95vw; max-height: 90vh;
+      border-radius: 10px; box-shadow: 0 20px 60px rgba(0,0,0,.5);
+    }
+    .lightbox-close {
+      position: fixed; top: 20px; right: 28px;
+      background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2);
+      color: #fff; font-size: 20px; width: 40px; height: 40px;
+      border-radius: 50%; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      z-index: 1000;
+    }
+    .screenshot img { cursor: zoom-in; }
   </style>
 </head>
 <body>
@@ -339,6 +404,17 @@
         <p>Optionale Integration mit Royal Schedule (KI-Stundenplaner) für vollautomatische Stundenplanerstellung per KI-Algorithmus.</p>
       </div>
     </div>
+
+    <div class="screenshot-group" style="margin-top:32px">
+      <div class="screenshot" onclick="openLightbox(this)">
+        <img src="https://files.helpdocs.io/j95rumib0d/articles/xds10caret/1647518468226/stundenplan-2.png" alt="Stundenplan Bearbeitungsansicht" loading="lazy">
+        <div class="screenshot-caption">📸 <strong>Bearbeitungsansicht</strong> — Drag & Drop Interface mit Arbeitsvorrat und Wochengitter</div>
+      </div>
+      <div class="screenshot" onclick="openLightbox(this)">
+        <img src="https://files.helpdocs.io/j95rumib0d/articles/xds10caret/1646292472621/image.png" alt="Stundenplan PDF Ausgabe" loading="lazy">
+        <div class="screenshot-caption">📸 <strong>PDF-Ausgabe</strong> — Klassenstundenplan als druckfertiges PDF</div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -381,6 +457,27 @@
     <div class="info-box" style="margin-top:24px">
       <strong>Neu (2025):</strong> Gruppenlektionen werden bei der Klassen-Planung angezeigt, auch ohne zugewiesene Stufe – vereinfacht die Planung für Wahlfach- und Mehrstufenklassen. Schulleitungen sehen nur noch ihre eigenen Schuleinheiten in der Bearbeitungsansicht.
     </div>
+
+    <div class="screenshot-group" style="margin-top:28px">
+      <div class="screenshot" onclick="openLightbox(this)">
+        <img src="https://files.helpdocs.io/j95rumib0d/articles/xds10caret/1703841993542/image.png" alt="Kantonale Stundentafel" loading="lazy">
+        <div class="screenshot-caption">📸 <strong>Kant. Stundentafel</strong> — Fächer × Stufen mit Lektionenanzahl</div>
+      </div>
+      <div class="screenshot" onclick="openLightbox(this)">
+        <img src="https://files.helpdocs.io/j95rumib0d/articles/xds10caret/1646228415643/2022-03-02-14-36-51.png" alt="Klassenstundentafel" loading="lazy">
+        <div class="screenshot-caption">📸 <strong>Klassenstundentafel</strong> — Lektioneneinträge pro Klasse mit LP und Raum</div>
+      </div>
+    </div>
+    <div class="screenshot-group">
+      <div class="screenshot" onclick="openLightbox(this)">
+        <img src="https://files.helpdocs.io/j95rumib0d/articles/xds10caret/1736969243369/image.png" alt="Gruppentypen Übersicht" loading="lazy">
+        <div class="screenshot-caption">📸 <strong>Gruppentypen</strong> — Halbklasse, Niveaugruppe und Wahlfachgruppe im Überblick</div>
+      </div>
+      <div class="screenshot" onclick="openLightbox(this)">
+        <img src="https://files.helpdocs.io/j95rumib0d/articles/xds10caret/1713940783375/image.png" alt="Anonymisierungseinstellungen" loading="lazy">
+        <div class="screenshot-caption">📸 <strong>Anonymisierung</strong> — Datenschutz-Einstellungen für das Elternportal</div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -408,6 +505,17 @@
         <p>Lesezugriff via PUPIL Connect (Elternportal). Sehen freigegebene Stundenpläne mit konfigurierbaren Datenschutzeinstellungen (Vollansicht, Raumangabe, Vorlage).</p>
       </div>
     </div>
+
+    <div class="screenshot-group" style="margin-top:28px">
+      <div class="screenshot" onclick="openLightbox(this)">
+        <img src="https://files.helpdocs.io/j95rumib0d/articles/xds10caret/1646295900571/2022-03-03-09-22-42.png" alt="Lehrpersonenansicht" loading="lazy">
+        <div class="screenshot-caption">📸 <strong>LP-Ansicht</strong> — Lehrperson sieht eigenen Stundenplan mit Semester- und Klassenfilter</div>
+      </div>
+      <div class="screenshot" onclick="openLightbox(this)">
+        <img src="https://files.helpdocs.io/j95rumib0d/articles/xds10caret/1646292651976/2022-03-03-08-30-28.png" alt="Elternportal Freigabe" loading="lazy">
+        <div class="screenshot-caption">📸 <strong>Elternportal</strong> — Aktivierung der Stundenplan-Freigabe via PUPIL Connect</div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -433,6 +541,26 @@
             <li>Fächer mit Farbe und Code definieren</li>
             <li>Klassenlehrpersonen zuweisen</li>
           </ul>
+          <div class="screenshot-group" style="margin-top:16px">
+            <div class="screenshot" onclick="openLightbox(this)">
+              <img src="https://files.helpdocs.io/j95rumib0d/articles/xds10caret/1645628575599/2022-02-23-16-00-24.png" alt="Semester definieren" loading="lazy">
+              <div class="screenshot-caption">📸 <strong>Klassen & Semester</strong> — Klassen pro Semester definieren</div>
+            </div>
+            <div class="screenshot" onclick="openLightbox(this)">
+              <img src="https://files.helpdocs.io/j95rumib0d/articles/xds10caret/1645623576852/raum-erstelle.png" alt="Raum erstellen" loading="lazy">
+              <div class="screenshot-caption">📸 <strong>Raum erstellen</strong> — Gebäude, Abkürzung und Anzeige-Optionen</div>
+            </div>
+          </div>
+          <div class="screenshot-group">
+            <div class="screenshot" onclick="openLightbox(this)">
+              <img src="https://files.helpdocs.io/j95rumib0d/articles/xds10caret/1645626887804/2022-02-23-15-32-51.png" alt="LP Kürzel" loading="lazy">
+              <div class="screenshot-caption">📸 <strong>LP-Kürzel</strong> — Abkürzung für Lehrpersonen erfassen</div>
+            </div>
+            <div class="screenshot" onclick="openLightbox(this)">
+              <img src="https://files.helpdocs.io/j95rumib0d/articles/xds10caret/1646225251609/2022-03-02-13-39-19.png" alt="Fach erstellen" loading="lazy">
+              <div class="screenshot-caption">📸 <strong>Fach erstellen</strong> — Name, Kürzel und Farbe definieren</div>
+            </div>
+          </div>
         </div>
       </div>
       <div class="step">
@@ -445,6 +573,16 @@
             <li>Gruppen-Lektionen spezifizieren (Halbklassen, Niveaus)</li>
             <li>Synchronisation auslösen → Lektionseinträge werden automatisch erstellt oder aktualisiert</li>
           </ul>
+          <div class="screenshot-group" style="margin-top:16px">
+            <div class="screenshot" onclick="openLightbox(this)">
+              <img src="https://files.helpdocs.io/j95rumib0d/articles/xds10caret/1703841993542/image.png" alt="Kantonale Stundentafel bearbeiten" loading="lazy">
+              <div class="screenshot-caption">📸 <strong>Kant. Stundentafel</strong> — Inline-Bearbeitung der Lektionenanzahl</div>
+            </div>
+            <div class="screenshot" onclick="openLightbox(this)">
+              <img src="https://files.helpdocs.io/j95rumib0d/articles/xds10caret/1646228906152/image.png" alt="Lektionseintrag bearbeiten" loading="lazy">
+              <div class="screenshot-caption">📸 <strong>Lektionseintrag</strong> — LP und Raum pro Lektion zuweisen</div>
+            </div>
+          </div>
         </div>
       </div>
       <div class="step">
@@ -459,6 +597,16 @@
             <li>Mittagspausen markieren</li>
             <li>Schulbus / Schulplaner-Anbindung konfigurieren</li>
           </ul>
+          <div class="screenshot-group" style="margin-top:16px">
+            <div class="screenshot" onclick="openLightbox(this)">
+              <img src="https://files.helpdocs.io/j95rumib0d/articles/xds10caret/1717601068674/image.png" alt="Einstellungen Stundenplan" loading="lazy">
+              <div class="screenshot-caption">📸 <strong>Einstellungen</strong> — Semester, Stufe und Zeitkonfiguration</div>
+            </div>
+            <div class="screenshot" onclick="openLightbox(this)">
+              <img src="https://files.helpdocs.io/j95rumib0d/articles/xds10caret/1646231944997/image.png" alt="Lektionszeiten konfigurieren" loading="lazy">
+              <div class="screenshot-caption">📸 <strong>Lektionszeiten</strong> — Start- und Endzeiten pro Zeile definieren</div>
+            </div>
+          </div>
         </div>
       </div>
       <div class="step">
@@ -473,6 +621,26 @@
             <li>Fixe Lektionen setzen (z.B. Sport, TTG)</li>
             <li>Gruppenverknüpfungen beachten (parallele Gruppen)</li>
           </ul>
+          <div class="screenshot-group" style="margin-top:16px">
+            <div class="screenshot" onclick="openLightbox(this)">
+              <img src="https://files.helpdocs.io/j95rumib0d/articles/xds10caret/1647518491265/stundenplan-5-9.gif" alt="Drag & Drop Animation" loading="lazy">
+              <div class="screenshot-caption">🎬 <strong>Drag & Drop</strong> — Lektionen aus dem Arbeitsvorrat ins Wochengitter ziehen</div>
+            </div>
+            <div class="screenshot" onclick="openLightbox(this)">
+              <img src="https://files.helpdocs.io/j95rumib0d/articles/xds10caret/1646316807669/stundenplan-6.gif" alt="Lektion bearbeiten Animation" loading="lazy">
+              <div class="screenshot-caption">🎬 <strong>Lektion bearbeiten</strong> — Zahnrad-Icon für Detailanpassungen</div>
+            </div>
+          </div>
+          <div class="screenshot-group">
+            <div class="screenshot" onclick="openLightbox(this)">
+              <img src="https://files.helpdocs.io/j95rumib0d/articles/xds10caret/1769156179746/image.png" alt="Lektionskarten" loading="lazy">
+              <div class="screenshot-caption">📸 <strong>Arbeitsvorrat</strong> — Lektionskarten mit Fach, LP und verbleibende Anzahl</div>
+            </div>
+            <div class="screenshot" onclick="openLightbox(this)">
+              <img src="https://files.helpdocs.io/j95rumib0d/articles/xds10caret/1646319044866/stundenplan-7.png" alt="Konflikt-Erkennung" loading="lazy">
+              <div class="screenshot-caption">📸 <strong>Konflikte</strong> — Automatische Erkennung von Doppelbelegungen</div>
+            </div>
+          </div>
         </div>
       </div>
       <div class="step">
@@ -487,6 +655,26 @@
             <li>LP-Zugriff aktivieren</li>
             <li>Anonymisierungsoptionen setzen</li>
           </ul>
+          <div class="screenshot-group" style="margin-top:16px">
+            <div class="screenshot" onclick="openLightbox(this)">
+              <img src="https://files.helpdocs.io/j95rumib0d/articles/xds10caret/1646233228678/2022-03-02-15-59-59.png" alt="Druckansicht" loading="lazy">
+              <div class="screenshot-caption">📸 <strong>Druck & PDF</strong> — Semester wählen, Filter setzen und als PDF herunterladen</div>
+            </div>
+            <div class="screenshot" onclick="openLightbox(this)">
+              <img src="https://files.helpdocs.io/j95rumib0d/articles/xds10caret/1713946084578/image.png" alt="Anonymisierung Einstellungen" loading="lazy">
+              <div class="screenshot-caption">📸 <strong>Anonymisierung</strong> — LP-Namen pro Schuljahr und Stufe konfigurierbar</div>
+            </div>
+          </div>
+          <div class="screenshot-group">
+            <div class="screenshot" onclick="openLightbox(this)">
+              <img src="https://files.helpdocs.io/j95rumib0d/articles/xds10caret/1646232641024/image.png" alt="Freigabe gesperrt" loading="lazy">
+              <div class="screenshot-caption">📸 <strong>Gesperrt</strong> — Rotes Schloss: Stundenplan noch nicht freigegeben</div>
+            </div>
+            <div class="screenshot" onclick="openLightbox(this)">
+              <img src="https://files.helpdocs.io/j95rumib0d/articles/xds10caret/1646232628192/image.png" alt="Freigabe offen" loading="lazy">
+              <div class="screenshot-caption">📸 <strong>Freigegeben</strong> — Grünes Schloss: LP und Eltern haben Zugriff</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -543,6 +731,21 @@
 
     <div class="warn-box">
       <strong>⚠️ Wichtig:</strong> Geplante (scheduled) Stundenplaneinträge werden durch die Synchronisation <strong>nie überschrieben</strong>. Nur offene (open) Einträge werden bei Änderungen aktualisiert. Wenn mehr geplante Einträge existieren als die neue Lektionenzahl erlaubt, wird die Lektion gar nicht verarbeitet.
+    </div>
+
+    <div class="screenshot-group">
+      <div class="screenshot" onclick="openLightbox(this)">
+        <img src="https://files.helpdocs.io/j95rumib0d/articles/xds10caret/1769154916073/image.png" alt="Aktionen Synchronisation" loading="lazy">
+        <div class="screenshot-caption">📸 <strong>Aktionen-Menü</strong> — Klasse synchronisieren und Fachzuweisungen aktualisieren</div>
+      </div>
+      <div class="screenshot" onclick="openLightbox(this)">
+        <img src="https://files.helpdocs.io/j95rumib0d/articles/xds10caret/1769155388233/image.png" alt="Sync Bestätigung" loading="lazy">
+        <div class="screenshot-caption">📸 <strong>Sync-Dialog</strong> — Bestätigung vor dem Aktualisieren der Klassenstundentafel</div>
+      </div>
+      <div class="screenshot" onclick="openLightbox(this)">
+        <img src="https://files.helpdocs.io/j95rumib0d/articles/xds10caret/1769155484735/image.png" alt="Sync Erfolg" loading="lazy">
+        <div class="screenshot-caption">📸 <strong>Erfolg</strong> — Bestätigung der erfolgreichen Synchronisation</div>
+      </div>
     </div>
 
     <h3 style="margin: 32px 0 16px; font-size:16px">📦 Technische Modulstruktur (GitHub: PUPILAG/PUPIL)</h3>
@@ -817,7 +1020,31 @@
 
 <footer>
   <p>Zusammengestellt aus <a href="https://pupilag.atlassian.net" target="_blank">Confluence</a>, <a href="https://github.com/PUPILAG/PUPIL" target="_blank">GitHub PUPILAG/PUPIL</a> und <a href="https://dokumentation.pupil.ch" target="_blank">dokumentation.pupil.ch</a> · Stand März 2026 · Intern</p>
+  <p style="margin-top:8px; font-size:12px">Screenshots: <a href="https://dokumentation.pupil.ch/article/xds10caret-stundenplan" target="_blank">dokumentation.pupil.ch</a> · Klick auf Bilder zum Vergrössern</p>
 </footer>
+
+<!-- LIGHTBOX -->
+<div class="lightbox-overlay" id="lightbox" onclick="closeLightbox()">
+  <button class="lightbox-close" onclick="closeLightbox()">&times;</button>
+  <img id="lightbox-img" src="" alt="Vergrössertes Bild">
+</div>
+
+<script>
+function openLightbox(el) {
+  const img = el.querySelector('img');
+  if (!img) return;
+  document.getElementById('lightbox-img').src = img.src;
+  document.getElementById('lightbox').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('active');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeLightbox();
+});
+</script>
 
 </body>
 </html>
