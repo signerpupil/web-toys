@@ -266,14 +266,82 @@
     .toy-card { padding: 16px 18px; gap: 14px; }
     .toy-emoji { width: 40px; height: 40px; min-width: 40px; font-size: 18px; }
   }
+
+  /* ── PASSWORD GATE ── */
+  #pw-gate {
+    position: fixed; inset: 0; z-index: 9999;
+    background: var(--bg);
+    display: flex; align-items: center; justify-content: center;
+    padding: 24px;
+  }
+  #pw-gate.hidden { display: none; }
+  .pw-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 40px 36px;
+    max-width: 380px; width: 100%;
+    box-shadow: var(--card-shadow);
+    text-align: center;
+  }
+  .pw-emoji { font-size: 40px; margin-bottom: 16px; }
+  .pw-card h2 { font-size: 1.4rem; font-weight: 700; margin: 0 0 6px; }
+  .pw-card p { color: var(--text-muted); font-size: 0.9rem; margin: 0 0 24px; }
+  .pw-input-wrap { position: relative; margin-bottom: 12px; }
+  .pw-input-wrap input {
+    width: 100%; box-sizing: border-box;
+    padding: 12px 44px 12px 16px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 1rem;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .pw-input-wrap input:focus { border-color: var(--accent); }
+  .pw-input-wrap input.error { border-color: #e53e3e; }
+  .pw-toggle {
+    position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+    background: none; border: none; cursor: pointer;
+    color: var(--text-muted); padding: 4px; line-height: 1;
+    font-size: 16px;
+  }
+  .pw-btn {
+    width: 100%;
+    padding: 12px;
+    background: var(--accent);
+    color: #fff;
+    border: none; border-radius: 10px;
+    font-size: 1rem; font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+  .pw-btn:hover { opacity: 0.88; }
+  .pw-error { color: #e53e3e; font-size: 0.82rem; margin-top: 8px; min-height: 18px; }
 </style>
 </head>
 <body>
+<div id="pw-gate">
+  <div class="pw-card">
+    <div class="pw-emoji">🔐</div>
+    <h2>Web Toys</h2>
+    <p>This collection is password-protected.</p>
+    <div class="pw-input-wrap">
+      <input type="password" id="pw-input" placeholder="Enter password" autocomplete="current-password" />
+      <button class="pw-toggle" id="pw-toggle" type="button" aria-label="Show password">👁</button>
+    </div>
+    <button class="pw-btn" id="pw-submit">Unlock →</button>
+    <div class="pw-error" id="pw-error"></div>
+  </div>
+</div>
+
 
 <div class="page">
 
   <header class="header">
-    <span class="header-tag">signerpupil</span>
     <h1>Web <span class="accent">Toys</span></h1>
     <p>Kleine Webseiten, Infografiken und Tools – alles statisch, direkt im Browser lauffähig.</p>
   </header>
@@ -358,20 +426,6 @@
         <div class="toy-tags">
           <span class="toy-tag">Dashboard</span>
           <span class="toy-tag">Briefing</span>
-        </div>
-      </div>
-      <span class="toy-arrow">→</span>
-    </a>
-
-    <a href="pv_premium_analyse_roi_haus_signer.html" class="toy-card">
-      <div class="toy-emoji">🔋</div>
-      <div class="toy-info">
-        <div class="toy-title">PV Premium Analyse – Haus Signer</div>
-        <div class="toy-desc">ROI-Analyse und Entscheidungshilfe für eine Photovoltaik-Anlage</div>
-        <div class="toy-tags">
-          <span class="toy-tag">Solar</span>
-          <span class="toy-tag">ROI</span>
-          <span class="toy-tag">Analyse</span>
         </div>
       </div>
       <span class="toy-arrow">→</span>
@@ -476,5 +530,51 @@
   </div>
 </footer>
 
+<script>
+(function() {
+  const HASH = '';
+  const SESSION_KEY = 'wt_unlocked';
+
+  async function sha256(str) {
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+  }
+
+  const gate = document.getElementById('pw-gate');
+  const input = document.getElementById('pw-input');
+  const submitBtn = document.getElementById('pw-submit');
+  const toggleBtn = document.getElementById('pw-toggle');
+  const errorEl = document.getElementById('pw-error');
+
+  // Already unlocked this session?
+  if (sessionStorage.getItem(SESSION_KEY) === '1') {
+    gate.classList.add('hidden');
+    return;
+  }
+
+  async function tryUnlock() {
+    const h = await sha256(input.value);
+    if (h === HASH) {
+      sessionStorage.setItem(SESSION_KEY, '1');
+      gate.classList.add('hidden');
+    } else {
+      input.classList.add('error');
+      errorEl.textContent = 'Incorrect password. Try again.';
+      input.select();
+      setTimeout(() => input.classList.remove('error'), 1000);
+    }
+  }
+
+  submitBtn.addEventListener('click', tryUnlock);
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') tryUnlock(); });
+  toggleBtn.addEventListener('click', () => {
+    input.type = input.type === 'password' ? 'text' : 'password';
+    toggleBtn.textContent = input.type === 'password' ? '👁' : '🙈';
+  });
+
+  // Focus input once gate is shown
+  input.focus();
+})();
+</script>
 </body>
 </html>
