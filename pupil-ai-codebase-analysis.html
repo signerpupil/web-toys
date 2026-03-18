@@ -88,7 +88,7 @@ header::before {
 
 /* ─── Key Stats ─── */
 .key-stats {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 16px; margin-bottom: 0;
 }
 .stat-card {
@@ -97,7 +97,7 @@ header::before {
   transition: all 0.2s;
 }
 .stat-card:hover { border-color: var(--border-accent); transform: translateY(-2px); }
-.stat-value { font-family: 'Fraunces', serif; font-size: 32px; font-weight: 700; }
+.stat-value { font-family: 'Fraunces', serif; font-size: 28px; font-weight: 700; }
 .stat-label { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
 
 /* ─── Navigation ─── */
@@ -183,11 +183,11 @@ header::before {
 
 /* ─── Feature Table ─── */
 .feature-controls {
-  display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 24px;
+  display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 16px;
   align-items: center;
 }
 .feature-search {
-  flex: 1; min-width: 240px;
+  flex: 1; min-width: 200px;
   background: var(--bg-card); border: 1px solid var(--border);
   border-radius: var(--radius-sm); padding: 10px 16px;
   color: var(--text); font-size: 14px; font-family: inherit;
@@ -205,6 +205,15 @@ header::before {
 .filter-btn:hover { border-color: var(--border-accent); color: var(--text); }
 .filter-btn.active { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
 
+.module-filter-select {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 10px 16px;
+  color: var(--text-muted); font-size: 13px; font-family: inherit;
+  cursor: pointer; outline: none; min-width: 160px;
+}
+.module-filter-select:focus { border-color: var(--accent); }
+.module-filter-select option { background: var(--bg-card); color: var(--text); }
+
 .sort-btn {
   background: none; border: none; color: var(--text-dim);
   cursor: pointer; font-size: 12px; font-family: inherit; padding: 4px;
@@ -218,11 +227,11 @@ header::before {
 }
 .feature-row:hover { border-color: var(--border-accent); }
 .feature-header {
-  display: grid; grid-template-columns: 48px 1fr 120px 80px 80px 80px 80px 100px;
+  display: grid; grid-template-columns: 48px 1fr 120px 80px 80px 80px 80px 100px 120px;
   align-items: center; padding: 16px 20px; cursor: pointer; gap: 12px;
 }
-@media (max-width: 900px) {
-  .feature-header { grid-template-columns: 40px 1fr 80px 60px; }
+@media (max-width: 1100px) {
+  .feature-header { grid-template-columns: 40px 1fr 80px 60px 120px; }
   .feature-header .hide-mobile { display: none; }
 }
 .feature-num {
@@ -275,33 +284,6 @@ header::before {
 .module-detail { display: none; margin-top: 16px; border-top: 1px solid var(--border); padding-top: 16px; }
 .module-card.expanded .module-detail { display: block; }
 
-/* ─── Architecture Diagram ─── */
-.arch-diagram {
-  background: var(--bg-card); border: 1px solid var(--border);
-  border-radius: var(--radius); padding: 32px; margin: 24px 0;
-  font-family: var(--mono); font-size: 13px; line-height: 1.8;
-  overflow-x: auto; color: var(--text-muted);
-}
-.arch-diagram .highlight { color: var(--accent); font-weight: 500; }
-.arch-diagram .green { color: var(--green); }
-.arch-diagram .yellow { color: var(--yellow); }
-.arch-diagram .purple { color: var(--purple); }
-
-/* ─── Roadmap ─── */
-.roadmap-item {
-  display: flex; gap: 20px; padding: 20px 0;
-  border-bottom: 1px solid var(--border);
-}
-.roadmap-num {
-  width: 36px; height: 36px; flex-shrink: 0;
-  background: var(--accent-soft); color: var(--accent);
-  border-radius: 50%; display: flex; align-items: center; justify-content: center;
-  font-family: var(--mono); font-size: 14px; font-weight: 600;
-}
-.roadmap-content { flex: 1; }
-.roadmap-title { font-weight: 600; font-size: 15px; }
-.roadmap-meta { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
-
 /* ─── Insight Callout ─── */
 .callout {
   border-radius: var(--radius); padding: 20px 24px; margin: 20px 0;
@@ -314,9 +296,21 @@ header::before {
 .callout-warn { background: var(--yellow-soft); border: 1px solid rgba(251,191,36,0.2); }
 .callout-danger { background: var(--red-soft); border: 1px solid rgba(248,113,113,0.2); }
 
-/* ─── Scroll animations ─── */
-.fade-in { opacity: 0; transform: translateY(20px); transition: all 0.5s ease; }
-.fade-in.visible { opacity: 1; transform: translateY(0); }
+/* ─── Filter row ─── */
+.filter-row {
+  display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; align-items: center;
+}
+.filter-row-label {
+  font-size: 12px; color: var(--text-dim); font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.5px; margin-right: 4px;
+}
+
+/* ─── Summary Stats ─── */
+.feature-summary {
+  display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 24px;
+  font-size: 13px; color: var(--text-muted);
+}
+.feature-summary span { font-family: var(--mono); color: var(--accent); font-weight: 600; }
 
 /* ─── Print ─── */
 @media print {
@@ -343,24 +337,20 @@ header::before {
   </div>
   <div class="key-stats">
     <div class="stat-card">
-      <div class="stat-value" style="color:var(--accent)">Symfony 6.4</div>
-      <div class="stat-label">PHP 8.2 &middot; MySQL 8.0</div>
+      <div class="stat-value" style="color:var(--purple)">KI existiert</div>
+      <div class="stat-label">GPT_OSS_120B im Foerderplaner</div>
     </div>
     <div class="stat-card">
       <div class="stat-value" style="color:var(--green)">117</div>
       <div class="stat-label">Module im Monolith</div>
     </div>
     <div class="stat-card">
-      <div class="stat-value" style="color:var(--purple)">KI existiert</div>
-      <div class="stat-label">GPT_OSS_120B im Foerderplaner</div>
+      <div class="stat-value" style="color:var(--yellow)">48</div>
+      <div class="stat-label">Features bewertet</div>
     </div>
     <div class="stat-card">
-      <div class="stat-value" style="color:var(--yellow)">35 + 10</div>
-      <div class="stat-label">Features bewertet (+ neue Ideen)</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-value" style="color:var(--cyan)">Vue 3.5</div>
-      <div class="stat-label">Pinia &middot; Vite &middot; Vuetify &middot; Nx</div>
+      <div class="stat-value" style="color:var(--cyan)">4 Phasen</div>
+      <div class="stat-label">Priorisierte Umsetzung</div>
     </div>
   </div>
 </div>
@@ -369,143 +359,20 @@ header::before {
 <!-- ════════════════════════════════════════ NAV ════════════════════════════════════════ -->
 <nav class="nav-bar">
 <div class="nav-inner">
-  <button class="nav-tab active" data-tab="arch">Architektur</button>
-  <button class="nav-tab" data-tab="modules">Module</button>
+  <button class="nav-tab active" data-tab="modules">Module</button>
   <button class="nav-tab" data-tab="ai">KI-Integration</button>
-  <button class="nav-tab" data-tab="features">Features (45)</button>
-  <button class="nav-tab" data-tab="roadmap">Roadmap</button>
+  <button class="nav-tab" data-tab="features">Features (48)</button>
   <button class="nav-tab" data-tab="findings">Key Findings</button>
+  <button class="nav-tab" data-tab="arch">Architektur</button>
 </div>
 </nav>
 
-<!-- ════════════════════════════════════════ ARCHITEKTUR ════════════════════════════════════════ -->
 <div class="container">
-<section class="section active" id="arch">
-  <h2 class="section-title">Architektur-Uebersicht</h2>
-  <p class="section-subtitle">Tech Stack, Modulstruktur, API-Layer und kantonale Konfiguration</p>
-
-  <div class="grid-2">
-    <div class="card">
-      <h3>Tech Stack</h3>
-      <table class="tech-table">
-        <tr><th>Komponente</th><th>Technologie</th></tr>
-        <tr><td>Framework</td><td class="mono">Symfony 6.4</td></tr>
-        <tr><td>Sprache</td><td class="mono">PHP 8.2</td></tr>
-        <tr><td>Datenbank</td><td class="mono">MySQL 8.0</td></tr>
-        <tr><td>Frontend (Modern)</td><td class="mono">Vue 3.5 + Pinia + Vite</td></tr>
-        <tr><td>Frontend (Legacy)</td><td class="mono">Twig 3.14 + Webpack</td></tr>
-        <tr><td>UI Framework</td><td class="mono">Vuetify 3.7</td></tr>
-        <tr><td>API Client</td><td class="mono">OpenAPI Codegen + Axios</td></tr>
-        <tr><td>Auth</td><td class="mono">OAuth 2.0 + JWT + Azure AD</td></tr>
-        <tr><td>Mail</td><td class="mono">SendGrid</td></tr>
-        <tr><td>Uebersetzung</td><td class="mono">Azure Translator</td></tr>
-        <tr><td>PDF</td><td class="mono">knp-snappy + TCPDF + PHPDOCX</td></tr>
-        <tr><td>Storage</td><td class="mono">Flysystem (S3 / NFS)</td></tr>
-        <tr><td>Monitoring</td><td class="mono">Sentry</td></tr>
-        <tr><td>Migrations</td><td class="mono">Phinx (CakePHP)</td></tr>
-        <tr><td>Testing</td><td class="mono">PHPUnit + Vitest + Cypress + Playwright</td></tr>
-      </table>
-    </div>
-
-    <div>
-      <div class="card">
-        <h3>Kantonale Konfiguration</h3>
-        <p style="font-size:14px;color:var(--text-muted);margin-bottom:12px">Multi-Tenant via Environment Variable</p>
-        <div class="code">TENANT=SG_LOCAL_DEV
-ENABLE_CANTON_SWITCH=false
-TENANT_FILE_STORAGE=bucket  # nfs | bucket</div>
-        <p style="font-size:13px;color:var(--text-muted);margin-top:12px"><strong style="color:var(--text)">Strategy Pattern:</strong> ModuleInsightStrategy pro Modul fuer Tenant-spezifische Logik</p>
-        <p style="font-size:13px;color:var(--text-muted);margin-top:8px"><strong style="color:var(--text)">Custom Fields:</strong> CertificateConfiguration mit kantonalen Zusatzfeldern</p>
-        <p style="font-size:13px;color:var(--text-muted);margin-top:8px"><strong style="color:var(--text)">BISTA-Regeln:</strong> BistaRule mit kantonsspezifischen Validierungen</p>
-        <div style="margin-top:16px;display:flex;gap:6px;flex-wrap:wrap">
-          <span class="tag tag-blue">AG</span><span class="tag tag-green">SG</span>
-          <span class="tag tag-purple">ZH</span><span class="tag tag-yellow">TG</span>
-          <span class="tag tag-orange">SZ</span><span class="tag tag-cyan">BE</span>
-          <span class="tag tag-pink">BL</span>
-        </div>
-      </div>
-
-      <div class="card">
-        <h3>Queue &amp; Caching</h3>
-        <table class="tech-table">
-          <tr><td>Queue</td><td><span class="tag tag-yellow">DB-basiert</span> Custom ProcessQueue (kein Redis/RabbitMQ)</td></tr>
-          <tr><td>Cache</td><td><span class="tag tag-orange">Filesystem</span> Redis optional konfiguriert</td></tr>
-          <tr><td>Search</td><td><span class="tag tag-red">Keine Engine</span> Nur MySQL Queries</td></tr>
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <div class="card" style="margin-top:16px">
-    <h3>Backend-Modulstruktur (DDD-Pattern)</h3>
-    <div class="code">src/
-├── <span class="highlight">EvaluationCertificates/</span>   Beurteilungen &amp; Zeugnisse
-├── <span class="highlight">Absence/</span>                  Fehlzeiten-Management
-├── <span class="highlight">ParentMeeting/</span>            Elterngespraeche
-├── <span class="highlight">Journal/</span>                  Tagebuch / Notizen
-├── <span class="highlight">SupportPlanner/</span>           Foerderplaner (mit KI!)
-├── <span class="highlight">Timetable/</span>                Stundenplanung
-├── <span class="highlight">SchoolPlaner/</span>             Schulplaner / Lektionen
-├── <span class="highlight">WordTemplate/</span>             Serienbriefe
-├── <span class="highlight">Daycare/</span>                  Tagesstruktur / Hort
-├── <span class="highlight">MusicSchool/</span>              Musikschule
-├── <span class="highlight">MasterData/</span>               Stammdaten (90+ Submodule)
-│   ├── User/, School/, SchoolClass/, Semester/
-│   ├── PersonDuplicate/, Import/, BistaDataCheck/
-│   ├── EmployeeSubstitute/, Export/
-│   └── ... (Country, Language, Health, DynamicField, ...)
-├── <span class="highlight">Infrastructure/AI/Prompt/</span> KI-Service (GPT_OSS_120B)
-├── <span class="green">CourseProgram/</span>            Kursverwaltung
-├── <span class="green">Flex/</span>                     Flexible Lektionen
-├── <span class="green">Exam/</span>                     Pruefungen
-├── <span class="green">Alsv/</span>                     Altersdurchmischtes Lernen
-├── <span class="green">SchoolBus/</span>                Schulbus-Management
-├── <span class="green">InfoScreen/</span>               Digital Signage
-├── <span class="green">CaseManagement/</span>           Fallbearbeitung
-├── <span class="green">Invoice/</span>                  Rechnungswesen
-├── <span class="yellow">NotificationCenter/</span>      Benachrichtigungen
-├── <span class="yellow">Mail/</span>                     E-Mail (SendGrid)
-├── <span class="yellow">ProcessQueue/</span>             Async Job Processing
-├── <span class="purple">App/</span>                      Kernel, Controller, Security
-├── <span class="purple">Api/</span>                      API Scopes &amp; Definitionen
-├── <span class="purple">Common/</span>                   Shared Utilities
-└── ... (+60 weitere Module)</div>
-  </div>
-
-  <div class="card" style="margin-top:16px">
-    <h3>Frontend-Architektur (PUPILVue)</h3>
-    <div class="grid-2">
-      <div>
-        <h4>Student Portal (6 Module)</h4>
-        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">
-          <span class="tag tag-blue">Login</span><span class="tag tag-blue">Home</span>
-          <span class="tag tag-blue">Course</span><span class="tag tag-blue">Exams</span>
-          <span class="tag tag-blue">Flex</span><span class="tag tag-blue">ALSV</span>
-        </div>
-      </div>
-      <div>
-        <h4>Parent Portal (13 Module)</h4>
-        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">
-          <span class="tag tag-green">Login</span><span class="tag tag-green">Home</span>
-          <span class="tag tag-green">Course</span><span class="tag tag-green">Exams</span>
-          <span class="tag tag-green">Absences</span><span class="tag tag-green">Journal</span>
-          <span class="tag tag-green">ParentMeeting</span><span class="tag tag-green">Timetable</span>
-          <span class="tag tag-green">Daycare</span><span class="tag tag-green">Schoolbus</span>
-          <span class="tag tag-green">ALSV</span><span class="tag tag-green">PersonData</span>
-        </div>
-      </div>
-    </div>
-    <p style="font-size:13px;color:var(--text-muted);margin-top:16px">
-      <strong style="color:var(--text)">Keine KI-Integration im Frontend</strong> — komplett Greenfield fuer AI-Komponenten.
-      OpenAPI-generierter API-Client. i18n: de-CH (Default) + en-US. Azure AD Auth (MSAL).
-    </p>
-  </div>
-</section>
 
 <!-- ════════════════════════════════════════ MODULES ════════════════════════════════════════ -->
-<section class="section" id="modules">
+<section class="section active" id="modules">
   <h2 class="section-title">Modul-Explorer</h2>
-  <p class="section-subtitle">Klicke auf ein Modul fuer Details zu Models, Freitext-Feldern und API-Endpoints</p>
+  <p class="section-subtitle">Klicke auf ein Modul fuer Details zu Models, Freitext-Feldern und KI-Potenzial</p>
 
   <div class="grid-3" id="moduleGrid">
     <!-- Generated by JS -->
@@ -532,7 +399,6 @@ TENANT_FILE_STORAGE=bucket  # nfs | bucket</div>
         <tr><td>Temperature</td><td class="mono">0.3</td></tr>
         <tr><td>Max Tokens</td><td class="mono">2000</td></tr>
         <tr><td>Response</td><td class="mono">JSON Schema (ProgressResponse)</td></tr>
-        <tr><td>Tracking</td><td>Modul + Entity-basiert</td></tr>
       </table>
       <h4 style="margin-top:16px">Aktive KI-Funktionen</h4>
       <div style="margin-top:8px">
@@ -563,43 +429,24 @@ Beobachtungs-fokussiert, keine Spekulationen.
   ├── Model Router (GPT_OSS / Claude / Azure)
   ├── Prompt Cache <span class="yellow">(Redis aktivieren!)</span>
   ├── Response Validation (JSON Schema)
-  ├── Audit Log (Compliance / DSGVO)
-  └── Cost Tracking
-  │
-  ├──▶ GPT_OSS_120B  (Self-hosted)
-  ├──▶ Claude API     (Anthropic)
-  └──▶ Azure OpenAI   (Microsoft)</div>
+  ├── Audit Log (Compliance / DSG)
+  └── Cost Tracking</div>
       <h4 style="margin-top:16px">Neue FunctionFrom Werte</h4>
       <div style="margin-top:8px">
         <span class="tag tag-cyan">TEXT_EVALUATION_COMPLETION</span>
-        <span class="tag tag-cyan">PARENT_LETTER_GENERATION</span>
         <span class="tag tag-cyan">JOURNAL_SUMMARY</span>
         <span class="tag tag-cyan">INTERNAL_TO_EXTERNAL_NOTE</span>
-        <span class="tag tag-cyan">ABSENCE_VERIFICATION</span>
         <span class="tag tag-cyan">CERTIFICATE_REMARK</span>
-        <span class="tag tag-cyan">PROGRESS_REPORT</span>
-        <span class="tag tag-cyan">SERIAL_LETTER_TEMPLATE</span>
+        <span class="tag tag-cyan">MEETING_PROTOCOL</span>
+        <span class="tag tag-cyan">DAILY_REPORT</span>
+        <span class="tag tag-cyan">OBSERVATION_TEXT</span>
+        <span class="tag tag-cyan">CONSULTATION_SUMMARY</span>
       </div>
     </div>
   </div>
 
   <div class="card" style="margin-top:16px">
-    <h3>Empfohlene Vue AI-Komponenten Library</h3>
-    <div class="code" style="font-size:12px">libs/ai/
-├── components/
-│   ├── <span class="green">AiSuggestionButton.vue</span>     One-Click KI-Vorschlag
-│   ├── <span class="green">AiTextCompletion.vue</span>       Inline-Textvervollstaendigung
-│   ├── <span class="green">AiSummaryPanel.vue</span>         Zusammenfassung
-│   └── <span class="green">AiChatAssistant.vue</span>        RAG-Chatbot
-├── composables/
-│   ├── useAiSuggestion.ts          API-Call + Loading State
-│   └── useAiStream.ts              Streaming Response
-└── store/
-    └── aiStore.ts                   Pinia Store fuer AI State</div>
-  </div>
-
-  <div class="card" style="margin-top:16px">
-    <h3>Datenschutz-Empfehlungen</h3>
+    <h3>Datenschutz-Empfehlungen (CH DSG)</h3>
     <div class="grid-2">
       <div>
         <table class="tech-table">
@@ -612,7 +459,7 @@ Beobachtungs-fokussiert, keine Spekulationen.
         <table class="tech-table">
           <tr><td>Opt-In</td><td>KI-Features pro Schule/Kanton aktivierbar</td></tr>
           <tr><td>Tenant-Isolation</td><td>Keine Cross-Tenant-Daten im LLM-Kontext</td></tr>
-          <tr><td>DSGVO</td><td>Schweizer Datenschutzgesetz (DSG) beachten</td></tr>
+          <tr><td>DSG</td><td>Schweizer Datenschutzgesetz beachten</td></tr>
         </table>
       </div>
     </div>
@@ -622,19 +469,26 @@ Beobachtungs-fokussiert, keine Spekulationen.
 <!-- ════════════════════════════════════════ FEATURES ════════════════════════════════════════ -->
 <section class="section" id="features">
   <h2 class="section-title">Feature-Bewertung</h2>
-  <p class="section-subtitle">35 urspruengliche + 10 neue Features — sortier- und filterbar. Klicke fuer Details.</p>
+  <p class="section-subtitle">48 Features fuer den CH-Bildungsbereich — sortier- und filterbar nach Modul und Phase</p>
 
   <div class="feature-controls">
     <input type="text" class="feature-search" id="featureSearch" placeholder="Feature suchen...">
+    <select class="module-filter-select" id="moduleFilter">
+      <option value="all">Alle Module</option>
+    </select>
+  </div>
+  <div class="filter-row">
+    <span class="filter-row-label">Phase:</span>
     <button class="filter-btn active" data-phase="all">Alle</button>
     <button class="filter-btn" data-phase="1">Phase 1</button>
     <button class="filter-btn" data-phase="2">Phase 2</button>
     <button class="filter-btn" data-phase="3">Phase 3</button>
     <button class="filter-btn" data-phase="4">Phase 4</button>
-    <button class="filter-btn" data-phase="new">Neue Ideen</button>
   </div>
 
-  <div style="display:grid;grid-template-columns:48px 1fr 120px 80px 80px 80px 80px 100px;padding:8px 20px;gap:12px;font-size:12px;color:var(--text-dim);font-weight:600;text-transform:uppercase;letter-spacing:0.5px">
+  <div class="feature-summary" id="featureSummary"></div>
+
+  <div style="display:grid;grid-template-columns:48px 1fr 120px 80px 80px 80px 80px 100px 120px;padding:8px 20px;gap:12px;font-size:11px;color:var(--text-dim);font-weight:600;text-transform:uppercase;letter-spacing:0.5px">
     <div style="text-align:center">#</div>
     <div>Feature</div>
     <div style="text-align:center">Modul</div>
@@ -642,7 +496,8 @@ Beobachtungs-fokussiert, keine Spekulationen.
     <div style="text-align:center;cursor:pointer" class="hide-mobile" onclick="sortFeatures('confidence')">Conf <span class="sort-btn">&#9650;&#9660;</span></div>
     <div style="text-align:center;cursor:pointer" class="hide-mobile" onclick="sortFeatures('ease')">Ease <span class="sort-btn">&#9650;&#9660;</span></div>
     <div style="text-align:center;cursor:pointer" onclick="sortFeatures('ice')">ICE <span class="sort-btn">&#9650;&#9660;</span></div>
-    <div style="text-align:center" class="hide-mobile">Zeit</div>
+    <div style="text-align:center" class="hide-mobile" title="Implementierungsaufwand in Personentagen">Aufwand</div>
+    <div style="text-align:center" title="Geschaetzte Zeitersparnis pro LP/Admin">Ersparnis</div>
   </div>
 
   <div id="featureList">
@@ -650,52 +505,10 @@ Beobachtungs-fokussiert, keine Spekulationen.
   </div>
 </section>
 
-<!-- ════════════════════════════════════════ ROADMAP ════════════════════════════════════════ -->
-<section class="section" id="roadmap">
-  <h2 class="section-title">Priorisierte Roadmap</h2>
-  <p class="section-subtitle">Top 10 Features sortiert nach ICE-Score — sofort starten</p>
-
-  <div class="callout callout-info">
-    <div class="callout-icon">&#9733;</div>
-    <div class="callout-text">Die Roadmap basiert auf den <strong>tatsaechlichen Codebase-Findings</strong>. Features mit bestehender Infrastruktur (z.B. AI-Prompt-System, Duplikaterkennung) sind hoeher priorisiert.</div>
-  </div>
-
-  <div class="card" id="roadmapList">
-    <!-- Generated by JS -->
-  </div>
-
-  <div class="card" style="margin-top:24px">
-    <h3>Implementierungsstrategie</h3>
-    <div class="grid-2" style="margin-top:16px">
-      <div class="detail-box">
-        <h5>Woche 1-2: AI Gateway</h5>
-        <p>Bestehende Infrastructure/AI/Prompt/ als Basis. Redis-Cache aktivieren (bereits konfiguriert). Rate Limiting, Token-Tracking, Audit-Log. Model-Router fuer verschiedene LLM-Provider.</p>
-      </div>
-      <div class="detail-box">
-        <h5>Woche 3-4: ProcessQueue fuer KI</h5>
-        <p>Bestehende ProcessQueue nutzen fuer langlaufende KI-Aufgaben. Neuer AiQueueHandler Typ. Ergebnis-Caching in S3/NFS.</p>
-      </div>
-      <div class="detail-box">
-        <h5>Woche 3-6: Vue AI-Components</h5>
-        <p>Wiederverwendbare AI-Komponenten in libs/ai/: AiSuggestionButton, AiTextCompletion, AiSummaryPanel. Pinia Store fuer AI State.</p>
-      </div>
-      <div class="detail-box">
-        <h5>Fortlaufend: FunctionFrom erweitern</h5>
-        <p>Neue KI-Funktionen als FunctionFrom Enum-Werte registrieren. Jedes Feature = neuer Enum-Wert + PromptPreparationData + System-Prompt.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
 <!-- ════════════════════════════════════════ FINDINGS ════════════════════════════════════════ -->
 <section class="section" id="findings">
   <h2 class="section-title">Key Findings &amp; Ueberraschungen</h2>
   <p class="section-subtitle">Wichtigste Erkenntnisse aus der Codebase-Analyse</p>
-
-  <div class="callout callout-success">
-    <div class="callout-icon">&#10003;</div>
-    <div class="callout-text"><strong>Symfony 6.4, nicht Laravel</strong> — Das Framework ist Symfony mit DDD-Pattern, nicht Laravel wie urspruenglich angenommen. Dies aendert die Integrationsstrategie (Event Dispatcher statt Laravel Events, Phinx statt Laravel Migrations).</div>
-  </div>
 
   <div class="callout callout-success">
     <div class="callout-icon">&#10003;</div>
@@ -712,6 +525,11 @@ Beobachtungs-fokussiert, keine Spekulationen.
     <div class="callout-text"><strong>Azure Translator konfiguriert</strong> — AZURE_TRANSLATION_URL und AZURE_TRANSLATION_REGION sind als Environment-Variablen vorhanden. Feature #20 (Schuluebersetzung) kann darauf aufbauen.</div>
   </div>
 
+  <div class="callout callout-success">
+    <div class="callout-icon">&#10003;</div>
+    <div class="callout-text"><strong>Sitzungs-Modul mit reichen Textfeldern</strong> — Meeting/Protocol mit AgendaItem (content, fact, consideration, proposal, resolution) — idealer Kandidat fuer KI-gestuetzte Protokollgenerierung.</div>
+  </div>
+
   <div class="callout callout-warn">
     <div class="callout-icon">&#9888;</div>
     <div class="callout-text"><strong>Kein Chat-System im Backend</strong> — PUPIL Connect scheint ein separates System zu sein. Im Backend gibt es nur NotificationCenter + SendGrid Mail. Features #6 und #15 (Chat-basiert) sind deutlich aufwaendiger als angenommen.</div>
@@ -722,14 +540,9 @@ Beobachtungs-fokussiert, keine Spekulationen.
     <div class="callout-text"><strong>Keine Volltextsuche</strong> — Kein Elasticsearch/Meilisearch. Nur MySQL-basierte Queries. RAG-Features (#7, #22, #30) benoetigen externe Infrastruktur.</div>
   </div>
 
-  <div class="callout callout-warn">
-    <div class="callout-icon">&#9888;</div>
-    <div class="callout-text"><strong>DB-basierte Queue</strong> — Custom ProcessQueue in MySQL, kein Redis/RabbitMQ. Fuer KI-Features mit hohem Throughput sollte Redis aktiviert werden (bereits in Config vorhanden).</div>
-  </div>
-
   <div class="callout callout-info">
     <div class="callout-icon">&#8505;</div>
-    <div class="callout-text"><strong>Keine eigenstaendige LP21-Datenstruktur</strong> — LP21-Kompetenzen sind nur als has_competence_area Flag auf Subject und CurriculumStatus abgebildet. Fuer Features wie #18 (LP21-Lektionsvorschlaege) muss LP21-Daten extern angebunden werden (RAG).</div>
+    <div class="callout-text"><strong>Keine eigenstaendige LP21-Datenstruktur</strong> — LP21-Kompetenzen sind nur als has_competence_area Flag abgebildet. Fuer LP21-Lektionsvorschlaege muss LP21-Daten extern angebunden werden (RAG).</div>
   </div>
 
   <div class="card" style="margin-top:24px">
@@ -741,81 +554,150 @@ Beobachtungs-fokussiert, keine Spekulationen.
       <tr><td>#3 KI-Textvervollstaendigung</td><td>5.1</td><td style="color:var(--green)">5.7</td><td style="color:var(--green)">+12%</td><td>AI-Infra + viele Freitext-Felder</td></tr>
       <tr><td>#6 Antwortvorschlaege</td><td>4.5</td><td style="color:var(--red)">1.2</td><td style="color:var(--red)">-73%</td><td>Kein Chat-System im Backend</td></tr>
       <tr><td>#15 Auto-Kategorisierung Chats</td><td>2.5</td><td style="color:var(--red)">0.5</td><td style="color:var(--red)">-80%</td><td>Kein Chat-System im Backend</td></tr>
-      <tr><td>#20 Schuluebersetzung</td><td>2.1</td><td style="color:var(--green)">2.9</td><td style="color:var(--green)">+38%</td><td>Azure Translator bereits konfiguriert</td></tr>
-      <tr><td>#25 Stundenplangenerierung</td><td>2.2</td><td style="color:var(--red)">1.4</td><td style="color:var(--red)">-36%</td><td>Keine Optimierungsalgorithmen, hochkomplex</td></tr>
     </table>
   </div>
 </section>
+
+<!-- ════════════════════════════════════════ ARCHITEKTUR ════════════════════════════════════════ -->
+<section class="section" id="arch">
+  <h2 class="section-title">Architektur-Uebersicht</h2>
+  <p class="section-subtitle">Technische Grundlagen relevant fuer KI-Integration</p>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>KI-relevanter Tech Stack</h3>
+      <table class="tech-table">
+        <tr><th>Komponente</th><th>Technologie</th></tr>
+        <tr><td>Framework</td><td class="mono">Symfony 6.4 (PHP 8.2)</td></tr>
+        <tr><td>Frontend</td><td class="mono">Vue 3.5 + Pinia + Vuetify 3.7</td></tr>
+        <tr><td>KI-Infra</td><td class="mono">Infrastructure/AI/Prompt/</td></tr>
+        <tr><td>Queue</td><td class="mono">DB-basiert (ProcessQueue)</td></tr>
+        <tr><td>Uebersetzung</td><td class="mono">Azure Translator (konfiguriert)</td></tr>
+        <tr><td>Suche</td><td class="mono">Nur MySQL (kein ES/Meili)</td></tr>
+        <tr><td>Cache</td><td class="mono">Filesystem (Redis optional)</td></tr>
+        <tr><td>Storage</td><td class="mono">Flysystem (S3 / NFS)</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>Kantonale Konfiguration</h3>
+      <p style="font-size:14px;color:var(--text-muted);margin-bottom:12px">Multi-Tenant via Environment Variable</p>
+      <div class="code">TENANT=SG_LOCAL_DEV
+TENANT_FILE_STORAGE=bucket  # nfs | bucket</div>
+      <p style="font-size:13px;color:var(--text-muted);margin-top:12px"><strong style="color:var(--text)">Strategy Pattern:</strong> Pro Modul fuer Tenant-spezifische Logik</p>
+      <p style="font-size:13px;color:var(--text-muted);margin-top:8px"><strong style="color:var(--text)">Kantone:</strong></p>
+      <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">
+        <span class="tag tag-blue">AG</span><span class="tag tag-green">SG</span>
+        <span class="tag tag-purple">ZH</span><span class="tag tag-yellow">TG</span>
+        <span class="tag tag-orange">SZ</span><span class="tag tag-cyan">BE</span>
+        <span class="tag tag-pink">BL</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:16px">
+    <h3>Wichtige Einschraenkungen fuer KI-Features</h3>
+    <div class="grid-2" style="margin-top:12px">
+      <div class="detail-box">
+        <h5>Kein Chat-System</h5>
+        <p>PUPIL Connect ist ein separates System. Im Backend nur NotificationCenter + SendGrid. Chat-basierte KI-Features benoetigen separate Integration.</p>
+      </div>
+      <div class="detail-box">
+        <h5>Keine Volltextsuche</h5>
+        <p>Kein Elasticsearch/Meilisearch. RAG-Features benoetigen externe Vector-DB. Fuer einfache Suche genuegt MySQL LIKE.</p>
+      </div>
+      <div class="detail-box">
+        <h5>DB-basierte Queue</h5>
+        <p>ProcessQueue in MySQL. Fuer KI-Features mit hohem Throughput Redis aktivieren (bereits in Config vorhanden).</p>
+      </div>
+      <div class="detail-box">
+        <h5>Kein LP21-Datenmodell</h5>
+        <p>LP21-Kompetenzen nur als has_competence_area Flag. LP21-basierte Features benoetigen externe Datenquelle (RAG ueber LP21-Dokumente).</p>
+      </div>
+    </div>
+  </div>
+</section>
+
 </div>
 
 <!-- ════════════════════════════════════════ JS ════════════════════════════════════════ -->
 <script>
 // ─── Data ───
 const features = [
-  {n:1,name:"Elternbrief-Generator",module:"Connect",phase:1,i:7,c:6,e:7,time:"5-8d",desc:"KI-Entwuerfe fuer Elternbriefe aus Stichworten",notes:"Andocken an src/Mail/ + src/WordTemplate/. Neuer PromptBuilder-Typ in Infrastructure/AI/Prompt/. Word-Template-Platzhalter als Kontext. Kein Chat-System — nur E-Mail via SendGrid.",files:"src/Mail/Mailer/Mailer.php, src/WordTemplate/, src/Infrastructure/AI/Prompt/"},
-  {n:2,name:"Gespraechsvorbereitungs-Assistent",module:"Elterngespraeche",phase:1,i:8,c:8,e:7,time:"5-7d",desc:"Alle SuS-Daten auf einer Seite. Spart 20-45 Min./Kind",notes:"Daten aus ParentMeeting + Journal + EvaluationCertificates + Absence + SupportPlanner aggregieren. Neuer DataProvider. Vue-Komponente im parent-meeting Modul.",files:"src/ParentMeeting/, src/Journal/, src/EvaluationCertificates/, src/Absence/"},
-  {n:3,name:"KI-Textvervollstaendigung Beurteilungen",module:"Beurteilungen",phase:1,i:9,c:9,e:7,time:"8-12d",desc:"LP tippt Stichworte, KI generiert Text. Spart 3-6h/Semester",notes:"ec_student_text_evaluation.text + ec_student_observation.comment als Zielfelder. Bestehende AI-Infra nutzen. Neues FunctionFrom TEXT_EVALUATION_GENERATION. Kontext: Subject, CompetenceArea.",files:"src/EvaluationCertificates/Evaluation/TextEvaluation/, src/Infrastructure/AI/Prompt/"},
-  {n:4,name:"SMART-Zielgenerierung",module:"Foerderplaner",phase:1,i:8,c:9,e:9,time:"3-5d",desc:"Foerderziele aus Diagnose + LP21. Spart 30-60 Min./Dossier",notes:"INFRASTRUKTUR BEREITS VORHANDEN! SUPPORT_GOAL_GENERATION existiert. Erweitern um SMART-Kriterien im System-Prompt. Minimaler Aufwand.",files:"src/Infrastructure/AI/Prompt/, src/SupportPlanner/SupportGoal/"},
-  {n:5,name:"Automatisierte Verlaufsberichte",module:"Foerderplaner",phase:1,i:7,c:8,e:6,time:"8-10d",desc:"Fortschrittsberichte aus Journal/Beurteilungsdaten",notes:"Daten aus SupportGoal.progress + FundingHistory + Journal + StudentEvaluation aggregieren. Neuer FunctionFrom PROGRESS_REPORT_GENERATION.",files:"src/SupportPlanner/, src/Journal/, src/EvaluationCertificates/"},
-  {n:6,name:"Automatische Antwortvorschlaege",module:"Connect",phase:1,i:6,c:4,e:5,time:"10-15d",desc:"Ein-Klick-Antworten auf haeufige Elternfragen",notes:"KEIN CHAT-SYSTEM IM BACKEND! Connect scheint separates System. Nur E-Mail via SendGrid vorhanden. Score deutlich reduziert.",files:"src/Mail/, src/NotificationCenter/"},
-  {n:7,name:"PUPIL Doku-Assistent (RAG)",module:"In-App",phase:1,i:6,c:6,e:5,time:"15-20d",desc:"KI-Chatbot auf dokumentation.pupil.ch + Confluence",notes:"Eigenstaendiger Service noetig. Keine bestehende Volltextsuche. RAG-Pipeline: Embedding + Vector DB extern. Zendesk-Integration vorhanden.",files:"src/SupportTicketSystem/"},
-  {n:8,name:"Batch-Visierung mit KI-Pruefung",module:"Absenzen",phase:2,i:7,c:8,e:7,time:"5-8d",desc:"KI prueft Absenz-Muster vor Batch-Visierung",notes:"AbsenceConfirmationProcessor.confirmAbsences() erweitern. KI prueft comment + reason + Muster. Neuer FunctionFrom ABSENCE_VERIFICATION. Batch via ProcessQueue.",files:"src/Absence/Processor/AbsenceConfirmationProcessor.php"},
-  {n:9,name:"Journal-Zusammenfassungen",module:"Journal",phase:2,i:7,c:8,e:7,time:"5-8d",desc:"KI-Zusammenfassung aller Journal-Eintraege pro Schueler",notes:"Journal Entry (Comment, Meeting, Absence) pro Schueler aggregieren. jrn_entry_access.access_type fuer Sichtbarkeits-Filter. Neuer FunctionFrom JOURNAL_SUMMARY.",files:"src/Journal/Model/Entry.php, src/Infrastructure/AI/Prompt/"},
-  {n:10,name:"Oeffentliche Notiz aus interner",module:"Journal",phase:2,i:7,c:9,e:8,time:"3-5d",desc:"KI transformiert interne in datenschutzkonforme externe Notiz",notes:"jrn_entry_access.access_type INTERNAL → EXTERNAL Transformation. KI anonymisiert/neutralisiert sensible Inhalte. Einfache Prompt-Aufgabe.",files:"src/Journal/Model/Entry.php, src/Journal/AccessControl/"},
-  {n:11,name:"Sprach-zu-Text Journaleintraege",module:"Journal",phase:2,i:5,c:5,e:4,time:"15-20d",desc:"Audio-Aufnahme wird zu Text-Journaleintrag",notes:"Whisper API oder Azure Speech-to-Text anbinden. Neuer File-Upload in jrn_entry_file. Audio → Text → jrn_entry_comment.",files:"src/Journal/"},
-  {n:12,name:"Magic Allocation Elterngespraeche",module:"Elterngespraeche",phase:2,i:6,c:8,e:6,time:"8-12d",desc:"Optimierte automatische Terminzuweisung",notes:"AllocateCalendarProcessor erweitern. Bestehende Constraints + Optimierungsalgorithmus. Keine KI noetig — Constraint Solver effektiver.",files:"src/ParentMeeting/Allocate/AllocateCalendarProcessor.php"},
-  {n:13,name:"Gespraechsprotokoll-Assistent",module:"Elterngespraeche",phase:2,i:7,c:7,e:6,time:"8-10d",desc:"KI generiert strukturiertes Protokoll aus Stichpunkten",notes:"journalSubCategoryId in ParentMeeting nutzen. MEETING_AGENDA_ITEM_GENERATION existiert bereits als Basis.",files:"src/ParentMeeting/, src/Journal/"},
-  {n:14,name:"Anomalie-Erkennung Absenzen",module:"Absenzen",phase:2,i:6,c:7,e:5,time:"10-15d",desc:"Automatische Erkennung auffaelliger Absenzmuster",notes:"Daten aus Absence Repository. Pattern-Analyse: Haeufigkeit, Wochentags-Muster. Kein LLM noetig — statistisches Modell.",files:"src/Absence/Repository/MysqliAbsenceRepository.php"},
-  {n:15,name:"Auto-Kategorisierung aus Elternchats",module:"Absenzen",phase:2,i:5,c:3,e:3,time:"15-20d",desc:"Absenz-Grund automatisch aus Chat-Nachricht erkennen",notes:"KEIN CHAT-SYSTEM IM BACKEND! Gleiche Problematik wie Feature 6. Score stark reduziert.",files:"—"},
-  {n:16,name:"Massnahmenvorschlaege",module:"Foerderplaner",phase:2,i:7,c:8,e:8,time:"3-5d",desc:"KI schlaegt passende Foerdermassnahmen vor",notes:"SupportGoalActivity.activity als Zielfeld. Bestehende AI-Infra nutzen. Sehr aehnlich zu SUPPORT_GOAL_GENERATION.",files:"src/SupportPlanner/SupportGoal/, src/Infrastructure/AI/Prompt/"},
-  {n:17,name:"Kantonale Berichtsformate befuellen",module:"Foerderplaner",phase:2,i:7,c:7,e:5,time:"10-15d",desc:"KI befuellt kantonale Berichtsvorlagen automatisch",notes:"LearningAssessment + CustomArea als Ziel. Kantonale Templates aus CertificateConfiguration. Verschiedene Formate pro Kanton.",files:"src/SupportPlanner/LearningAssessment/, src/EvaluationCertificates/Certificate/AdditionalData/"},
-  {n:18,name:"LP21-Lektionsvorschlaege",module:"Schulplaner",phase:2,i:5,c:4,e:4,time:"12-15d",desc:"KI schlaegt LP21-konforme Lektionen vor",notes:"SchoolPlaner/Lesson + Subject.has_competence_area. Keine eigenstaendige LP21-Datenstruktur — RAG ueber LP21-Dokumente noetig.",files:"src/SchoolPlaner/Model/Lesson.php"},
-  {n:19,name:"Template-Generator Serienbriefe",module:"Dokumente",phase:2,i:7,c:8,e:7,time:"5-8d",desc:"KI generiert Textbloecke fuer Word-Templates",notes:"WordTemplate System + PlaceholderVariableGroup. KI generiert Text, Platzhalter automatisch. PHPDOCX-Integration vorhanden.",files:"src/WordTemplate/, src/WordTemplate/WordTemplateMerger/PhpdocxWordDocumentMerger.php"},
-  {n:20,name:"Intelligente Schuluebersetzung",module:"Connect",phase:2,i:6,c:7,e:7,time:"5-8d",desc:"Automatische Uebersetzung von Schulkommunikation",notes:"AZURE TRANSLATOR BEREITS KONFIGURIERT! AZURE_TRANSLATION_URL. i18n: de-CH + en-US. Erweitern um on-demand Uebersetzung.",files:"config/services.yaml (Azure Translation config)"},
-  {n:21,name:"BISTA-Validierungsassistent",module:"Statistiken",phase:2,i:6,c:8,e:7,time:"5-8d",desc:"KI-gestuetzte Vorschlaege zur BISTA-Fehlerbereinigung",notes:"BistaRule + BistaDataCheck bereits vorhanden. KI-Erweiterung: Vorschlaege zur Fehlerbehebung. InvalidDataProcessor erweitern.",files:"src/MasterData/BistaDataCheck/, src/MasterData/Export/Bista/"},
-  {n:22,name:"Kontextuelle Hilfe im Modul",module:"In-App",phase:2,i:5,c:5,e:4,time:"15-20d",desc:"RAG-basierte Hilfe kontextuell zum aktuellen Modul",notes:"RAG-System ueber PUPIL-Dokumentation. Aehnlich Feature 7 aber modul-kontextuell. Frontend-Widget in Vue.",files:"—"},
-  {n:23,name:"Konsistenzpruefung Noten / Praedikate",module:"Noten",phase:2,i:6,c:9,e:8,time:"3-5d",desc:"Automatische Pruefung auf Inkonsistenzen",notes:"StudentCertificateGrade (Noten) vs PredicateGrade (Praedikate). Regelbasiert: Schwellwerte definiert. Kein LLM noetig — SQL-Query + Validierung.",files:"src/EvaluationCertificates/Model/StudentCertificateGrade.php, src/EvaluationsCertificates/Certificate/Grade/Model/PredicateGrade.php"},
-  {n:24,name:"Bericht angepasste Lernziele (AG)",module:"Noten",phase:2,i:7,c:8,e:6,time:"8-12d",desc:"KI generiert AG-spezifischen Bericht aus Kompetenz-Items",notes:"EvaluationsCertificates/Evaluation/LearningObjective/ als Basis. StudentElementTextEvaluation fuer Freitext. AG-spezifisch.",files:"src/EvaluationsCertificates/Evaluation/LearningObjective/"},
-  {n:25,name:"Automatische Stundenplangenerierung",module:"Stundenplan",phase:3,i:8,c:6,e:3,time:"30-40d",desc:"KI/Solver generiert optimalen Stundenplan",notes:"TimetableEntry Modell vorhanden. Keine bestehenden Optimierungsalgorithmen. Constraint Solver (OR-Tools) noetig. Hochkomplex.",files:"src/Timetable/Model/TimetableEntry.php"},
-  {n:26,name:"Stellvertretungsvorschlaege",module:"Stundenplan",phase:3,i:6,c:8,e:6,time:"8-12d",desc:"KI/Regel schlaegt passende Stellvertretungen vor",notes:"EmployeeSubstitute Modul existiert. Strategy-Pattern fuer Assign/Revoke. Verfuegbarkeit + Fachqualifikation.",files:"src/MasterData/EmployeeSubstitute/"},
-  {n:27,name:"One-Click-Anpassung Stundenplan",module:"Stundenplan",phase:3,i:5,c:6,e:3,time:"20-25d",desc:"Einzelaenderung mit automatischer Constraint-Pruefung",notes:"Wie Feature 25 aber fuer Einzelaenderungen. Constraint-Propagation bei Aenderung.",files:"src/Timetable/"},
-  {n:28,name:"Automatische Stellvertretungszuweisung",module:"Personal",phase:3,i:6,c:7,e:5,time:"10-15d",desc:"Automatische Zuweisung basierend auf Verfuegbarkeit",notes:"EmployeeSubstitute + EmployeeAbsence. Regelbasiert: Verfuegbarkeit, Qualification-Match. ProcessQueue fuer async.",files:"src/MasterData/EmployeeSubstitute/, src/EmployeeAbsence/"},
-  {n:29,name:"Natural Language Data Querying",module:"Statistiken",phase:3,i:6,c:5,e:3,time:"20-30d",desc:"Fragen in natuerlicher Sprache an die Datenbank",notes:"Kein Query-Engine vorhanden. Text-to-SQL ueber LLM. Sicherheitsrisiko: SQL-Injection. Besser: Predefined Queries mit NL-Parametrisierung.",files:"—"},
-  {n:30,name:"FAQ-Chatbot Elternportal",module:"Connect",phase:3,i:5,c:6,e:5,time:"12-15d",desc:"FAQ-Bot im Elternportal",notes:"Vue Parent-Portal als Frontend. RAG ueber PUPIL-Dokumentation + FAQ. Separater Service.",files:"packages/master-data/parent-portal/"},
-  {n:31,name:"Voice Input Beratungsgespraeche",module:"Elterngespraeche",phase:3,i:5,c:5,e:4,time:"15-20d",desc:"Spracherkennung fuer Gespraechsnotizen",notes:"Wie Feature 11. Zusaetzlich: Strukturierte Extraktion aus Transkript.",files:"src/ParentMeeting/, src/Journal/"},
-  {n:32,name:"Pattern-Erkennung Leistungsentwicklung",module:"Beurteilungen",phase:3,i:6,c:7,e:4,time:"15-20d",desc:"Trends und Muster in Schueler-Leistungsdaten",notes:"StudentEvaluation + StudentCertificateGrade ueber Semester. Zeitreihen-Analyse. Statistisches Modell, kein LLM.",files:"src/EvaluationCertificates/"},
-  {n:33,name:"Duplikaterkennung Personen",module:"Stammdaten",phase:4,i:7,c:9,e:9,time:"2-3d",desc:"Verbesserte Fuzzy-Matching-Erkennung",notes:"BEREITS IMPLEMENTIERT! PersonDuplicate mit Rules, Comparators, Merge. KI: Fuzzy-Matching verbessern (Phonetik, Transliteration). Minimaler Aufwand.",files:"src/MasterData/PersonDuplicate/"},
-  {n:34,name:"Smart Import Feldmapping",module:"Stammdaten",phase:4,i:6,c:7,e:5,time:"10-15d",desc:"KI mapped CSV/Excel-Spalten automatisch auf PUPIL-Felder",notes:"FieldDescriptionTranslator existiert. KI-Erweiterung: Automatisches Mapping. LLM fuer Spalten-Erkennung.",files:"src/MasterData/Import/, src/MasterData/StudentImport/FieldDescription/FieldDescriptionTranslator.php"},
-  {n:35,name:"Intelligente Tarifvalidierung",module:"Tagesstruktur",phase:4,i:6,c:8,e:6,time:"5-8d",desc:"KI erkennt Anomalien in Tarif-Zuweisungen",notes:"Daycare/Settings/RateGroup/ + Rate + StudentRate. Regelbasiert: Tarif-Konsistenz. KI fuer Anomalie-Erkennung.",files:"src/Daycare/Settings/RateGroup/, src/Daycare/StudentSettings/"},
-  // New features
-  {n:36,name:"KI-Beobachtungsassistent",module:"Beurteilungen",phase:"new",i:8,c:8,e:7,time:"5-8d",desc:"Aus Stichworten vollstaendige Beobachtungstexte generieren",notes:"StudentObservation.comment als Zielfeld. Bestehende AI-Infra, neues FunctionFrom OBSERVATION_TEXT_GENERATION.",files:"src/EvaluationCertificates/Model/StudentObservation.php"},
-  {n:37,name:"Automatische Absenz-Grund-Erkennung",module:"Absenzen",phase:"new",i:6,c:5,e:5,time:"8-12d",desc:"Aus E-Mails automatisch Absenz-Gruende extrahieren",notes:"Mail-Parser + LLM + AbsenceReason-Mapping. Eingehende E-Mails analysieren.",files:"src/Mail/, src/Absence/Model/AbsenceReason.php"},
-  {n:38,name:"Intelligente Gruppenbildung",module:"Stammdaten",phase:"new",i:6,c:7,e:6,time:"8-12d",desc:"KI-optimierte Gruppenzuweisung",notes:"GroupGenerator erweitern mit Constraint-Solver. Leistung, Sozialverhalten, Heterogenitaet.",files:"src/GroupGenerator/"},
-  {n:39,name:"Zeugnis-Bemerkungen-Generator",module:"Noten",phase:"new",i:8,c:8,e:7,time:"5-8d",desc:"KI generiert Zeugnis-Bemerkungen aus Journal + Beurteilungen",notes:"StudentCertificate.remark + .manualRemark als Zielfelder. Kontext aus Journal + Evaluations.",files:"src/EvaluationCertificates/Certificate/Model/StudentCertificate.php"},
-  {n:40,name:"Automatische Kursempfehlungen",module:"Kurse",phase:"new",i:5,c:6,e:5,time:"10-12d",desc:"Kursvorschlaege basierend auf Interessen",notes:"CourseRegistration + StudentEvaluation als Datenquellen.",files:"src/CourseProgram/"},
-  {n:41,name:"InfoScreen-Content-Generator",module:"InfoScreen",phase:"new",i:4,c:6,e:7,time:"3-5d",desc:"KI generiert Texte fuer Digital-Signage",notes:"TextWidget im InfoScreen-Modul. Einfache Textgenerierung.",files:"src/InfoScreen/"},
-  {n:42,name:"Schulbus-Optimierung",module:"SchoolBus",phase:"new",i:5,c:7,e:4,time:"15-20d",desc:"Routen-Optimierung mit DistanceMatrix",notes:"BusLine + BusStop + DistanceMatrix. Constraint Solver fuer Routen.",files:"src/SchoolBus/, src/DistanceMatrix/"},
-  {n:43,name:"CaseManagement-Zusammenfassungen",module:"CaseManagement",phase:"new",i:7,c:7,e:6,time:"5-8d",desc:"KI-Zusammenfassungen von Fallverlaeufen",notes:"DossierTimeline + Consultation aggregieren. Bestehende AI-Infra nutzen.",files:"src/CaseManagement/"},
-  {n:44,name:"Homework-Differenzierung",module:"Homework",phase:"new",i:5,c:5,e:5,time:"10-12d",desc:"Differenzierte Aufgaben basierend auf Leistungsniveau",notes:"Homework + StudentEvaluation als Datenquellen.",files:"src/Homework/"},
-  {n:45,name:"Praedikats-Text-Generator",module:"Noten",phase:"new",i:6,c:8,e:7,time:"3-5d",desc:"Aus Praedikats-Noten textuelle Beschreibungen",notes:"PredicateGrade → Freitext. Einfache Prompt-Aufgabe.",files:"src/EvaluationsCertificates/Certificate/Grade/Model/PredicateGrade.php"}
+  // Phase 1 — Quick Wins (bestehende Infra nutzen)
+  {n:1,name:"Elternbrief-Generator",module:"Connect",phase:1,i:7,c:6,e:7,time:"5-8d",savings:"~30 min/Woche",desc:"KI-Entwuerfe fuer Elternbriefe aus Stichworten. Andocken an Mail/ + WordTemplate/.",notes:"Neuer PromptBuilder-Typ in Infrastructure/AI/Prompt/. Word-Template-Platzhalter als Kontext. Kein Chat-System — nur E-Mail via SendGrid.",files:"src/Mail/, src/WordTemplate/, src/Infrastructure/AI/Prompt/"},
+  {n:2,name:"Gespraechsvorbereitungs-Assistent",module:"Elterngespraeche",phase:1,i:8,c:8,e:7,time:"5-7d",savings:"~30 min/Gespraech",desc:"Alle SuS-Daten auf einer Seite: Journal, Beurteilungen, Absenzen, Foerderplanung.",notes:"Daten aus ParentMeeting + Journal + EvaluationCertificates + Absence + SupportPlanner aggregieren. Vue-Komponente im parent-meeting Modul.",files:"src/ParentMeeting/, src/Journal/, src/EvaluationCertificates/, src/Absence/"},
+  {n:3,name:"KI-Textvervollstaendigung Beurteilungen",module:"Beurteilungen",phase:1,i:9,c:9,e:7,time:"8-12d",savings:"~4h/Semester",desc:"LP tippt Stichworte, KI generiert Beurteilungstext. Zentrales CH-Bildungsthema.",notes:"ec_student_text_evaluation.text + ec_student_observation.comment als Zielfelder. Bestehende AI-Infra nutzen. Neues FunctionFrom TEXT_EVALUATION_GENERATION. Kontext: Fach, Kompetenzbereich, Lehrplan.",files:"src/EvaluationCertificates/Evaluation/TextEvaluation/, src/Infrastructure/AI/Prompt/"},
+  {n:4,name:"SMART-Zielgenerierung",module:"Foerderplaner",phase:1,i:8,c:9,e:9,time:"3-5d",savings:"~45 min/Dossier",desc:"Foerderziele aus Diagnose + LP21/ICF. Infrastruktur bereits vorhanden!",notes:"SUPPORT_GOAL_GENERATION existiert bereits. Erweitern um SMART-Kriterien im System-Prompt. Minimaler Aufwand da Infrastruktur steht.",files:"src/Infrastructure/AI/Prompt/, src/SupportPlanner/SupportGoal/"},
+  {n:5,name:"Automatisierte Verlaufsberichte",module:"Foerderplaner",phase:1,i:7,c:8,e:6,time:"8-10d",savings:"~1.5h/Monat",desc:"Fortschrittsberichte aus Foerderziel-Daten, Journal und Beurteilungen.",notes:"Daten aus SupportGoal.progress + FundingHistory + Journal + StudentEvaluation aggregieren. Neuer FunctionFrom PROGRESS_REPORT_GENERATION.",files:"src/SupportPlanner/, src/Journal/, src/EvaluationCertificates/"},
+  {n:36,name:"KI-Beobachtungsassistent",module:"Beurteilungen",phase:1,i:8,c:8,e:7,time:"5-8d",savings:"~3h/Semester",desc:"Aus Stichworten vollstaendige Beobachtungstexte generieren (LP21-konform).",notes:"StudentObservation.comment als Zielfeld. Bestehende AI-Infra, neues FunctionFrom OBSERVATION_TEXT_GENERATION. CH-Lehrplan als Kontext.",files:"src/EvaluationCertificates/Model/StudentObservation.php"},
+
+  // Phase 2 — Erweiterte Features
+  {n:8,name:"Batch-Visierung mit KI-Pruefung",module:"Absenzen",phase:2,i:7,c:8,e:7,time:"5-8d",savings:"~20 min/Woche",desc:"KI prueft Absenz-Muster vor Batch-Visierung und flaggt Auffaelligkeiten.",notes:"AbsenceConfirmationProcessor.confirmAbsences() erweitern. KI prueft comment + reason + Muster. Neuer FunctionFrom ABSENCE_VERIFICATION.",files:"src/Absence/Processor/AbsenceConfirmationProcessor.php"},
+  {n:9,name:"Journal-Zusammenfassungen",module:"Journal",phase:2,i:7,c:8,e:7,time:"5-8d",savings:"~2h/Semester pro SuS",desc:"KI-Zusammenfassung aller Journal-Eintraege pro Schueler*in.",notes:"Journal Entry (Comment, Meeting, Absence) pro SuS aggregieren. jrn_entry_access.access_type fuer Sichtbarkeits-Filter. FunctionFrom JOURNAL_SUMMARY.",files:"src/Journal/Model/Entry.php, src/Infrastructure/AI/Prompt/"},
+  {n:10,name:"Oeffentliche Notiz aus interner",module:"Journal",phase:2,i:7,c:9,e:8,time:"3-5d",savings:"~10 min/Notiz",desc:"KI transformiert interne in datenschutzkonforme externe Notiz.",notes:"jrn_entry_access.access_type INTERNAL zu EXTERNAL. KI anonymisiert/neutralisiert. Einfache Prompt-Aufgabe.",files:"src/Journal/Model/Entry.php, src/Journal/AccessControl/"},
+  {n:13,name:"Gespraechsprotokoll-Assistent",module:"Elterngespraeche",phase:2,i:7,c:7,e:6,time:"8-10d",savings:"~20 min/Gespraech",desc:"KI generiert strukturiertes Protokoll aus Stichpunkten.",notes:"journalSubCategoryId in ParentMeeting nutzen. MEETING_AGENDA_ITEM_GENERATION existiert als Basis.",files:"src/ParentMeeting/, src/Journal/"},
+  {n:16,name:"Massnahmenvorschlaege",module:"Foerderplaner",phase:2,i:7,c:8,e:8,time:"3-5d",savings:"~20 min/Dossier",desc:"KI schlaegt passende Foerdermassnahmen basierend auf Diagnose vor.",notes:"SupportGoalActivity.activity als Zielfeld. Bestehende AI-Infra nutzen. Sehr aehnlich zu SUPPORT_GOAL_GENERATION.",files:"src/SupportPlanner/SupportGoal/, src/Infrastructure/AI/Prompt/"},
+  {n:19,name:"Template-Generator Serienbriefe",module:"Dokumente",phase:2,i:7,c:8,e:7,time:"5-8d",savings:"~30 min/Brief",desc:"KI generiert Textbloecke fuer Word-Templates aus Stichworten.",notes:"WordTemplate System + PlaceholderVariableGroup. KI generiert Text, Platzhalter automatisch. PHPDOCX-Integration vorhanden.",files:"src/WordTemplate/, src/WordTemplate/WordTemplateMerger/PhpdocxWordDocumentMerger.php"},
+  {n:20,name:"Intelligente Schuluebersetzung",module:"Connect",phase:2,i:6,c:7,e:7,time:"5-8d",savings:"~20 min/Dokument",desc:"Automatische Uebersetzung von Schulkommunikation (Azure Translator steht bereit).",notes:"AZURE TRANSLATOR BEREITS KONFIGURIERT! Erweitern um on-demand Uebersetzung in Elternportal. Sprachen: de, en, fr, it, weitere.",files:"config/services.yaml (Azure Translation config)"},
+  {n:21,name:"BISTA-Validierungsassistent",module:"Statistiken",phase:2,i:6,c:8,e:7,time:"5-8d",savings:"~3h/Semester",desc:"KI-gestuetzte Vorschlaege zur BISTA-Fehlerbereinigung.",notes:"BistaRule + BistaDataCheck bereits vorhanden. KI-Erweiterung: Vorschlaege zur Fehlerbehebung. InvalidDataProcessor erweitern.",files:"src/MasterData/BistaDataCheck/, src/MasterData/Export/Bista/"},
+  {n:23,name:"Konsistenzpruefung Noten/Praedikate",module:"Noten",phase:2,i:6,c:9,e:8,time:"3-5d",savings:"~1h/Semester",desc:"Automatische Pruefung auf Inkonsistenzen zwischen Noten und Praedikaten.",notes:"StudentCertificateGrade vs PredicateGrade. Regelbasiert: Schwellwerte definiert. Kein LLM noetig — SQL-Query + Validierung.",files:"src/EvaluationCertificates/Model/StudentCertificateGrade.php"},
+  {n:24,name:"Bericht angepasste Lernziele (AG)",module:"Noten",phase:2,i:7,c:8,e:6,time:"8-12d",savings:"~45 min/Bericht",desc:"KI generiert AG-spezifischen Bericht aus Kompetenz-Items.",notes:"EvaluationsCertificates/Evaluation/LearningObjective/ als Basis. StudentElementTextEvaluation fuer Freitext.",files:"src/EvaluationsCertificates/Evaluation/LearningObjective/"},
+  {n:14,name:"Anomalie-Erkennung Absenzen",module:"Absenzen",phase:2,i:6,c:7,e:5,time:"10-15d",savings:"~30 min/Woche",desc:"Automatische Erkennung auffaelliger Absenzmuster (Schulabsentismus-Praevention).",notes:"Pattern-Analyse: Haeufigkeit, Wochentags-Muster. Frueherkennung ist CH-Bildungsthema. Kein LLM noetig — statistisches Modell.",files:"src/Absence/Repository/MysqliAbsenceRepository.php"},
+  {n:17,name:"Kantonale Berichtsformate befuellen",module:"Foerderplaner",phase:2,i:7,c:7,e:5,time:"10-15d",savings:"~1h/Bericht",desc:"KI befuellt kantonale Berichtsvorlagen (SSG, SAV) automatisch.",notes:"LearningAssessment + CustomArea als Ziel. Kantonale Templates aus CertificateConfiguration. Verschiedene Formate pro Kanton.",files:"src/SupportPlanner/LearningAssessment/, src/EvaluationCertificates/Certificate/AdditionalData/"},
+  {n:43,name:"CaseManagement-Zusammenfassungen",module:"CaseManagement",phase:2,i:7,c:7,e:6,time:"5-8d",savings:"~30 min/Fall",desc:"KI-Zusammenfassungen von Fallverlaeufen und Beratungsnotizen.",notes:"Consultation.content + Consultation.agreements + DossierTimeline aggregieren. Bestehende AI-Infra nutzen.",files:"src/CaseManagement/DossierConsultation/Model/Consultation.php"},
+  {n:45,name:"Praedikats-Text-Generator",module:"Noten",phase:2,i:6,c:8,e:7,time:"3-5d",savings:"~2h/Semester",desc:"Aus Praedikats-Noten textuelle Beschreibungen fuer Zeugnisse generieren.",notes:"PredicateGrade Werte (VERY_GOOD bis INSUFFICIENT) in formulierten Text umwandeln. Einfache Prompt-Aufgabe.",files:"src/EvaluationsCertificates/Certificate/Grade/Model/PredicateGrade.php"},
+  {n:41,name:"InfoScreen-Content-Generator",module:"InfoScreen",phase:2,i:4,c:6,e:7,time:"3-5d",savings:"~30 min/Woche",desc:"KI generiert aktuelle Texte fuer Digital-Signage-Anzeigen.",notes:"TextWidget im InfoScreen-Modul. Einfache Textgenerierung aus Schulkalender, Wetter, Ankuendigungen.",files:"src/InfoScreen/"},
+  {n:46,name:"Sitzungsprotokoll-Assistent",module:"Sitzungen",phase:2,i:7,c:8,e:7,time:"5-8d",savings:"~30 min/Sitzung",desc:"KI generiert strukturiertes Sitzungsprotokoll aus Traktanden und Notizen.",notes:"Meeting/Protocol mit AgendaItem (content, fact, consideration, proposal, resolution). DocXMeetingProtocolGenerator fuer Export. Reiche Textfelder vorhanden.",files:"src/Meeting/Protocol/, src/Meeting/AgendaItem/"},
+  {n:47,name:"Tagesbericht Eltern (Tagesstruktur)",module:"Tagesstruktur",phase:2,i:7,c:7,e:6,time:"5-8d",savings:"~2h/Woche (Betreuung)",desc:"Automatische Tagesberichte fuer Eltern aus Anwesenheit, DailyNotes und Beobachtungen.",notes:"DailyNote + AppearanceNote + ModuleComment aggregieren. Pro Kind taeglich. Betreuungspersonal entlasten.",files:"src/Daycare/Mobile/DailyNote/, src/Daycare/Reservation/"},
+
+  // Phase 3 — Komplexere Integrationen
+  {n:7,name:"PUPIL Doku-Assistent (RAG)",module:"In-App",phase:3,i:6,c:6,e:5,time:"15-20d",savings:"~30 min/Woche",desc:"KI-Chatbot auf dokumentation.pupil.ch + Confluence.",notes:"Eigenstaendiger RAG-Service noetig. Keine bestehende Volltextsuche. Vector DB extern. Zendesk-Integration vorhanden.",files:"src/SupportTicketSystem/"},
+  {n:11,name:"Sprach-zu-Text Journaleintraege",module:"Journal",phase:3,i:5,c:5,e:4,time:"15-20d",savings:"~1h/Woche",desc:"Audio-Aufnahme wird zu Text-Journaleintrag (Whisper/Azure Speech).",notes:"Whisper API oder Azure Speech-to-Text anbinden. Neuer File-Upload in jrn_entry_file. Audio zu Text zu jrn_entry_comment.",files:"src/Journal/"},
+  {n:12,name:"Magic Allocation Elterngespraeche",module:"Elterngespraeche",phase:3,i:6,c:8,e:6,time:"8-12d",savings:"~2h/Durchfuehrung",desc:"Optimierte automatische Terminzuweisung mit Constraint Solver.",notes:"AllocateCalendarProcessor erweitern. Keine KI noetig — Constraint Solver effektiver. 2-3x pro Jahr.",files:"src/ParentMeeting/Allocate/AllocateCalendarProcessor.php"},
+  {n:18,name:"LP21-Lektionsvorschlaege",module:"Schulplaner",phase:3,i:5,c:4,e:4,time:"12-15d",savings:"~30 min/Woche",desc:"KI schlaegt LP21-konforme Lektionen und Materialien vor.",notes:"SchoolPlaner/Lesson + Subject.has_competence_area. Keine eigenstaendige LP21-Datenstruktur — RAG ueber LP21-Dokumente noetig.",files:"src/SchoolPlaner/Model/Lesson.php"},
+  {n:25,name:"Automatische Stundenplangenerierung",module:"Stundenplan",phase:3,i:8,c:6,e:3,time:"30-40d",savings:"~20h/Semester",desc:"KI/Solver generiert optimalen Stundenplan (Constraint Programming).",notes:"TimetableEntry Modell vorhanden. Keine bestehenden Optimierungsalgorithmen. OR-Tools oder CP-SAT noetig. Hochkomplex.",files:"src/Timetable/Model/TimetableEntry.php"},
+  {n:26,name:"Stellvertretungsvorschlaege",module:"Stundenplan",phase:3,i:6,c:8,e:6,time:"8-12d",savings:"~15 min/Fall",desc:"Regelbasierte Vorschlaege fuer passende Stellvertretungen.",notes:"EmployeeSubstitute Modul existiert. Strategy-Pattern. Verfuegbarkeit + Fachqualifikation matchen.",files:"src/MasterData/EmployeeSubstitute/"},
+  {n:28,name:"Automatische Stellvertretungszuweisung",module:"Personal",phase:3,i:6,c:7,e:5,time:"10-15d",savings:"~20 min/Fall",desc:"Automatische Zuweisung basierend auf Verfuegbarkeit und Qualifikation.",notes:"EmployeeSubstitute + EmployeeAbsence. Regelbasiert. ProcessQueue fuer async.",files:"src/MasterData/EmployeeSubstitute/, src/EmployeeAbsence/"},
+  {n:32,name:"Pattern-Erkennung Leistungsentwicklung",module:"Beurteilungen",phase:3,i:6,c:7,e:4,time:"15-20d",savings:"~2h/Semester",desc:"Trends und Muster in Schueler-Leistungsdaten erkennen (Fruehwarnung).",notes:"StudentEvaluation + StudentCertificateGrade ueber Semester. Zeitreihen-Analyse. Statistisches Modell.",files:"src/EvaluationCertificates/"},
+  {n:37,name:"Automatische Absenz-Grund-Erkennung",module:"Absenzen",phase:3,i:6,c:5,e:5,time:"8-12d",savings:"~10 min/Woche",desc:"Aus E-Mails automatisch Absenz-Gruende extrahieren und zuordnen.",notes:"Mail-Parser + LLM + AbsenceReason-Mapping. Eingehende E-Mails analysieren.",files:"src/Mail/, src/Absence/Model/AbsenceReason.php"},
+  {n:38,name:"Intelligente Gruppenbildung",module:"Stammdaten",phase:3,i:6,c:7,e:6,time:"8-12d",savings:"~30 min/Gruppierung",desc:"KI-optimierte Gruppenzuweisung nach Leistung, Sozialverhalten, Heterogenitaet.",notes:"GroupGeneratorProcessor erweitern. Aktuell nur Gender-Split + Zufall. Constraint-Solver fuer bessere Verteilung.",files:"src/GroupGenerator/GroupGeneratorProcessor.php"},
+  {n:40,name:"Automatische Kursempfehlungen",module:"Kurse",phase:3,i:5,c:6,e:5,time:"10-12d",savings:"~2h/Semester",desc:"Kursvorschlaege basierend auf bisherigen Leistungen und Interessen.",notes:"CourseRegistration + StudentEvaluation als Datenquellen.",files:"src/CourseProgram/"},
+  {n:44,name:"Homework-Differenzierung",module:"Homework",phase:3,i:5,c:5,e:5,time:"10-12d",savings:"~1h/Woche",desc:"Differenzierte Aufgaben basierend auf Leistungsniveau generieren.",notes:"Homework + StudentEvaluation als Datenquellen. Verschiedene Niveaustufen pro SuS.",files:"src/Homework/Model/Homework.php"},
+  {n:48,name:"Beschluss-Tracker Sitzungen",module:"Sitzungen",phase:3,i:5,c:7,e:6,time:"5-8d",savings:"~20 min/Sitzung",desc:"KI extrahiert Beschluesse und Pendenzen aus Sitzungsprotokollen.",notes:"Resolution.resolutionText + Task-Modell. Automatische Follow-up-Erstellung. Meeting/Task/ fuer Pendenz-Tracking.",files:"src/Meeting/Resolution/, src/Meeting/Task/"},
+  {n:6,name:"Automatische Antwortvorschlaege",module:"Connect",phase:3,i:6,c:4,e:5,time:"10-15d",savings:"~15 min/Woche",desc:"Ein-Klick-Antworten auf haeufige Elternfragen (via E-Mail, da kein Chat).",notes:"KEIN CHAT-SYSTEM IM BACKEND! Connect ist separat. Nur E-Mail via SendGrid vorhanden. Score deutlich reduziert.",files:"src/Mail/, src/NotificationCenter/"},
+  {n:22,name:"Kontextuelle Hilfe im Modul",module:"In-App",phase:3,i:5,c:5,e:4,time:"15-20d",savings:"~20 min/Woche",desc:"RAG-basierte Hilfe kontextuell zum aktuellen Modul.",notes:"RAG-System ueber PUPIL-Dokumentation. Aehnlich Feature 7 aber modul-kontextuell. Frontend-Widget in Vue.",files:"—"},
+  {n:29,name:"Natural Language Data Querying",module:"Statistiken",phase:3,i:6,c:5,e:3,time:"20-30d",savings:"~2h/Monat",desc:"Fragen in natuerlicher Sprache an die Schulstatistik.",notes:"Text-to-SQL ueber LLM. Sicherheitsrisiko: SQL-Injection. Besser: Predefined Queries mit NL-Parametrisierung.",files:"—"},
+  {n:30,name:"FAQ-Chatbot Elternportal",module:"Connect",phase:3,i:5,c:6,e:5,time:"12-15d",savings:"~30 min/Woche",desc:"FAQ-Bot im Elternportal fuer haeufige Fragen.",notes:"Vue Parent-Portal als Frontend. RAG ueber FAQ. Separater Service.",files:"packages/master-data/parent-portal/"},
+  {n:31,name:"Voice Input Beratungsgespraeche",module:"Elterngespraeche",phase:3,i:5,c:5,e:4,time:"15-20d",savings:"~2h/Semester",desc:"Spracherkennung fuer Gespraechsnotizen und Protokolle.",notes:"Whisper/Azure Speech. Strukturierte Extraktion aus Transkript.",files:"src/ParentMeeting/, src/Journal/"},
+  {n:15,name:"Auto-Kategorisierung aus Elternchats",module:"Absenzen",phase:3,i:5,c:3,e:3,time:"15-20d",savings:"N/A (Chat fehlt)",desc:"Absenz-Grund automatisch aus Chat-Nachricht erkennen.",notes:"KEIN CHAT-SYSTEM IM BACKEND! Gleiche Problematik wie Feature 6. Nur sinnvoll wenn Connect integriert wird.",files:"—"},
+  {n:27,name:"One-Click-Anpassung Stundenplan",module:"Stundenplan",phase:3,i:5,c:6,e:3,time:"20-25d",savings:"~2h/Monat",desc:"Einzelaenderung mit automatischer Constraint-Pruefung.",notes:"Abhaengig von Feature 25 (Constraint-Modell). Constraint-Propagation bei Aenderung.",files:"src/Timetable/"},
+
+  // Phase 4 — Spezial & Optimierung
+  {n:33,name:"Duplikaterkennung Personen",module:"Stammdaten",phase:4,i:7,c:9,e:9,time:"2-3d",savings:"~30 min/Import",desc:"Verbesserte Fuzzy-Matching-Erkennung (Phonetik, Transliteration).",notes:"BEREITS IMPLEMENTIERT! PersonDuplicate mit Rules, Comparators, Merge. KI: Fuzzy-Matching verbessern. Minimaler Aufwand.",files:"src/MasterData/PersonDuplicate/"},
+  {n:34,name:"Smart Import Feldmapping",module:"Stammdaten",phase:4,i:6,c:7,e:5,time:"10-15d",savings:"~1h/Import",desc:"KI mapped CSV/Excel-Spalten automatisch auf PUPIL-Felder.",notes:"FieldDescriptionTranslator existiert. KI-Erweiterung: LLM fuer Spalten-Erkennung.",files:"src/MasterData/Import/, src/MasterData/StudentImport/FieldDescription/FieldDescriptionTranslator.php"},
+  {n:35,name:"Intelligente Tarifvalidierung",module:"Tagesstruktur",phase:4,i:6,c:8,e:6,time:"5-8d",savings:"~30 min/Monat",desc:"Anomalie-Erkennung in Tarif-Zuweisungen (Tagesstruktur).",notes:"Daycare/Settings/RateGroup/ + Rate + StudentRate. Regelbasiert: Tarif-Konsistenz pruefen.",files:"src/Daycare/Settings/RateGroup/, src/Daycare/StudentSettings/"},
+  {n:39,name:"Zeugnis-Bemerkungen-Generator",module:"Noten",phase:4,i:6,c:6,e:7,time:"5-8d",savings:"~3h/Semester",desc:"KI-Entwuerfe fuer Zeugnis-Bemerkungen aus Journal + Beurteilungen. Optional — viele LP bevorzugen eigene Formulierungen.",notes:"StudentCertificate.remark + .manualRemark als Zielfelder. Kontext aus Journal + Evaluations. Wichtig: Nur als Entwurf, LP behaelt volle Kontrolle. In CH sind Zeugnis-Bemerkungen oft sehr individuell.",files:"src/EvaluationCertificates/Certificate/Model/StudentCertificate.php"},
+  {n:42,name:"Schulbus-Optimierung",module:"SchoolBus",phase:4,i:5,c:7,e:4,time:"15-20d",savings:"~3h/Semester",desc:"Routen-Optimierung mit DistanceMatrix.",notes:"BusLine + BusStop + DistanceMatrix. Constraint Solver fuer Routen.",files:"src/SchoolBus/, src/DistanceMatrix/"},
 ];
 
 const modules = [
-  {name:"Beurteilungen",icon:"&#9997;",color:"var(--accent)",desc:"Noten, Praedikate, Freitext, Beobachtungen",detail:"<b>Models:</b> StudentEvaluation, EvaluationEvent, StudentObservation, TextEvaluation<br><b>Freitext:</b> ec_student_text_evaluation.text, ec_student_observation.comment, ec_student_evaluation.comment<br><b>Typen:</b> GRADE, POINTS, MISTAKES, METERS, TIME, FREE, INDIVIDUAL_SCALE<br><b>Kantone:</b> AG-Formulare, PHSG wissenschaftlich, Praedikats-Skalen<br><b>Pfad:</b> <code>src/EvaluationCertificates/</code>"},
-  {name:"Noten & Zeugnisse",icon:"&#127891;",color:"var(--green)",desc:"Zeugnisse, Praedikate, Lernziele",detail:"<b>Models:</b> StudentCertificate, StudentCertificateGrade, PredicateGrade<br><b>Freitext:</b> remark, manualRemark, comment, CustomFieldCollection<br><b>Praedikate:</b> VERY_GOOD (≥5.75), GOOD (≥4.75), SUFFICIENT (≥3.75), INSUFFICIENT<br><b>AG:</b> LearningObjective-Modul mit lza-Flag<br><b>Pfad:</b> <code>src/EvaluationCertificates/Certificate/</code>"},
-  {name:"Foerderplaner",icon:"&#127919;",color:"var(--purple)",desc:"Dossiers, Ziele, Massnahmen, SSG-Berichte, KI!",detail:"<b>Models:</b> Dossier, SupportGoal, SupportGoalActivity, LearningAssessment<br><b>Freitext:</b> support_goal, progress, activity, acknowledgmentText<br><b>KI:</b> GPT_OSS_120B fuer SUPPORT_GOAL_GENERATION + MEETING_AGENDA_ITEM_GENERATION<br><b>Pfad:</b> <code>src/SupportPlanner/</code>, <code>src/Infrastructure/AI/Prompt/</code>"},
-  {name:"Absenzen",icon:"&#128197;",color:"var(--red)",desc:"Fehlzeiten, Visierung, Gruende, Batch-Processing",detail:"<b>Models:</b> Absence, AbsenceReason, AbsenceComment<br><b>Freitext:</b> comment (max 2000 Zeichen)<br><b>Workflow:</b> ANNOUNCED → CURRENT → TO_BE_VERIFIED → CONFIRMED<br><b>Visierung:</b> Automatisch (1 Tag) oder Manuell, Batch via confirmAbsences()<br><b>12 Rollen:</b> Parent, Principal, ClassTeacher, ...<br><b>Pfad:</b> <code>src/Absence/</code>"},
-  {name:"Journal",icon:"&#128214;",color:"var(--yellow)",desc:"Eintraege, Sichtbarkeit, Absenz-Sync",detail:"<b>Types:</b> Absence, Meeting, File, Comment<br><b>Freitext:</b> comment (Absence), TEXT-Inhalt (Comment)<br><b>Sichtbarkeit:</b> INTERNAL / EXTERNAL via jrn_entry_access<br><b>Absenz-Sync:</b> Automatische Verknuepfung<br><b>Pfad:</b> <code>src/Journal/</code>"},
-  {name:"Elterngespraeche",icon:"&#128101;",color:"var(--cyan)",desc:"Termine, Auto/Manual Allocation, Journal-Link",detail:"<b>Models:</b> ParentMeeting, ParentMeetingSchedule, Allocate, Invite<br><b>Workflow:</b> CREATED → PLANNED → INVITED → ALLOCATED<br><b>Zuweisung:</b> MANUAL oder AUTOMATIC (AllocateCalendarProcessor)<br><b>Protokolle:</b> Via Journal (journalSubCategoryId)<br><b>Pfad:</b> <code>src/ParentMeeting/</code>"},
-  {name:"Connect / Mail",icon:"&#9993;",color:"var(--orange)",desc:"SendGrid, Notifications, Azure Translator",detail:"<b>Wichtig:</b> Kein Chat-System im Backend!<br><b>Mail:</b> SendGrid (Mail, MassMail, AnonymousMassMail)<br><b>Notifications:</b> NotificationCenter mit Subscriptions<br><b>Uebersetzung:</b> Azure Translator konfiguriert<br><b>Pfad:</b> <code>src/Mail/</code>, <code>src/NotificationCenter/</code>"},
-  {name:"Stundenplan",icon:"&#128340;",color:"var(--pink)",desc:"TimetableEntry, Sdui-Integration, keine Optimierung",detail:"<b>Models:</b> TimetableEntry, TimetableSettings, SettingHourConfig<br><b>Sdui:</b> OAuth-Provider + HTTP SourceDriver<br><b>Optimierung:</b> Keine automatische Generierung<br><b>Lock:</b> isLocked-Flag fuer manuelle Fixierung<br><b>Pfad:</b> <code>src/Timetable/</code>"},
-  {name:"Serienbriefe",icon:"&#128196;",color:"var(--accent)",desc:"Word-Templates, Platzhalter, PHPDOCX",detail:"<b>Models:</b> WordTemplate, WordTemplatePlaceholder, WordTemplateFolder<br><b>Kategorien:</b> PERSONAL, SCHOOL, CANTON, PUPIL<br><b>Merge:</b> PhpdocxWordDocumentMerger, CreateDocumentProcessor<br><b>Pfad:</b> <code>src/WordTemplate/</code>"},
-  {name:"BISTA / Statistiken",icon:"&#128202;",color:"var(--green)",desc:"Export, Validierung, kantonale Regeln",detail:"<b>Export:</b> BistaStudentExport, BistaClassExport, BistaTeacherExport, BistaActivityExport<br><b>Validierung:</b> BistaRule pro Kanton, InvalidData (School/Class/Employee/Student)<br><b>Encoding:</b> Windows-1252 fuer Behoerdensysteme<br><b>Pfad:</b> <code>src/MasterData/Export/Bista/</code>, <code>src/MasterData/BistaDataCheck/</code>"},
-  {name:"Stammdaten",icon:"&#128100;",color:"var(--purple)",desc:"90+ Submodule, Duplikaterkennung, Import",detail:"<b>User:</b> Zentral fuer alle Personentypen<br><b>Struktur:</b> SchoolUnit → School → SchoolClass → Semester<br><b>Duplikate:</b> PersonDuplicate mit Rules, Comparators, Merge (EXISTIERT!)<br><b>Import:</b> Student/Teacher/Class mit Validation<br><b>Pfad:</b> <code>src/MasterData/</code>"},
-  {name:"Schulplaner",icon:"&#128218;",color:"var(--yellow)",desc:"Lektionen, Materialien, Serien, Stundenplan-Link",detail:"<b>Models:</b> Lesson, LessonTeacher, LessonFile, Note, RepeatCycle<br><b>Typen:</b> SCHOOLING, PREPARATION, SCHOOL_FREE, OTHER<br><b>Stundenplan:</b> Via timetableEntryId<br><b>Pfad:</b> <code>src/SchoolPlaner/</code>"},
-  {name:"Tagesstruktur",icon:"&#127968;",color:"var(--orange)",desc:"Module, Reservationen, Tarife, Invoice",detail:"<b>Models:</b> Module, Reservation, RateGroup, Rate, StudentRate<br><b>Tarife:</b> supportCost + cateringCost, IndividualRate<br><b>Invoice:</b> CreateInvoiceProcessor, DiscountProcessor, Familienrabatte<br><b>Portal:</b> Eltern-Anmeldung (THIS_SCHOOL_YEAR/NEXT/CUSTOM/DAILY)<br><b>Pfad:</b> <code>src/Daycare/</code>"},
-  {name:"Musikschule",icon:"&#127925;",color:"var(--cyan)",desc:"Kurse, Lektionen, Anmeldungen, Invoice",detail:"<b>Models:</b> Course, Lesson, SignUp, Instrument, RateType<br><b>Planung:</b> WeekPlanner, SemesterPlanning<br><b>Invoice:</b> Eigenes System mit Familienrabatt<br><b>Pfad:</b> <code>src/MusicSchool/</code>"},
-  {name:"Weitere Module",icon:"&#10024;",color:"var(--text-dim)",desc:"CourseProgram, Flex, Exam, Alsv, SchoolBus, InfoScreen, ...",detail:"<b>CourseProgram:</b> Kursverwaltung mit Registration + Invoice<br><b>Flex:</b> Flexible Lektionen, Coaching, Presence<br><b>Exam:</b> Pruefungsverwaltung<br><b>Alsv:</b> Altersdurchmischtes Lernen mit Bewertungssystem<br><b>SchoolBus:</b> BusLine, BusStop, Driver, Vehicle<br><b>InfoScreen:</b> Digital Signage mit Widget-System<br><b>CaseManagement:</b> Fallbearbeitung mit Timeline"}
+  {name:"Beurteilungen",icon:"&#9997;",color:"var(--accent)",desc:"Noten, Praedikate, Freitext, Beobachtungen",detail:"<b>Models:</b> StudentEvaluation, EvaluationEvent, StudentObservation, TextEvaluation<br><b>Freitext:</b> ec_student_text_evaluation.text, ec_student_observation.comment, ec_student_evaluation.comment<br><b>Typen:</b> GRADE, POINTS, MISTAKES, METERS, TIME, FREE, INDIVIDUAL_SCALE<br><b>KI-Potenzial:</b> Textvervollstaendigung, Beobachtungsassistent, Pattern-Erkennung<br><b>Pfad:</b> <code>src/EvaluationCertificates/</code>"},
+  {name:"Noten & Zeugnisse",icon:"&#127891;",color:"var(--green)",desc:"Zeugnisse, Praedikate, Lernziele, Bemerkungen",detail:"<b>Models:</b> StudentCertificate, StudentCertificateGrade, PredicateGrade<br><b>Freitext:</b> remark, manualRemark, comment, CustomFieldCollection<br><b>Praedikate:</b> VERY_GOOD, GOOD, SUFFICIENT, INSUFFICIENT<br><b>KI-Potenzial:</b> Konsistenzpruefung, Praedikats-Texte, Lernziel-Berichte (AG)<br><b>Pfad:</b> <code>src/EvaluationCertificates/Certificate/</code>"},
+  {name:"Foerderplaner",icon:"&#127919;",color:"var(--purple)",desc:"Dossiers, Ziele, Massnahmen, SSG-Berichte, KI!",detail:"<b>Models:</b> Dossier, SupportGoal, SupportGoalActivity, LearningAssessment<br><b>Freitext:</b> support_goal, progress, activity, acknowledgmentText<br><b>KI:</b> GPT_OSS_120B fuer SUPPORT_GOAL_GENERATION + MEETING_AGENDA_ITEM_GENERATION<br><b>KI-Potenzial:</b> SMART-Ziele (existiert!), Massnahmen, Verlaufsberichte, kantonale Formate<br><b>Pfad:</b> <code>src/SupportPlanner/</code>"},
+  {name:"Absenzen",icon:"&#128197;",color:"var(--red)",desc:"Fehlzeiten, Visierung, Gruende, Batch-Processing",detail:"<b>Models:</b> Absence, AbsenceReason, AbsenceComment<br><b>Workflow:</b> ANNOUNCED → CURRENT → TO_BE_VERIFIED → CONFIRMED<br><b>KI-Potenzial:</b> Batch-Pruefung, Anomalie-Erkennung (Schulabsentismus), Grund-Erkennung<br><b>Pfad:</b> <code>src/Absence/</code>"},
+  {name:"Journal",icon:"&#128214;",color:"var(--yellow)",desc:"Eintraege, Sichtbarkeit (intern/extern), Absenz-Sync",detail:"<b>Types:</b> Absence, Meeting, File, Comment<br><b>Sichtbarkeit:</b> INTERNAL / EXTERNAL via jrn_entry_access<br><b>KI-Potenzial:</b> Zusammenfassungen, Intern→Extern Transformation, Sprach-zu-Text<br><b>Pfad:</b> <code>src/Journal/</code>"},
+  {name:"Elterngespraeche",icon:"&#128101;",color:"var(--cyan)",desc:"Termine, Allocation, Protokolle, Journal-Link",detail:"<b>Models:</b> ParentMeeting, ParentMeetingSchedule, Allocate, Invite<br><b>Workflow:</b> CREATED → PLANNED → INVITED → ALLOCATED<br><b>KI-Potenzial:</b> Gespraechsvorbereitung, Protokoll-Assistent, Magic Allocation<br><b>Pfad:</b> <code>src/ParentMeeting/</code>"},
+  {name:"Sitzungen",icon:"&#128221;",color:"var(--accent)",desc:"Traktanden, Protokolle, Beschluesse, Aufgaben",detail:"<b>Models:</b> Protocol, AgendaItem, Resolution, Committee, Task<br><b>Freitext:</b> content, fact, consideration, proposal, resolution, information, publicRelation<br><b>Export:</b> DocXMeetingProtocolGenerator, DocXResolutionProtocolGenerator<br><b>KI-Potenzial:</b> Protokoll-Generierung, Beschluss-Extraktion, Aufgaben-Tracking<br><b>Pfad:</b> <code>src/Meeting/</code>"},
+  {name:"Tagesstruktur",icon:"&#127968;",color:"var(--orange)",desc:"Module, Reservationen, Tarife, Tagesberichte",detail:"<b>Models:</b> Module, Reservation, RateGroup, Rate, DailyNote, AppearanceNote<br><b>Freitext:</b> DailyNote (2000 Zeichen), ModuleComment, BillingNote, ReservationComment<br><b>Invoice:</b> CreateInvoiceProcessor, DiscountProcessor, Familienrabatte<br><b>KI-Potenzial:</b> Tagesberichte fuer Eltern, Tarifvalidierung, Kapazitaetsplanung<br><b>Pfad:</b> <code>src/Daycare/</code>"},
+  {name:"Connect / Mail",icon:"&#9993;",color:"var(--orange)",desc:"SendGrid, Notifications, Azure Translator",detail:"<b>Wichtig:</b> Kein Chat-System im Backend!<br><b>Mail:</b> SendGrid (Mail, MassMail, AnonymousMassMail)<br><b>Uebersetzung:</b> Azure Translator konfiguriert<br><b>KI-Potenzial:</b> Elternbrief-Generator, Schuluebersetzung, FAQ-Bot<br><b>Pfad:</b> <code>src/Mail/</code>, <code>src/NotificationCenter/</code>"},
+  {name:"Stundenplan",icon:"&#128340;",color:"var(--pink)",desc:"TimetableEntry, Sdui-Integration, keine Optimierung",detail:"<b>Models:</b> TimetableEntry, TimetableSettings, SettingHourConfig<br><b>Sdui:</b> OAuth-Provider + HTTP SourceDriver<br><b>KI-Potenzial:</b> Stundenplangenerierung (komplex!), Stellvertretung, One-Click-Anpassung<br><b>Pfad:</b> <code>src/Timetable/</code>"},
+  {name:"Serienbriefe",icon:"&#128196;",color:"var(--accent)",desc:"Word-Templates, Platzhalter, PHPDOCX",detail:"<b>Models:</b> WordTemplate, WordTemplatePlaceholder, WordTemplateFolder<br><b>Merge:</b> PhpdocxWordDocumentMerger, CreateDocumentProcessor<br><b>KI-Potenzial:</b> Template-Generator, Textblock-Generierung<br><b>Pfad:</b> <code>src/WordTemplate/</code>"},
+  {name:"Stammdaten",icon:"&#128100;",color:"var(--purple)",desc:"90+ Submodule, Duplikaterkennung, Import, Gruppen",detail:"<b>User:</b> Zentral fuer alle Personentypen<br><b>Duplikate:</b> PersonDuplicate mit Rules, Comparators, Merge (EXISTIERT!)<br><b>Import:</b> Student/Teacher/Class mit Validation<br><b>Gruppen:</b> GroupGenerator mit Gender-Split + Zufall<br><b>KI-Potenzial:</b> Duplikaterkennung+, Smart Import, Intelligente Gruppenbildung<br><b>Pfad:</b> <code>src/MasterData/</code>"},
+  {name:"CaseManagement",icon:"&#128188;",color:"var(--cyan)",desc:"Dossiers, Beratungen, Timeline, Aufgaben",detail:"<b>Models:</b> Consultation (content, agreements), Task, DossierTimeline<br><b>Freitext:</b> Consultation.content, Consultation.agreements<br><b>Export:</b> Dokument-Handling, Timeline-Tracking<br><b>KI-Potenzial:</b> Zusammenfassungen, Beratungsnotiz-Generierung, Fallberichte<br><b>Pfad:</b> <code>src/CaseManagement/</code>"},
+  {name:"Musikschule",icon:"&#127925;",color:"var(--cyan)",desc:"Kurse, Lektionen, Anmeldungen, Invoice",detail:"<b>Models:</b> Course, Lesson, SignUp, Instrument, RateType<br><b>Planung:</b> WeekPlanner, SemesterPlanning<br><b>Pfad:</b> <code>src/MusicSchool/</code>"},
+  {name:"BISTA / Statistiken",icon:"&#128202;",color:"var(--green)",desc:"Export, Validierung, kantonale Regeln",detail:"<b>Export:</b> BistaStudentExport, BistaClassExport, BistaTeacherExport<br><b>Validierung:</b> BistaRule pro Kanton, InvalidData-Processor<br><b>KI-Potenzial:</b> Validierungsassistent, Fehlervorschlaege, NL Data Querying<br><b>Pfad:</b> <code>src/MasterData/Export/Bista/</code>"},
+  {name:"Weitere Module",icon:"&#10024;",color:"var(--text-dim)",desc:"Schulplaner, Homework, Kurse, Flex, SchoolBus, InfoScreen, ...",detail:"<b>Schulplaner:</b> Lesson, LessonTeacher, RepeatCycle — LP21-Lektionsvorschlaege<br><b>Homework:</b> Homework, StudentHomework — Differenzierung<br><b>CourseProgram:</b> Kursempfehlungen<br><b>Flex:</b> FlexSlotLesson, Coaching — Coaching-Notizen<br><b>SchoolBus:</b> BusLine, BusStop, DistanceMatrix — Routen-Optimierung<br><b>InfoScreen:</b> Widget-System — Content-Generierung"}
 ];
 
 // ─── Render Modules ───
@@ -831,6 +713,15 @@ modules.forEach((m, i) => {
   `;
   card.onclick = () => card.classList.toggle('expanded');
   moduleGrid.appendChild(card);
+});
+
+// ─── Module Filter Dropdown ───
+const uniqueModules = [...new Set(features.map(f => f.module))].sort();
+const moduleSelect = document.getElementById('moduleFilter');
+uniqueModules.forEach(m => {
+  const opt = document.createElement('option');
+  opt.value = m; opt.textContent = m;
+  moduleSelect.appendChild(opt);
 });
 
 // ─── Render Features ───
@@ -849,8 +740,9 @@ function renderFeatures(list) {
     const row = document.createElement('div');
     row.className = 'feature-row';
     row.dataset.phase = f.phase;
-    const phaseLabel = f.phase === 'new' ? 'NEU' : `P${f.phase}`;
-    const phaseColor = f.phase === 'new' ? 'tag-pink' : f.phase <= 1 ? 'tag-green' : f.phase <= 2 ? 'tag-yellow' : f.phase <= 3 ? 'tag-orange' : 'tag-purple';
+    row.dataset.module = f.module;
+    const phaseLabel = `P${f.phase}`;
+    const phaseColor = f.phase <= 1 ? 'tag-green' : f.phase <= 2 ? 'tag-yellow' : f.phase <= 3 ? 'tag-orange' : 'tag-purple';
     row.innerHTML = `
       <div class="feature-header" onclick="this.parentElement.classList.toggle('expanded')">
         <div class="feature-num">${f.n}</div>
@@ -863,6 +755,7 @@ function renderFeatures(list) {
           <div class="feature-bar"><div class="feature-bar-fill" style="width:${Math.min(ice/7*100,100)}%;background:${iceColor(ice)}"></div></div>
         </div>
         <div class="feature-score hide-mobile" style="font-size:12px;color:var(--text-muted)">${f.time}</div>
+        <div class="feature-score" style="font-size:11px;color:var(--green);font-weight:500">${f.savings}</div>
       </div>
       <div class="feature-detail">
         <p style="font-size:14px;color:var(--text-muted);margin-bottom:16px">${f.desc}</p>
@@ -880,10 +773,16 @@ function renderFeatures(list) {
     `;
     container.appendChild(row);
   });
+
+  // Update summary
+  const summary = document.getElementById('featureSummary');
+  const totalIce = list.reduce((s, f) => s + f.i * f.c * f.e / 100, 0);
+  summary.innerHTML = `Angezeigt: <span>${list.length}</span> Features &middot; Durchschnitt ICE: <span>${(totalIce / (list.length || 1)).toFixed(1)}</span>`;
 }
 
-let currentSort = { key: 'n', desc: false };
+let currentSort = { key: 'ice', desc: true };
 let currentPhase = 'all';
+let currentModule = 'all';
 let currentSearch = '';
 
 function getFilteredFeatures() {
@@ -891,9 +790,12 @@ function getFilteredFeatures() {
   if (currentPhase !== 'all') {
     list = list.filter(f => String(f.phase) === currentPhase);
   }
+  if (currentModule !== 'all') {
+    list = list.filter(f => f.module === currentModule);
+  }
   if (currentSearch) {
     const s = currentSearch.toLowerCase();
-    list = list.filter(f => f.name.toLowerCase().includes(s) || f.module.toLowerCase().includes(s) || f.desc.toLowerCase().includes(s));
+    list = list.filter(f => f.name.toLowerCase().includes(s) || f.module.toLowerCase().includes(s) || f.desc.toLowerCase().includes(s) || f.notes.toLowerCase().includes(s));
   }
   const key = currentSort.key;
   list.sort((a, b) => {
@@ -923,35 +825,18 @@ document.querySelectorAll('.filter-btn').forEach(btn => {
   };
 });
 
+document.getElementById('moduleFilter').onchange = (e) => {
+  currentModule = e.target.value;
+  renderFeatures(getFilteredFeatures());
+};
+
 document.getElementById('featureSearch').oninput = (e) => {
   currentSearch = e.target.value;
   renderFeatures(getFilteredFeatures());
 };
 
-// Initial render — sorted by ICE desc
-currentSort = { key: 'ice', desc: true };
+// Initial render
 renderFeatures(getFilteredFeatures());
-
-// ─── Render Roadmap ───
-const roadmapTop = [...features].sort((a,b) => (b.i*b.c*b.e) - (a.i*a.c*a.e)).slice(0, 10);
-const roadmapList = document.getElementById('roadmapList');
-roadmapTop.forEach((f, i) => {
-  const ice = (f.i * f.c * f.e / 100).toFixed(1);
-  const item = document.createElement('div');
-  item.className = 'roadmap-item';
-  item.innerHTML = `
-    <div class="roadmap-num">${i+1}</div>
-    <div class="roadmap-content">
-      <div class="roadmap-title">#${f.n} ${f.name}</div>
-      <div class="roadmap-meta">
-        <span class="tag tag-blue">${f.module}</span>
-        <span style="color:${iceColor(ice)};font-family:var(--mono);font-weight:600">ICE ${ice}</span>
-        &middot; ${f.time} &middot; ${f.desc}
-      </div>
-    </div>
-  `;
-  roadmapList.appendChild(item);
-});
 
 // ─── Tab Navigation ───
 document.querySelectorAll('.nav-tab').forEach(tab => {
