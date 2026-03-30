@@ -104,7 +104,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);color:va
 #hibadge .hi-edit{font-family:var(--fm);font-size:9px;color:var(--t3)}
 
 /* study btn */
-#stbtn{position:fixed;top:60px;right:18px;z-index:180;display:flex;align-items:center;gap:6px;padding:5px 11px;border-radius:100px;border:1px solid var(--bdr);background:var(--bg3);color:var(--t3);font-family:var(--fm);font-size:9px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:all .2s}
+#stbtn{display:none !important;position:fixed;top:60px;right:18px;z-index:180;display:flex;align-items:center;gap:6px;padding:5px 11px;border-radius:100px;border:1px solid var(--bdr);background:var(--bg3);color:var(--t3);font-family:var(--fm);font-size:9px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:all .2s}
 #stbtn:hover{color:var(--t1);border-color:var(--p)}
 #stbtn.on{background:rgba(30,144,255,.12);border-color:var(--p);color:var(--p3)}
 #stbtn .dot{width:6px;height:6px;border-radius:50%;background:var(--t3);transition:.2s}
@@ -401,7 +401,7 @@ kbd{padding:1px 4px;border:1px solid var(--t4);border-radius:3px;font-size:9px;f
   .ts-track{width:52px;height:28px;border-radius:100px;border:1.5px solid var(--bdr2);background:var(--bg4);position:relative;cursor:pointer;transition:background .25s,border-color .25s;flex-shrink:0}
   .ts-track:hover{border-color:var(--p)}
   .ts-thumb{position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:linear-gradient(135deg,var(--p),var(--acc));transition:transform .25s cubic-bezier(.4,0,.2,1),background .25s;box-shadow:0 2px 6px rgba(0,0,0,.25)}
-  [data-theme='light'] .ts-thumb{transform:translateX(24px);background:linear-gradient(135deg,var(--warn),var(--p))}
+  [data-theme="light"] .ts-thumb{transform:translateX(24px);background:linear-gradient(135deg,var(--acc),var(--p))}
   .ts-sun,.ts-moon{font-size:11px}
 
   /* light theme adjustments for slides */
@@ -495,7 +495,7 @@ kbd{padding:1px 4px;border:1px solid var(--t4);border-radius:3px;font-size:9px;f
     <span class="hnum"><span id="cn">1</span> / <span id="tn"></span></span>
   </div>
 </header>
-<button id="stbtn" onclick="toggleStudy()"><div class="dot"></div>Selbststudium</button>
+
 
 <!-- ══════════════════════════════════════════
      SLIDES
@@ -533,7 +533,7 @@ kbd{padding:1px 4px;border:1px solid var(--t4);border-radius:3px;font-size:9px;f
       <span class="theme-slider-lbl" id="lbl-light">☀️ Hell</span>
     </div>
     <div class="ani" style="margin-top:8px;font-family:var(--fm);font-size:10px;color:var(--t3);display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
-      <span>← → navigieren</span><span>·</span><span>📖 Selbststudium für Lerntipps</span><span>·</span><span id="url-hint-title">🔗 PUPIL-Instanz oben rechts ändern</span>
+      <span>← → navigieren</span><span id="url-hint-title">🔗 PUPIL-Instanz oben rechts ändern</span>
     </div>
   </div>
 </div>
@@ -1442,7 +1442,7 @@ kbd{padding:1px 4px;border:1px solid var(--t4);border-radius:3px;font-size:9px;f
 <script>
 // ─── State ────────────────────────────────────────────────────────
 let pupilBase = '';
-let study = false;
+let study = true;
 
 // ─── Slides setup ─────────────────────────────────────────────────
 const slides = Array.from(document.querySelectorAll('.s'));
@@ -1479,6 +1479,8 @@ function gts(i) {
   uiNav();
 }
 function nav(d) { gts(cur + d); }
+// init study notes
+if (study) { document.querySelectorAll(".sn2").forEach(n => n.classList.add("vis")); }
 
 function toggleStudy() {
   study = !study;
