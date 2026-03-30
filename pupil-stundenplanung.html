@@ -487,7 +487,7 @@ kbd{padding:1px 4px;border:1px solid var(--t4);border-radius:3px;font-size:9px;f
 ══════════════════════════════════════════ -->
 <div id="pbar"></div>
 <header id="hdr">
-  <a class="hlogo" href="index.html" title="Zurück zur Übersicht" style="text-decoration:none;color:inherit"><div class="hlogo-dot"></div>PUPIL Stundenplanung</a>
+  <a class="hlogo" href="https://signerpupil.github.io/web-toys/" title="Zurück zur Übersicht" style="text-decoration:none;color:inherit"><div class="hlogo-dot"></div>PUPIL Stundenplanung</a>
   <div class="hright">
     <button id="themebtn" onclick="toggleTheme()" title="Theme wechseln"><span class="ticon">🌙</span></button>
     <div id="hibadge" onclick="openSetup()" title="Instanz wechseln">
@@ -511,10 +511,11 @@ kbd{padding:1px 4px;border:1px solid var(--t4);border-radius:3px;font-size:9px;f
     <h1 class="ani tm">PUPIL<br>Stundenplan</h1>
     <p class="ani ts">Von der kantonalen Stundentafel bis zur Freigabe im Elternportal — alle Ansichten, Prozesse und Szenarien im Detail.</p>
     <div class="ani" style="display:flex;gap:9px;margin-top:28px;justify-content:center;flex-wrap:wrap">
-      <span class="tag ta">📋 Alle Ansichten</span>
-      <span class="tag tb">⚙️ Vier Planungsszenarien</span>
-      <span class="tag tc">🆕 Neuerungen 2025/26</span>
-      <span class="tag td">🔗 Links direkt in PUPIL</span>
+      <button onclick="gts(1)" class="tag ta" style="cursor:pointer;border:none;font-family:inherit">📋 Alle Ansichten</button>
+      <button onclick="gts(7)" class="tag tb" style="cursor:pointer;border:none;font-family:inherit">⚙️ Vier Planungsszenarien</button>
+      <button onclick="gts(11)" class="tag tb" style="cursor:pointer;border:none;font-family:inherit;background:rgba(0,229,200,.1);border:1px solid rgba(0,229,200,.25);color:var(--acc)">🗂️ Planungsprozess</button>
+      <button onclick="gts(15)" class="tag tc" style="cursor:pointer;border:none;font-family:inherit">🆕 Neuerungen 2025/26</button>
+      <button onclick="gts(18)" class="tag td" style="cursor:pointer;border:none;font-family:inherit">🔗 Links direkt in PUPIL</button>
     </div>
     <div class="ani" style="margin-top:18px;display:flex;justify-content:center">
       <button onclick="gts(11)" style="background:rgba(0,229,200,.1);border:1px solid rgba(0,229,200,.25);color:var(--acc);border-radius:100px;padding:6px 18px;font-family:var(--fm);font-size:10px;letter-spacing:.07em;text-transform:uppercase;cursor:pointer;transition:all .2s" onmouseover="this.style.background='rgba(0,229,200,.18)'" onmouseout="this.style.background='rgba(0,229,200,.1)'">↓ Direkt zum Planungsprozess</button>
