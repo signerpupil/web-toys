@@ -753,11 +753,18 @@ kbd{padding:1px 4px;border:1px solid var(--t4);border-radius:3px;font-size:9px;f
         <div class="card" style="margin-bottom:10px">
           <h3>⚙️ Synchronisation</h3>
           <ul class="ul">
-            <li>Sync-Button übernimmt Stundentafel-Änderungen</li>
-            <li>Seit Aug 2025: Fächer nur noch <strong>richtiger LP</strong> zugewiesen <span class="upd">Aug 2025</span></li>
+            <li>Sync-Button gleicht Stundentafel-Änderungen auf Lektionsbausteine ab</li>
             <li>Manuelle Einträge können überschrieben werden</li>
             <li>Sync sperren empfohlen bei manueller Pflege (in Planung)</li>
           </ul>
+        </div>
+        <div class="hbox hr">
+          <strong>⚠️ Absprache Sync-Zeitpunkt</strong>
+          <p>Stundenplaner*innen müssen untereinander absprechen, <strong>wann der Sync-Button zum letzten Mal gedrückt wird</strong> — danach sind manuelle Anpassungen verbindlich und dürfen nicht mehr überschrieben werden.</p>
+        </div>
+        <div class="hbox hb">
+          <strong>📅 Lehrpersonenverfügbarkeit</strong>
+          <p>LP-Verfügbarkeiten (Abwesenheiten, Teilzeit) werden im <strong>LP-Stundenplan</strong> angezeigt. Vor der Planung sicherstellen, dass Verfügbarkeiten aktuell gepflegt sind.</p>
         </div>
         <div class="hbox hw"><strong>⚠️ Semesterwechsel-Risiko</strong><p>Alte LP/Lektionen vom Vorjahr können kopiert werden. Manuelle Bereinigung zu Beginn jedes Schuljahres nötig — bekannt bei Kloten, Oberengstringen, Nollen.</p></div>
         <div class="pbtns"><a class="pbtn plink" data-path="/timetable/lessons" href="#" target="_blank">↗ Lektionenübersicht öffnen</a></div>
@@ -1198,11 +1205,12 @@ kbd{padding:1px 4px;border:1px solid var(--t4);border-radius:3px;font-size:9px;f
         <div class="step"><div class="sn">1</div><div class="sc2"><strong>Stammdaten prüfen</strong><span>Klassen, LP, Räume, Fächer vollständig? Fremd-IDs gesetzt?</span></div></div>
         <div class="step"><div class="sn">2</div><div class="sc2"><strong>Kantonale Stundentafel aktualisieren</strong><span>Pflichtlektionen und Wahlfächer korrekt?</span></div></div>
         <div class="step"><div class="sn">3</div><div class="sc2"><strong>Gruppen erstellen</strong><span>Halbklassen, Niveaugruppen, Wahlfachgruppen mit SuS befüllen</span></div></div>
-        <div class="step"><div class="sn">4</div><div class="sc2"><strong>Lektionenübersicht prüfen</strong><span>Sync ausführen, LP zuweisen, Lektionszahlen kontrollieren</span></div></div>
-        <div class="step"><div class="sn">5</div><div class="sc2"><strong>Zeitraster konfigurieren</strong><span>Perioden, Pausen, Blockzeiten — Abweichungen je Klasse</span></div></div>
-        <div class="step"><div class="sn">6</div><div class="sc2"><strong>Stundenplan erstellen</strong><span>Manuell via Drag &amp; Drop — oder Export → KI-Planer → Import</span></div></div>
-        <div class="step"><div class="sn">7</div><div class="sc2"><strong>Plan prüfen</strong><span>Konflikte, fehlende Räume, Gruppenlektionen korrekt?</span></div></div>
-        <div class="step"><div class="sn">8</div><div class="sc2"><strong>Druckausgabe &amp; Freigabe</strong><span>PDF prüfen, Elternportal / PUPIL Connect aktivieren</span></div></div>
+        <div class="step"><div class="sn">4</div><div class="sc2"><strong>Lektionenübersicht: Sync ausführen</strong><span>Stundentafel-Änderungen auf Lektionsbausteine abgleichen — <strong>letzten Sync-Zeitpunkt</strong> im Team absprechen</span></div></div>
+        <div class="step"><div class="sn">5</div><div class="sc2"><strong>Lektionenübersicht: LP &amp; Räume zuweisen</strong><span>LP-Verfügbarkeit prüfen, Lektionszahlen kontrollieren, Fremd-IDs setzen</span></div></div>
+        <div class="step"><div class="sn">6</div><div class="sc2"><strong>Zeitraster konfigurieren</strong><span>Perioden, Pausen, Blockzeiten — Abweichungen je Klasse</span></div></div>
+        <div class="step"><div class="sn">7</div><div class="sc2"><strong>Stundenplan erstellen</strong><span>Manuell via Drag &amp; Drop — oder Export → KI-Planer → Import</span></div></div>
+        <div class="step"><div class="sn">8</div><div class="sc2"><strong>Plan prüfen</strong><span>Konflikte, fehlende Räume, Gruppenlektionen korrekt?</span></div></div>
+        <div class="step"><div class="sn">9</div><div class="sc2"><strong>Druckausgabe &amp; Freigabe</strong><span>PDF prüfen, Elternportal / PUPIL Connect aktivieren</span></div></div>
       </div>
       <div>
         <div class="hbox hp"><strong>Wann welchen Ansatz?</strong><ul><li><strong>Kleine Primarschule:</strong> Schritte 1–5 + manuelles Planen → fertig</li><li><strong>Grosse Sek:</strong> Schritte 1–5 + KI-Stundenplaner → deutlich schneller</li><li><strong>Jahreswechsel:</strong> Alle Schritte neu — besonders 3–5 nicht vergessen</li></ul></div>
