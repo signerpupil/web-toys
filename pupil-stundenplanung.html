@@ -1146,27 +1146,27 @@ kbd{padding:1px 4px;border:1px solid var(--t4);border-radius:3px;font-size:9px;f
           <p>Fehler in den Stammdaten führen im besten Fall zu Korrekturbedarf nach der Planung — im schlimmsten Fall zu falschen Stundenplänen, die Eltern oder SuS sehen. Daten zuerst prüfen spart Zeit.</p>
         </div>
         <div class="card" style="margin-bottom:10px">
-          <h3>🆔 Fremd-IDs — vollständig?</h3>
+          <h3>🏷️ Kürzel — vollständig?</h3>
           <ul class="ul">
-            <li><strong>Klassen:</strong> Jede Klasse braucht eine Fremd-ID</li>
-            <li><strong>Gruppen:</strong> Alle Gruppen mit Fremd-ID — sonst im KI-Stundenplaner nicht erkennbar</li>
-            <li><strong>Lehrpersonen:</strong> Fremd-ID = Kürzel/Personalnummer, muss gesetzt sein</li>
-            <li><strong>Räume:</strong> Fremd-ID für alle genutzten Räume setzen</li>
+            <li><strong>Klassen:</strong> Jede Klasse braucht ein Kürzel</li>
+            <li><strong>Gruppen:</strong> Alle Gruppen mit Kürzel — sonst im KI-Stundenplaner nicht erkennbar</li>
+            <li><strong>Lehrpersonen:</strong> Kürzel / Personalnummer muss gesetzt sein</li>
+            <li><strong>Räume:</strong> Kürzel für alle genutzten Räume setzen</li>
           </ul>
         </div>
         <div class="hbox hr">
-          <strong>⚠️ Häufiger Fehler: Gruppen ohne Fremd-ID</strong>
-          <p>Gruppen ohne Fremd-ID werden beim Export/Import übergangen — die zugehörigen Lektionen fehlen dann im KI-Stundenplaner komplett.</p>
+          <strong>⚠️ Hinweis: Gruppen ohne Kürzel</strong>
+          <p>Ohne Kürzel werden die Lektionen im <strong>Stundenplan bearbeiten</strong> und in der <strong>Druckausgabe</strong> nicht mit den Zusatzinformationen angezeigt.</p>
         </div>
       </div>
       <div>
         <div class="card" style="margin-bottom:10px">
           <h3>✅ Checkliste vor der Planung</h3>
           <ul style="list-style:none;font-size:12.5px;color:var(--t2);line-height:2.1">
-            <li>☐ Alle Klassen mit Fremd-ID versehen</li>
+            <li>☐ Alle Klassen mit Kürzel versehen</li>
             <li>☐ Alle Gruppen angelegt und mit SuS befüllt</li>
-            <li>☐ Alle Gruppen mit Fremd-ID versehen</li>
-            <li>☐ Alle LP im System — Fremd-ID gesetzt</li>
+            <li>☐ Alle Gruppen mit Kürzel versehen</li>
+            <li>☐ Alle LP im System — Kürzel gesetzt</li>
             <li>☐ Alle genutzten Räume angelegt</li>
             <li>☐ Lektionenübersicht: LP-Zuweisungen vollständig</li>
             <li>☐ Lektionenübersicht: Lektionszahlen plausibel</li>
@@ -1180,7 +1180,7 @@ kbd{padding:1px 4px;border:1px solid var(--t4);border-radius:3px;font-size:9px;f
         <div class="hbox hb">
           <strong>💡 Wo prüfen?</strong>
           <ul>
-            <li><strong>Fremd-IDs:</strong> Master Data → Klassen / Gruppen / LP / Räume</li>
+            <li><strong>Kürzel:</strong> Master Data → Klassen / Gruppen / LP / Räume</li>
             <li><strong>Gruppen-Mitglieder:</strong> Master Data → Gruppen → Mitglieder</li>
             <li><strong>LP-Zuweisungen:</strong> Schulleitung → Stundenplan → Lektionenübersicht</li>
           </ul>
@@ -1192,7 +1192,6 @@ kbd{padding:1px 4px;border:1px solid var(--t4);border-radius:3px;font-size:9px;f
         </div>
       </div>
     </div>
-    <div class="sn2"><strong>📚 Erfahrung aus Importen</strong>Der häufigste Grund für Support-Anfragen nach dem KI-Stundenplaner-Import: Gruppen waren in PUPIL angelegt aber ohne Fremd-ID — die Lektionen fehlten dann vollständig. Zweithäufigst: LP-Zuweisungen in der Lektionenübersicht unvollständig, weil Sync nach einer Stundentafel-Änderung nicht erneut ausgeführt wurde.</div>
   </div>
 </div>
 
