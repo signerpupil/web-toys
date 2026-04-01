@@ -462,7 +462,7 @@ kbd{padding:1px 4px;border:1px solid var(--t4);border-radius:3px;font-size:9px;f
       <button class="sbtn" onclick="confirmUrl()">Starten →</button>
     </div>
     <div id="serr"></div>
-    <div class="shint">Format: <span>https://name.pupil.schule</span> oder <span>https://name.pupil-dev.ch</span></div>
+    <div class="shint">Format: <span>https://name.pupil.schule</span></div>
     <div class="sexamples">
       <p>Bekannte Instanzen — klicken zum Übernehmen</p>
       <div class="seg" onclick="fillUrl('https://kloten.pupil.schule')">
@@ -740,7 +740,7 @@ kbd{padding:1px 4px;border:1px solid var(--t4);border-radius:3px;font-size:9px;f
         <a class="path plink" data-path="/timetable/lessons" href="#" target="_blank"><strong>Schulleitung</strong><span>→</span>Stundenplan<span>→</span><strong>Lektionenübersicht</strong><span class="path-open">↗ öffnen</span></a>
         <div class="hbox hb">
           <strong>Was hat sich geändert?</strong>
-          <p>Bisherige Ansichten <span class="new" style="font-size:9px">KLASSENSTUNDENTAFEL</span> und <span class="new" style="font-size:9px">LEHRPERSONENSTUNDEN</span> → zusammengeführt zur <span class="new">LEKTIONENÜBERSICHT</span>. Beide funktional erweitert. <span class="upd">Dez 2025</span></p>
+          <p>Bisherige Ansichten <span style="font-family:var(--fm);font-size:9px;letter-spacing:.07em;text-transform:uppercase;color:var(--t2);background:var(--bg4);border:1px solid var(--bdr);border-radius:3px;padding:1px 5px">Klassenstundentafel</span> und <span style="font-family:var(--fm);font-size:9px;letter-spacing:.07em;text-transform:uppercase;color:var(--t2);background:var(--bg4);border:1px solid var(--bdr);border-radius:3px;padding:1px 5px">Lehrpersonenstunden</span> → zusammengeführt zur <span style="font-family:var(--fm);font-size:9px;letter-spacing:.07em;text-transform:uppercase;color:var(--acc);background:rgba(0,229,200,.08);border:1px solid rgba(0,229,200,.25);border-radius:3px;padding:1px 5px">Lektionenübersicht</span>. Beide funktional erweitert. <span class="upd">Dez 2025</span></p>
         </div>
         <div class="card">
           <h3>📋 Inhalt der Lektionenübersicht</h3>
@@ -1141,10 +1141,10 @@ kbd{padding:1px 4px;border:1px solid var(--t4);border-radius:3px;font-size:9px;f
         <div class="card" style="margin-bottom:10px">
           <h3>🏷️ Kürzel — vollständig?</h3>
           <ul class="ul">
-            <li><strong>Klassen:</strong> Jede Klasse braucht ein Kürzel</li>
-            <li><strong>Gruppen:</strong> Alle Gruppen mit Kürzel — sonst im KI-Stundenplaner nicht erkennbar</li>
-            <li><strong>Lehrpersonen:</strong> Kürzel / Personalnummer muss gesetzt sein</li>
-            <li><strong>Räume:</strong> Kürzel für alle genutzten Räume setzen</li>
+            <li><strong>Klassen:</strong> Jede Klasse braucht ein Kürzel <a class="plink" data-path="/master_data/classes" href="#" target="_blank" style="font-family:var(--fm);font-size:9px;color:var(--acc);text-decoration:none;opacity:.8">↗</a></li>
+            <li><strong>Gruppen:</strong> Alle Gruppen mit Kürzel — sonst im KI-Stundenplaner nicht erkennbar <a class="plink" data-path="/master_data/groups" href="#" target="_blank" style="font-family:var(--fm);font-size:9px;color:var(--acc);text-decoration:none;opacity:.8">↗</a></li>
+            <li><strong>Lehrpersonen:</strong> Kürzel / Personalnummer muss gesetzt sein <a class="plink" data-path="/master_data/teachers" href="#" target="_blank" style="font-family:var(--fm);font-size:9px;color:var(--acc);text-decoration:none;opacity:.8">↗</a></li>
+            <li><strong>Räume:</strong> Kürzel für alle genutzten Räume setzen <a class="plink" data-path="/master_data/rooms" href="#" target="_blank" style="font-family:var(--fm);font-size:9px;color:var(--acc);text-decoration:none;opacity:.8">↗</a></li>
           </ul>
         </div>
         <div class="hbox hr">
