@@ -1733,9 +1733,10 @@
                 }
 
                 const pupilLink = pupilUrl(moduleRoutes[key] || '');
+                const pupilIconImg = `<img src="https://ag-p1.pupil.schule/assets/dist/img/pupil_by_seven_education_icon.svg" class="module-title-ext" alt="In PUPIL öffnen">`;
                 const titleHtml = pupilLink
-                    ? `<a href="${pupilLink}" target="_blank" class="module-title-link" title="In PUPIL öffnen: ${pupilLink}">${module.icon} ${module.name} <img src="https://ag-p1.pupil.schule/assets/dist/img/pupil_by_seven_education_icon.svg" class="module-title-ext" alt="In PUPIL öffnen"></a>`
-                    : `${module.icon} ${module.name}`;
+                    ? `${module.icon} ${module.name} <a href="${pupilLink}" target="_blank" class="module-title-link" title="In PUPIL öffnen: ${pupilLink}">${pupilIconImg}</a>`
+                    : `${module.icon} ${module.name} <a href="#" onclick="event.preventDefault();document.getElementById('urlModal').classList.add('active')" class="module-title-link" title="PUPIL-URL festlegen, um dieses Modul direkt zu öffnen">${pupilIconImg}</a>`;
                 let html = `
                     <div class="module-header">
                         <h2>${titleHtml}</h2>
@@ -1763,8 +1764,11 @@
 
                 module.sections.forEach(section => {
                     const secLink = pupilUrl(sectionRoutes[section.title] || '');
-                    const secTitleHtml = secLink
-                        ? `${section.title} <a href="${secLink}" target="_blank" class="section-pupil-link" title="In PUPIL öffnen"><img src="https://ag-p1.pupil.schule/assets/dist/img/pupil_by_seven_education_icon.svg" alt="In PUPIL öffnen"></a>`
+                    const secIconImg = `<img src="https://ag-p1.pupil.schule/assets/dist/img/pupil_by_seven_education_icon.svg" alt="In PUPIL öffnen">`;
+                    const secTitleHtml = sectionRoutes[section.title]
+                        ? (secLink
+                            ? `${section.title} <a href="${secLink}" target="_blank" class="section-pupil-link" title="In PUPIL öffnen">${secIconImg}</a>`
+                            : `${section.title} <a href="#" onclick="event.preventDefault();document.getElementById('urlModal').classList.add('active')" class="section-pupil-link" title="PUPIL-URL festlegen">${secIconImg}</a>`)
                         : section.title;
                     html += `
                         <div class="tasks-section">
