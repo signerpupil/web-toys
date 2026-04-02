@@ -1088,7 +1088,6 @@
             <p>Alle deine Notizen sind in dieser Session gespeichert. Exportiere sie, bevor du die Seite schliesst.</p>
             <div class="export-buttons">
                 <button class="export-btn html" onclick="exportAsHTML()">📄 Als HTML exportieren</button>
-                <button class="export-btn txt" onclick="exportAsTXT()">📝 Als Textdatei exportieren</button>
             </div>
             <div class="export-info">
                 Die Notizen werden automatisch beim Exportieren generiert und heruntergeladen.
@@ -1993,68 +1992,6 @@
 </html>`;
 
             downloadFile(html, 'PUPIL_Fortschritt_' + new Date().toISOString().split('T')[0] + '.html', 'text/html');
-        }
-
-        function exportAsTXT() {
-            let txt = `PUPIL@ZH LERNUMGEBUNG - FORTSCHRITT & NOTIZEN EXPORT
-====================================================
-Exportiert am: ${new Date().toLocaleString('de-CH')}
-URL-Basis: ${customUrl}
-
-GESAMTFORTSCHRITT
-=================`;
-
-            let totalCompleted = 0;
-            let totalTasks = 0;
-            Object.keys(modules).forEach(key => {
-                const completed = Object.keys(completedTasks).filter(t => t.startsWith(key + '-')).length;
-                const total = modules[key].sections.reduce((sum, s) => sum + s.tasks.length, 0);
-                totalCompleted += completed;
-                totalTasks += total;
-                const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
-                txt += `\n${modules[key].icon} ${modules[key].name}: ${completed}/${total} (${percentage}%)`;
-            });
-
-            txt += `\n\nGESAMT: ${totalCompleted}/${totalTasks} Aufträge (${totalTasks > 0 ? Math.round(totalCompleted/totalTasks*100) : 0}%)\n`;
-
-            // Add detailed tasks with completion status
-            txt += '\n\nDETAILLIERTER FORTSCHRITT\n=========================\n';
-            Object.keys(modules).forEach(key => {
-                const module = modules[key];
-                if (module.isWelcome) return;
-                const completed = Object.keys(completedTasks).filter(t => t.startsWith(key + '-')).length;
-                const total = module.sections.reduce((sum, s) => sum + s.tasks.length, 0);
-                const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
-
-                txt += `\n${module.icon} ${module.name} (${completed}/${total} - ${percentage}%)\n`;
-                txt += '─'.repeat(60) + '\n';
-
-                module.sections.forEach(section => {
-                    txt += `\n  ${section.title}\n`;
-                    section.tasks.forEach((task, idx) => {
-                        const taskId = key + '-' + section.title.replace(/\s/g, '-') + '-' + idx;
-                        const taskText = typeof task === 'string' ? task : task.text;
-                        const isCompleted = completedTasks[taskId] ? true : false;
-                        const status = isCompleted ? '✓' : '○';
-                        txt += `  ${status} ${taskText}\n`;
-                    });
-                });
-            });
-
-            // Add notes
-            txt += '\n\nDETAILLIERTE NOTIZEN\n====================\n';
-            Object.keys(modules).forEach(key => {
-                if (modules[key].isWelcome) return;
-                if (notes[key] && notes[key].trim()) {
-                    txt += `\n${modules[key].icon} ${modules[key].name}\n`;
-                    txt += '─'.repeat(60) + '\n';
-                    txt += notes[key] + '\n';
-                }
-            });
-
-            txt += '\n\n' + '═'.repeat(60) + '\nErstellt mit PUPIL@ZH Lernumgebung | pupil.ch | © 2026 Seven Education';
-
-            downloadFile(txt, 'PUPIL_Fortschritt_' + new Date().toISOString().split('T')[0] + '.txt', 'text/plain');
         }
 
         function downloadFile(content, filename, type) {
