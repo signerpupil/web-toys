@@ -419,7 +419,8 @@
             transition: opacity 0.2s;
         }
 
-        .section-pupil-link img {
+        .section-pupil-link img,
+        .section-pupil-link svg {
             width: 16px;
             height: 16px;
         }
@@ -1732,7 +1733,7 @@
                 }
 
                 const pupilLink = pupilUrl(moduleRoutes[key] || '');
-                const pupilIconImg = `<img src="https://ag-p1.pupil.schule/assets/dist/img/pupil_by_seven_education_icon.svg" class="module-title-ext" alt="In PUPIL öffnen">`;
+                const pupilIconImg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="15 15 516 516" class="module-title-ext" aria-hidden="true"><path fill="#2884C1" d="M421.87,526.05H124.35c-57.57,0-104.25-46.67-104.25-104.25V124.29c0-57.57,46.67-104.25,104.25-104.25h297.52c57.57,0,104.25,46.67,104.25,104.25v297.52C526.11,479.38,479.44,526.05,421.87,526.05z"/><polygon fill="#fff" points="260.45,286.25 163.84,230.47 67.23,286.25 67.23,397.79 163.84,453.57 260.45,397.79"/><polygon fill="#fff" points="478.98,159.06 425.34,128.09 371.7,159.06 371.7,221 425.34,251.97 478.98,221"/><polygon fill="#fff" points="345.99,135.2 272.06,92.52 198.14,135.2 198.14,220.57 272.06,263.25 345.99,220.57"/></svg>`;
                 const titleHtml = pupilLink
                     ? `${module.icon} ${module.name} <a href="${pupilLink}" target="_blank" class="module-title-link" title="In PUPIL öffnen: ${pupilLink}">${pupilIconImg}</a>`
                     : `${module.icon} ${module.name} <a href="#" onclick="event.preventDefault();document.getElementById('urlModal').classList.add('active')" class="module-title-link" title="PUPIL-URL festlegen, um dieses Modul direkt zu öffnen">${pupilIconImg}</a>`;
@@ -1763,7 +1764,7 @@
 
                 module.sections.forEach(section => {
                     const secLink = pupilUrl(sectionRoutes[section.title] || '');
-                    const secIconImg = `<img src="https://ag-p1.pupil.schule/assets/dist/img/pupil_by_seven_education_icon.svg" alt="In PUPIL öffnen">`;
+                    const secIconImg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="15 15 516 516" aria-hidden="true"><path fill="#2884C1" d="M421.87,526.05H124.35c-57.57,0-104.25-46.67-104.25-104.25V124.29c0-57.57,46.67-104.25,104.25-104.25h297.52c57.57,0,104.25,46.67,104.25,104.25v297.52C526.11,479.38,479.44,526.05,421.87,526.05z"/><polygon fill="#fff" points="260.45,286.25 163.84,230.47 67.23,286.25 67.23,397.79 163.84,453.57 260.45,397.79"/><polygon fill="#fff" points="478.98,159.06 425.34,128.09 371.7,159.06 371.7,221 425.34,251.97 478.98,221"/><polygon fill="#fff" points="345.99,135.2 272.06,92.52 198.14,135.2 198.14,220.57 272.06,263.25 345.99,220.57"/></svg>`;
                     const secTitleHtml = sectionRoutes[section.title]
                         ? (secLink
                             ? `${section.title} <a href="${secLink}" target="_blank" class="section-pupil-link" title="In PUPIL öffnen">${secIconImg}</a>`
