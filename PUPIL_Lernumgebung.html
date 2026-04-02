@@ -429,34 +429,6 @@
             opacity: 1;
         }
 
-        .deep-link-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 8px 14px;
-            background: var(--bg-light);
-            border: 1.5px solid var(--border);
-            border-radius: 6px;
-            font-size: 0.82em;
-            font-weight: 600;
-            color: var(--text-secondary);
-            cursor: pointer;
-            transition: all 0.25s;
-            white-space: nowrap;
-            flex-shrink: 0;
-        }
-
-        .deep-link-btn:hover {
-            border-color: var(--primary);
-            color: var(--primary);
-            background: white;
-        }
-
-        .deep-link-btn.copied {
-            border-color: var(--success);
-            color: var(--success);
-            background: #F0FDF4;
-        }
 
         .tasks-section {
             margin-bottom: 30px;
@@ -1740,9 +1712,6 @@
                 let html = `
                     <div class="module-header">
                         <h2>${titleHtml}</h2>
-                        <button class="deep-link-btn" id="dlbtn-${key}" onclick="copyDeepLink('${key}')">
-                            🔗 Link kopieren
-                        </button>
                     </div>`;
 
                 // Add progress bar
@@ -1857,19 +1826,6 @@
             window.location.hash = moduleKey;
         }
 
-        function copyDeepLink(key) {
-            const url = (customUrl || window.location.href.split('#')[0]) + '#' + key;
-            navigator.clipboard.writeText(url).then(() => {
-                const btn = document.getElementById('dlbtn-' + key);
-                if (!btn) return;
-                btn.textContent = '✓ Kopiert!';
-                btn.classList.add('copied');
-                setTimeout(() => {
-                    btn.textContent = '🔗 Link kopieren';
-                    btn.classList.remove('copied');
-                }, 2000);
-            });
-        }
 
         function handleHash() {
             const hash = window.location.hash.slice(1) || lastModule || 'welcome';
