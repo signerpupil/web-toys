@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PUPIL@AG Lernumgebung</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --primary: #F43175;
+            --primary-light: #FF6BA6;
+            --primary-dark: #D41662;
+            --neutral-dark: #1C1C1C;
+            --neutral-light: #FFFAF6;
+            --text-primary: #1C1C1C;
+            --text-secondary: #666;
+            --success: #2ECC71;
+            --info: #3498DB;
+            --warning: #F39C12;
+            --danger: #E74C3C;
+            --border: #E8E8E8;
+            --bg-light: #F5F3F0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background-color: var(--neutral-light);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .container { max-width: 1300px; margin: 0 auto; padding: 30px 20px; }
+
+        header {
+            background: linear-gradient(135deg, var(--neutral-dark) 0%, #2D2D2D 100%);
+            color: var(--neutral-light);
+            padding: 50px 30px;
+            margin-bottom: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(244, 49, 117, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            right: -50px; top: -50px;
+            width: 200px; height: 200px;
+            background: var(--primary);
+            border-radius: 50%;
+            opacity: 0.1;
+        }
+
+        header h1 { font-size: 2.8em; font-weight: 700; margin-bottom: 10px; position: relative; z-index: 1; }
+        header p { font-size: 1.1em; opacity: 0.9; position: relative; z-index: 1; }
+
+        .modal {
+            display: none; position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(28, 28, 28, 0.8);
+            z-index: 1000; justify-content: center; align-items: center;
+            backdrop-filter: blur(5px);
+        }
+        .modal.active { display: flex; }
+
+        .modal-content {
+            background: var(--neutral-light);
+            padding: 50px; border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            max-width: 500px; text-align: center;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-content h2 { color: var(--primary); margin-bottom: 15px; font-size: 2em; font-weight: 700; }
+        .modal-content p { margin-bottom: 15px; color: var(--text-secondary); font-size: 0.95em; line-height: 1.5; }
+
+        .url-input-group { display: flex; gap: 12px; margin-bottom: 20px; }
+        .url-input-group input {
+            flex: 1; padding: 14px 16px;
+            border: 2px solid var(--border); border-radius: 8px;
+            font-size: 1em; transition: all 0.3s; background: white;
+        }
+        .url-input-group input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(244,49,117,0.1); }
+        .url-input-group button {
+            padding: 14px 28px; background: var(--primary); color: white;
+            border: none; border-radius: 8px; cursor: pointer;
+            font-weight: 700; transition: all 0.3s; font-size: 0.95em;
+        }
+        .url-input-group button:hover { background: var(--primary-dark); transform: translateY(-2px); box-shadow: 0 8px 16px rgba(244,49,117,0.3); }
+
+        .url-hint {
+            background: var(--bg-light); padding: 16px; border-radius: 8px;
+            margin-top: 20px; font-size: 0.9em; color: var(--text-secondary);
+            border-left: 4px solid var(--primary);
+        }
+        .url-hint code { background: white; padding: 4px 8px; border-radius: 4px; font-family: 'Courier New', monospace; color: var(--primary); font-weight: 600; }
+
+        .help-modal {
+            display: none; position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(28,28,28,0.8);
+            z-index: 999; justify-content: center; align-items: center;
+            backdrop-filter: blur(5px); overflow-y: auto; padding: 20px;
+        }
+        .help-modal.active { display: flex; }
+
+        .help-modal-content {
+            background: var(--neutral-light); padding: 40px; border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2); max-width: 700px;
+            animation: slideUp 0.3s ease;
+        }
+        .help-modal-content h3 { color: var(--primary); margin-bottom: 20px; font-size: 1.6em; padding-bottom: 15px; border-bottom: 3px solid var(--primary); }
+        .help-content { display: flex; flex-direction: column; gap: 20px; }
+        .help-section { padding: 15px; background: var(--bg-light); border-radius: 8px; border-left: 4px solid var(--primary); }
+        .help-section h4 { color: var(--primary); margin-bottom: 10px; font-size: 1.1em; }
+        .help-section p { color: var(--text-secondary); font-size: 0.95em; margin-bottom: 8px; }
+        .help-links { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+        .help-link {
+            display: inline-block; padding: 8px 14px; background: white;
+            border: 2px solid var(--primary); color: var(--primary);
+            text-decoration: none; border-radius: 6px; font-size: 0.9em; font-weight: 600; transition: all 0.3s;
+        }
+        .help-link:hover { background: var(--primary); color: white; transform: translateY(-2px); }
+        .help-link.external::after { content: ' 🔗'; }
+        .close-help {
+            background: var(--primary); color: white; border: none;
+            padding: 12px 24px; border-radius: 8px; cursor: pointer;
+            font-weight: 700; margin-top: 20px; transition: all 0.3s;
+        }
+        .close-help:hover { background: var(--primary-dark); transform: translateY(-2px); }
+
+        .navigation { display: flex; gap: 12px; margin-bottom: 40px; flex-wrap: wrap; }
+        .nav-btn {
+            padding: 12px 20px; background: white; border: 2px solid var(--border);
+            color: var(--text-primary); border-radius: 8px; cursor: pointer;
+            font-weight: 600; transition: all 0.3s; font-size: 0.95em;
+        }
+        .nav-btn:hover { border-color: var(--primary); color: var(--primary); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(244,49,117,0.15); }
+        .nav-btn.active { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 8px 20px rgba(244,49,117,0.3); }
+
+        .main-content { margin-bottom: 40px; }
+        .module { display: none; }
+        .module.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .content-card {
+            background: white; padding: 30px; border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08); transition: all 0.3s; border: 1px solid var(--border);
+        }
+        .content-card:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.12); transform: translateY(-4px); }
+
+        .module-header {
+            display: flex; align-items: flex-start; justify-content: space-between;
+            gap: 16px; margin-bottom: 30px; padding-bottom: 15px;
+            border-bottom: 3px solid var(--primary); flex-wrap: wrap;
+        }
+        .module h2 { color: var(--primary); font-size: 1.8em; font-weight: 700; margin: 0; }
+
+        .module-title-link { color: var(--primary); text-decoration: none; cursor: pointer; border-bottom: 2px solid transparent; transition: border-color 0.2s, opacity 0.2s; }
+        .module-title-link:hover { border-bottom-color: var(--primary); opacity: 0.85; }
+        .module-title-ext { width: 20px; height: 20px; vertical-align: middle; opacity: 0.5; margin-left: 8px; transition: opacity 0.2s; }
+        .module-title-link:hover .module-title-ext { opacity: 1; }
+
+        .section-pupil-link { display: inline-flex; align-items: center; opacity: 0.45; margin-left: 6px; vertical-align: middle; transition: opacity 0.2s; }
+        .section-pupil-link img, .section-pupil-link svg { width: 16px; height: 16px; }
+        .section-pupil-link:hover { opacity: 1; }
+
+        .tasks-section { margin-bottom: 30px; }
+        .tasks-section h3 {
+            color: var(--neutral-dark); margin: 25px 0 15px 0;
+            padding-left: 16px; border-left: 4px solid var(--primary);
+            font-size: 1.15em; font-weight: 700;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .task-item {
+            display: flex; gap: 14px; margin-bottom: 12px; padding: 14px;
+            background: var(--bg-light); border-radius: 8px; transition: all 0.3s;
+            border: 1px solid transparent; flex-wrap: wrap; align-items: flex-start;
+        }
+        .task-item:hover { background: white; border-color: var(--primary); box-shadow: 0 2px 8px rgba(244,49,117,0.1); }
+        .task-item input[type="checkbox"] { width: 22px; height: 22px; cursor: pointer; margin-top: 2px; flex-shrink: 0; accent-color: var(--primary); }
+        .task-label { flex: 1; cursor: pointer; font-size: 0.95em; min-width: 200px; }
+        .task-item label { cursor: pointer; }
+        .task-item input[type="checkbox"]:checked + .task-label { color: #999; text-decoration: line-through; }
+
+        .task-help-btn {
+            background: var(--info); color: white; border: none;
+            padding: 6px 12px; border-radius: 6px; cursor: pointer;
+            font-size: 0.85em; font-weight: 600; transition: all 0.3s; flex-shrink: 0;
+        }
+        .task-help-btn:hover { background: #2980B9; transform: scale(1.05); }
+
+        .task-advanced-badge {
+            display: inline-block; background: var(--warning); color: white;
+            padding: 4px 8px; border-radius: 4px; font-size: 0.75em; font-weight: 700; margin-top: 8px;
+        }
+
+        .notes-card {
+            background: linear-gradient(135deg, #FFF9E6 0%, #FFFEF0 100%);
+            border: 2px solid var(--primary); position: relative;
+            display: grid; grid-template-rows: auto 1fr auto;
+            margin-top: 25px; border-radius: 12px;
+        }
+        .notes-header { color: var(--neutral-dark); font-weight: 700; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 2px solid rgba(244,49,117,0.2); font-size: 1em; }
+        .notes-textarea {
+            background: white; border: 2px solid rgba(244,49,117,0.1); border-radius: 8px;
+            padding: 12px; font-family: 'Courier New', monospace; font-size: 0.95em;
+            resize: vertical; min-height: 140px; color: var(--text-primary); transition: all 0.3s;
+        }
+        .notes-textarea:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(244,49,117,0.1); }
+        .notes-textarea::placeholder { color: #CCC; }
+        .notes-count { font-size: 0.85em; color: var(--text-secondary); margin-top: 8px; text-align: right; }
+
+        .module-progress { background: white; padding: 15px; border-radius: 8px; margin-bottom: 25px; border-left: 4px solid var(--primary); }
+        .progress-label { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.9em; font-weight: 600; }
+        .progress-bar { width: 100%; height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary) 0%, var(--primary-light) 100%); transition: width 0.3s ease; }
+
+        .export-section {
+            background: white; padding: 30px; border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08); margin-top: 40px; border: 1px solid var(--border);
+        }
+        .export-section h3 { color: var(--primary); margin-bottom: 15px; font-size: 1.3em; font-weight: 700; }
+        .export-section p { margin-bottom: 20px; color: var(--text-secondary); font-size: 0.95em; }
+        .export-buttons { display: flex; gap: 12px; flex-wrap: wrap; }
+        .export-btn { padding: 12px 24px; border: none; border-radius: 8px; cursor: pointer; font-weight: 700; transition: all 0.3s; font-size: 0.95em; }
+        .export-btn.html { background: var(--primary); color: white; }
+        .export-btn.html:hover { background: var(--primary-dark); transform: translateY(-2px); box-shadow: 0 8px 16px rgba(244,49,117,0.3); }
+        .export-info { color: var(--text-secondary); font-size: 0.9em; margin-top: 15px; }
+
+        @media (max-width: 1000px) {
+            header h1 { font-size: 2em; }
+            header { padding: 30px 20px; }
+            .navigation { justify-content: center; }
+            .container { padding: 20px 15px; }
+            .content-card { padding: 20px; }
+            .help-modal-content { padding: 30px 20px; }
+        }
+
+        footer { text-align: center; padding: 30px 20px; color: var(--text-secondary); font-size: 0.9em; margin-top: 40px; border-top: 1px solid var(--border); }
+        footer a { color: var(--primary); text-decoration: none; font-weight: 600; }
+        footer a:hover { text-decoration: underline; }
+
+        /* ── Welcome Page ─────────────────────────── */
+        .welcome-hero {
+            background: linear-gradient(135deg, var(--neutral-dark) 0%, #2D2D2D 100%);
+            border-radius: 16px; padding: 70px 50px;
+            color: var(--neutral-light); position: relative; overflow: hidden; margin-bottom: 40px;
+        }
+        .welcome-hero::before, .welcome-hero::after { content: ''; position: absolute; border-radius: 50%; background: var(--primary); opacity: 0.08; }
+        .welcome-hero::before { width: 350px; height: 350px; right: -80px; top: -100px; }
+        .welcome-hero::after { width: 200px; height: 200px; left: -60px; bottom: -60px; }
+        .welcome-hero-inner { position: relative; z-index: 1; max-width: 700px; }
+        .welcome-hero .kicker { display: inline-block; background: var(--primary); color: white; font-size: 0.85em; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; padding: 6px 14px; border-radius: 20px; margin-bottom: 20px; }
+        .welcome-hero h2 { font-size: 2.8em; font-weight: 700; line-height: 1.2; margin-bottom: 20px; color: var(--neutral-light); border-bottom: none; }
+        .welcome-hero p { font-size: 1.15em; opacity: 0.88; margin-bottom: 32px; line-height: 1.7; }
+        .welcome-cta { display: inline-block; background: var(--primary); color: white; border: none; padding: 16px 36px; border-radius: 8px; font-size: 1.05em; font-weight: 700; cursor: pointer; transition: all 0.3s; text-decoration: none; }
+        .welcome-cta:hover { background: var(--primary-dark); transform: translateY(-3px); box-shadow: 0 12px 28px rgba(244,49,117,0.4); }
+
+        .welcome-feature-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 40px; }
+        @media (max-width: 900px) { .welcome-feature-grid { grid-template-columns: 1fr 1fr; } .welcome-hero h2 { font-size: 2em; } .welcome-hero { padding: 50px 30px; } }
+        @media (max-width: 600px) { .welcome-feature-grid { grid-template-columns: 1fr; } }
+
+        .feature-card { background: white; border: 1px solid var(--border); border-radius: 12px; padding: 28px 24px; transition: all 0.3s; }
+        .feature-card:hover { border-color: var(--primary); transform: translateY(-4px); box-shadow: 0 10px 28px rgba(244,49,117,0.12); }
+        .feature-icon { font-size: 2.2em; margin-bottom: 14px; display: block; }
+        .feature-card h4 { font-size: 1.05em; font-weight: 700; color: var(--text-primary); margin-bottom: 8px; }
+        .feature-card p { font-size: 0.9em; color: var(--text-secondary); line-height: 1.6; }
+
+        .welcome-module-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 40px; }
+        @media (max-width: 900px) { .welcome-module-grid { grid-template-columns: 1fr 1fr; } }
+        @media (max-width: 600px) { .welcome-module-grid { grid-template-columns: 1fr; } }
+
+        .module-card { background: var(--bg-light); border-radius: 10px; padding: 20px; cursor: pointer; transition: all 0.3s; border: 2px solid transparent; display: flex; align-items: flex-start; gap: 14px; }
+        .module-card:hover { background: white; border-color: var(--primary); box-shadow: 0 6px 18px rgba(244,49,117,0.12); }
+        .module-card-icon { font-size: 1.8em; flex-shrink: 0; }
+        .module-card-body h4 { font-weight: 700; font-size: 1em; margin-bottom: 4px; color: var(--text-primary); }
+        .module-card-body p { font-size: 0.85em; color: var(--text-secondary); }
+
+        .welcome-section-title { font-size: 1.4em; font-weight: 700; color: var(--text-primary); margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+        .welcome-section-title::after { content: ''; flex: 1; height: 2px; background: var(--border); border-radius: 2px; }
+
+        .welcome-tip-box { background: linear-gradient(135deg, #FFF5F8 0%, #FFF0F5 100%); border: 2px solid var(--primary); border-radius: 12px; padding: 24px; margin-bottom: 40px; }
+        .welcome-tip-box h4 { color: var(--primary); font-weight: 700; margin-bottom: 12px; font-size: 1.05em; }
+        .welcome-tip-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+        .welcome-tip-list li { display: flex; gap: 10px; font-size: 0.95em; color: var(--text-secondary); align-items: flex-start; }
+        .welcome-tip-list li::before { content: '→'; color: var(--primary); font-weight: 700; flex-shrink: 0; }
+
+        .resource-chips { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 16px; }
+        .resource-chip { display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; background: white; border: 2px solid var(--border); border-radius: 50px; text-decoration: none; color: var(--text-primary); font-size: 0.9em; font-weight: 600; transition: all 0.3s; }
+        .resource-chip:hover { border-color: var(--primary); color: var(--primary); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(244,49,117,0.15); }
+    </style>
+</head>
+<body>
+    <!-- URL Setup Modal -->
+    <div id="urlModal" class="modal active">
+        <div class="modal-content">
+            <h2>🎓 PUPIL@AG</h2>
+            <p>Willkommen zur interaktiven Lernumgebung! Lege zunächst deine persönliche URL fest, damit du direkt auf einzelne Module verweisen kannst.</p>
+            <div class="url-input-group">
+                <input type="text" id="customUrl" placeholder="z.B. https://meine-schule.pupil.schule" value="" onkeydown="if(event.key==='Enter') setCustomUrl()">
+                <button onclick="setCustomUrl()">Speichern</button>
+            </div>
+            <div class="url-hint">
+                <strong>💡 Tipp:</strong> Diese URL wird für Deep-Links verwendet. Du kannst sie später ändern.<br><br>
+                Beispiel: <code id="exampleUrl">https://meine-schule.pupil.schule</code>
+            </div>
+        </div>
+    </div>
+
+    <!-- Help Modal -->
+    <div id="helpModal" class="help-modal">
+        <div class="help-modal-content">
+            <h3 id="helpTitle">💡 Hilfe & Anleitung</h3>
+            <div id="helpContent" class="help-content"></div>
+            <button class="close-help" onclick="closeHelp()">Schliessen</button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <header>
+            <h1>🎓 PUPIL@AG Lernumgebung</h1>
+            <p>Interaktive Schulung für neue Lehrpersonen • Kanton Aargau</p>
+        </header>
+
+        <nav class="navigation" id="navigation"></nav>
+        <div class="main-content" id="mainContent"></div>
+
+        <div class="export-section">
+            <h3>📥 Deine Notizen exportieren</h3>
+            <p>Alle deine Notizen sind in dieser Session gespeichert. Exportiere sie, bevor du die Seite schliesst.</p>
+            <div class="export-buttons">
+                <button class="export-btn html" onclick="exportAsHTML()">📄 Als HTML exportieren</button>
+            </div>
+            <div class="export-info">Die Notizen werden automatisch beim Exportieren generiert und heruntergeladen.</div>
+        </div>
+    </div>
+
+    <footer>
+        <p>PUPIL@AG Lernumgebung | © 2026 Seven Education</p>
+    </footer>
+
+    <script>
+        const helpContent = {
+            'dashboard': {
+                title: 'Dashboard',
+                sections: [
+                    { title: '📌 Was ist das Dashboard?', text: 'Das Dashboard ist die persönliche Startseite in PUPIL. Es zeigt eine individuell konfigurierbare Übersicht der wichtigsten Module und Informationen – z.B. offene Absenzen, aktuelle Beurteilungen oder Journaleinträge.' },
+                    { title: '🧩 Widgets', text: 'Das Dashboard besteht aus sogenannten Widgets – kleine Informationsblöcke, die sich ein- und ausblenden lassen. Jede Lehrperson kann ihr Dashboard so gestalten, dass es zu ihrem Arbeitsalltag passt.' },
+                    { title: '⭐ Favoriten', text: 'Seiten, die häufig besucht werden, können als Favoriten gespeichert werden. Sie erscheinen dann prominent im Dashboard und ermöglichen einen schnellen Zugriff ohne langes Navigieren im Menü.' },
+                    { title: '💡 Best Practice', text: 'Richte dein Dashboard gleich zu Beginn ein. Ein gut konfiguriertes Dashboard spart täglich Zeit und gibt sofort einen Überblick über das Wesentliche – ohne in Untermenüs navigieren zu müssen.' }
+                ],
+                links: [
+                    { text: 'Dokumentation: Dashboard', url: 'https://dokumentation.pupil.ch/search/Dashboard' },
+                    { text: 'eLearning: Grundlagen AG', url: 'https://www.pupil.ch/participant-page/grundlagen-ag?programId=bcc0bfe3-01ac-464d-90a6-14f0044aac50' }
+                ]
+            },
+            'absenzen': {
+                title: 'Absenzen',
+                sections: [
+                    { title: '📋 Was umfasst das Absenzenmodul?', text: 'Im Absenzenmodul werden alle Abwesenheiten von Schüler/innen erfasst und verwaltet. Es bietet eine Übersicht pro Klasse und Datum sowie verschiedene Action-Icons, um den Status einer Absenz zu kennzeichnen (z.B. entschuldigt, unentschuldigt, krank).' },
+                    { title: '🖥️ Dashboard-Widget vs. Absenzenmodul', text: 'Das Dashboard-Widget zeigt nur eine kompakte Übersicht. Das vollständige Absenzenmodul bietet erweiterte Filter- und Verwaltungsmöglichkeiten. Für die tägliche Erfassung eignet sich das Modul besser.' },
+                    { title: '🔗 Synchronisation mit dem Journal', text: 'Absenzen werden automatisch ins Journal übertragen. Dort sind sie als Einträge sichtbar und können bei späteren Beobachtungen oder Beurteilungen als Kontext genutzt werden.' },
+                    { title: '💡 Best Practice', text: 'Trage Absenzen möglichst zeitnah ein. So bleibt die Übersicht aktuell und die Daten sind für Gespräche mit Eltern oder Behörden jederzeit nachvollziehbar.' }
+                ],
+                links: [
+                    { text: 'Dokumentation: Absenzen', url: 'https://dokumentation.pupil.ch/search/Absenzen' },
+                    { text: 'eLearning: Absenzen', url: 'https://www.pupil.ch/participant-page/Absenzen?programId=fc30c30f-ea56-4057-b2f8-d6d94cf54644' }
+                ]
+            },
+            'beurteilungen': {
+                title: 'Beurteilungen',
+                sections: [
+                    { title: '📊 Beurteilungsarten in PUPIL', text: 'PUPIL unterstützt verschiedene Beurteilungsformen:\n- Noten (Ziffern 1–6)\n- Textbeurteilungen (freie Beschreibung)\n- Prädikate (z.B. «sehr gut», «befriedigend»)\n- Kompetenzbeurteilungen nach LP 21\n\nDiese können kombiniert werden – je nach Stufe, Fach und Schulkontext.' },
+                    { title: '📋 LP 21 Kompetenzen', text: 'Beurteilungen können direkt mit Kompetenzen des Lehrplans 21 verknüpft werden. Das System filtert die Kompetenzen nach Fach, sodass nur die relevanten angezeigt werden.' },
+                    { title: '🖨️ Druckausgaben', text: 'Beurteilungen können in verschiedenen Formaten ausgedruckt werden – als Einzelübersicht pro Schüler/in, als Klassenübersicht oder als detaillierter Bericht.' },
+                    { title: '💡 Best Practice', text: 'Regelmässige Beurteilungen über das Semester verteilt erleichtern später das Setzen der Zeugnisnote erheblich. Je mehr Daten vorhanden sind, desto aussagekräftiger ist die Entscheidungsgrundlage.' }
+                ],
+                links: [
+                    { text: 'Dokumentation: Beurteilungen', url: 'https://dokumentation.pupil.ch/search/Beurteilungen' },
+                    { text: 'Dokumentation: LP 21', url: 'https://dokumentation.pupil.ch/search/Lehrplan+21' },
+                    { text: 'eLearning: Noten & Zeugnisse AG', url: 'https://www.pupil.ch/participant-page/notenundzeugnisse-ag?programId=5282c210-d073-4fda-863c-051a91f5a590' }
+                ]
+            },
+            'zeugnisse': {
+                title: 'Zeugnisse',
+                sections: [
+                    { title: '📄 Zeugnisnoten und Entscheidungshilfen', text: 'Die Zeugnisnote wird pro Fach und Schüler/in gesetzt. PUPIL stellt dabei eine grafische Entscheidungshilfe zur Verfügung: die Zeugnisgrafik (Durchschnitt und Streuung der bisherigen Beurteilungen). Sie hilft, eine nachvollziehbare und faire Zeugnisnote zu wählen.' },
+                    { title: '🗂️ Weitere Zeugnisdaten', text: 'Neben den Noten können weitere Informationen im Zeugnis festgehalten werden, z. B. die Klassenlehrperson und individuelle Bemerkungen. Diese Felder erscheinen auf dem gedruckten Zeugnis.' },
+                    { title: '💡 Best Practice', text: 'Überprüfe vor dem Drucken die Zeugnisdaten aller Schüler/innen der Klasse in der Gesamtübersicht. So werden fehlende Noten oder inkonsistente Einträge frühzeitig erkannt.' }
+                ],
+                links: [
+                    { text: 'Dokumentation: Zeugnisse', url: 'https://dokumentation.pupil.ch/search/Zeugnisse' },
+                    { text: 'eLearning: Noten & Zeugnisse AG', url: 'https://www.pupil.ch/participant-page/notenundzeugnisse-ag?programId=5282c210-d073-4fda-863c-051a91f5a590' }
+                ]
+            },
+            'uefk': {
+                title: 'Überfachliche Kompetenzen (ÜfK)',
+                sections: [
+                    { title: '👥 Was sind Überfachliche Kompetenzen?', text: 'Überfachliche Kompetenzen (ÜfK) sind Fähigkeiten und Haltungen, die unabhängig von einzelnen Fächern beurteilt werden – wie Selbstständigkeit, Zuverlässigkeit, Kooperationsfähigkeit und Konfliktverhalten. Sie werden separat im Zeugnis ausgewiesen.' },
+                    { title: '🔗 Verknüpfung mit dem Journal', text: 'Journaleinträge der Kategorie «Überfachliche Beobachtung» fliessen automatisch in die ÜfK-Beurteilung ein. PUPIL fasst diese Beobachtungen zusammen und zeigt sie als Grundlage für die Einschätzung an. Je mehr Beobachtungen vorhanden sind, desto fundierter ist die Beurteilung.' },
+                    { title: '📋 Kategorien beurteilen', text: 'Die ÜfK-Kategorien sind kantonal festgelegt. Jede Kategorie wird mit einer Einschätzungsskala beurteilt. Die Beurteilung erscheint zusammen mit den Fachnoten auf dem Zeugnis.' },
+                    { title: '💡 Best Practice', text: 'Halte überfachliche Beobachtungen kontinuierlich im Journal fest – nicht nur kurz vor dem Zeugnis. So basiert die ÜfK-Beurteilung auf einer breiten, dokumentierten Grundlage und ist bei Elterngesprächen gut begründbar.' }
+                ],
+                links: [
+                    { text: 'Dokumentation: ALS / ÜfK', url: 'https://dokumentation.pupil.ch/search/ALS' },
+                    { text: 'eLearning: Noten & Zeugnisse AG', url: 'https://www.pupil.ch/participant-page/notenundzeugnisse-ag?programId=5282c210-d073-4fda-863c-051a91f5a590' }
+                ]
+            },
+            'journal': {
+                title: 'Journal',
+                sections: [
+                    { title: '📝 Was ist das Journal?', text: 'Das Journal ist das zentrale Dokumentationswerkzeug in PUPIL. Lehrpersonen können Beobachtungen, Vorfälle, Gespräche und Notizen zu einzelnen Schüler/innen oder ganzen Klassen festhalten. Einträge sind kategorisierbar und filterbar.' },
+                    { title: '🔍 Kategorien und Filter', text: 'Einträge lassen sich verschiedenen Kategorien zuordnen (z.B. Verhalten, Gespräch, Überfachliche Beobachtung). Die Filterfunktion ermöglicht es, schnell alle Einträge zu einem bestimmten Schüler, einer Kategorie oder einem Zeitraum zu finden.' },
+                    { title: '🔐 Sichtbarkeit', text: 'Jeder Journaleintrag hat eine Sichtbarkeitseinstellung: nur für die eigene Person, für alle Lehrpersonen der Klasse oder auch für weitere Beteiligte. Sensible Beobachtungen sollten entsprechend eingeschränkt werden.' },
+                    { title: '💡 Best Practice', text: 'Kurze, regelmässige Einträge sind wertvoller als lange, seltene. Bereits zwei bis drei Sätze pro Beobachtung reichen aus. Das Journal entfaltet seinen vollen Nutzen über Zeit.' }
+                ],
+                links: [
+                    { text: 'Dokumentation: Journal', url: 'https://dokumentation.pupil.ch/search/Journal' },
+                    { text: 'eLearning: Journal AG', url: 'https://www.pupil.ch/challenge-page/journal-ag?programId=0faa251c-b99a-4d83-8a12-f28d6a98c186' }
+                ]
+            },
+            'förderplaner': {
+                title: 'Förderplaner',
+                sections: [
+                    { title: '📋 Was ist ein Förderdossier?', text: 'Ein Förderdossier wird für Schüler/innen mit besonderem Förderbedarf eröffnet. Es bündelt alle relevanten Informationen: Förderziele, Fortschritte, Massnahmen und Protokolle. Dossiers können nicht gelöscht, sondern nur deaktiviert werden.' },
+                    { title: '👥 Zusammenarbeit im Team', text: 'Mehrere Lehrpersonen können auf dasselbe Förderdossier zugreifen. Die Zugriffsrechte (Lesen oder Bearbeiten) werden individuell vergeben. Dies fördert die interdisziplinäre Zusammenarbeit.' },
+                    { title: '🎯 Förderziele', text: 'Förderziele beschreiben konkret und messbar, was ein Kind bis zu einem bestimmten Zeitpunkt erreichen soll. PUPIL ermöglicht es, Fortschritte direkt beim Ziel zu dokumentieren und den Verlauf nachzuverfolgen.' },
+                    { title: '💡 Best Practice', text: 'Klärt im Team frühzeitig, wer Dossiers eröffnet und wer die Zugriffsrechte verwaltet. Eine klare Rollenzuteilung verhindert doppelte Arbeit.' }
+                ],
+                links: [
+                    { text: 'Dokumentation: Förderplaner', url: 'https://dokumentation.pupil.ch/search/F%C3%B6rderplaner' },
+                    { text: 'eLearning: Förderplaner AG', url: 'https://www.pupil.ch/participant-page/f%C3%B6rderplaner-ag?programId=35d8979e-3329-4510-9baf-33713d946f88' }
+                ]
+            },
+            'schulplaner': {
+                title: 'Schulplaner',
+                sections: [
+                    { title: '📅 Was ist der Schulplaner?', text: 'Der Schulplaner ist das digitale Planungswerkzeug für den Unterricht in PUPIL. Er zeigt Lektionen nach Klasse, Gruppe oder Lehrperson an und ermöglicht verschiedene Ansichten (Tag, Woche, Monat).' },
+                    { title: '📝 Lektionsinhalte', text: 'Pro Lektion können Inhalte, Ziele, Notizen und Dateianhänge hinterlegt werden. Diese Informationen sind für alle Lehrpersonen mit Zugriff auf die Klasse einsehbar – ideal für Vertretungssituationen.' },
+                    { title: '🔄 Wiederholende Lektionen', text: 'Lektionen können als wiederkehrend markiert werden (täglich, wöchentlich oder monatlich). Dabei lässt sich wählen, ob Änderungen an einer Lektion nur diese eine oder alle zukünftigen Lektionen betreffen.' },
+                    { title: '💡 Best Practice', text: 'Der Schulplaner entfaltet seinen Nutzen besonders in Teamteaching-Situationen: Förderlehrpersonen können ihre Planung in derselben Lektion ergänzen.' }
+                ],
+                links: [
+                    { text: 'Dokumentation: Schulplaner', url: 'https://dokumentation.pupil.ch/search/Schulplaner' },
+                    { text: 'eLearning: Schulplaner', url: 'https://www.pupil.ch/participant-page/Schulplaner?programId=7bbf965f-f856-41ab-97a1-18768283fd19' }
+                ]
+            }
+        };
+
+        const moduleRoutes = {
+            'pupil-allgemein': '/home',
+            'noten-zeugnisse': '/evaluations_certificates/certificates/students',
+            'uefk': '/alsv/assessment',
+            'journal': '/journal/entries',
+            'foerderplaner': '/support_planner/overview',
+            'optional': '/schoolplaner'
+        };
+
+        const sectionRoutes = {
+            'Dashboard': '/home',
+            'Absenzen': '/absences/administration',
+            'Adressbuch / Listen': '/master_data/persons',
+            'Master Data – Personen': '/master_data/persons',
+            'Beurteilungen erfassen und anpassen': '/evaluations_certificates/certificates/students',
+            'Überblick und Druck von Beurteilungsübersichten': '/evaluations_certificates/certificates/students',
+            'Zeugnisse erstellen': '/evaluations_certificates/certificates/students',
+            'Journaleinträge und ÜfK-Kategorien': '/alsv/assessment',
+            'Journaleinträge verwalten': '/journal/entries',
+            'Förderdossier erstellen und verwalten': '/support_planner/overview',
+            'Informationen': '/support_planner/overview',
+            'Förderziele': '/support_planner/overview',
+            'Lernberichte': '/support_planner/overview',
+            'Dokumentenverwaltung': '/document_storage',
+            'Schulplaner': '/schoolplaner'
+        };
+
+        function pupilUrl(route) {
+            if (!customUrl) return null;
+            let base = customUrl.replace(/\/$/, '');
+            if (!base.startsWith('http://') && !base.startsWith('https://')) base = 'https://' + base;
+            return base + route;
+        }
+
+        const modules = {
+            'welcome': { name: 'Willkommen', icon: '🏠', isWelcome: true },
+            'pupil-allgemein': {
+                name: 'PUPIL Allgemein',
+                icon: '⚙️',
+                sections: [
+                    {
+                        title: 'Dashboard',
+                        tasks: [
+                            { text: 'Stelle dein Dashboard individuell zusammen.', help: 'dashboard' },
+                            { text: 'Erfasse Favoriten für die Seiten, welche du häufig verwenden wirst.', help: 'dashboard' }
+                        ]
+                    },
+                    {
+                        title: 'Absenzen',
+                        tasks: [
+                            { text: 'Erfasse und verwalte Absenzen. Was bewirken die einzelnen Action-Icons?', help: 'absenzen' },
+                            { text: 'Prüfe die Möglichkeiten auf dem Dashboard sowie im Absenzenmodul. Wie unterscheiden sich die beiden Widgets?', help: 'absenzen' },
+                            { text: 'Erweiterter Auftrag: Überprüfe die Synchronisation ins Journal. Wann werden die Absenzen dort angezeigt?', help: 'absenzen', advanced: true }
+                        ]
+                    },
+                    {
+                        title: 'Adressbuch / Listen',
+                        tasks: [
+                            { text: 'Lerne die verschiedenen Filteroptionen kennen. Durch Drücken auf das «Auge-Symbol» kannst du dir die entsprechenden Filterresultate anzeigen lassen.' },
+                            { text: 'Generiere eine Klassenliste für das nächste Schuljahr. Lade diese sowohl als Excel als auch als PDF herunter.' },
+                            { text: 'Erstelle eine individuelle Konfiguration mit eigenen Feldern und teile diese mit jemand anderem.' },
+                            { text: 'Probiere auch weitere Listentypen aus.' },
+                            { text: 'Erweiterter Auftrag: Verwende verschiedene Einstellungen, wie die Listen gruppiert werden. Versuche die passenden Optionen für verschiedene Fälle zu finden.', advanced: true }
+                        ]
+                    },
+                    {
+                        title: 'Master Data – Personen',
+                        tasks: [
+                            { text: 'Finde in der Personen-Ansicht verschiedene Informationen zu deinen SuS und deren Eltern. Exportiere diese Informationen zu Personen als Excel-Datei.' },
+                            { text: 'Klicke auf das Ordner-Icon am Ende der Tabelle. Nun bist du im digitalen Personendossier. Überlege dir, welche Informationen alle abgelegt werden können.' }
+                        ]
+                    }
+                ]
+            },
+            'noten-zeugnisse': {
+                name: 'Noten & Zeugnisse',
+                icon: '📊',
+                sections: [
+                    {
+                        title: 'Beurteilungen erfassen und anpassen',
+                        tasks: [
+                            { text: 'Erfasse mindestens eine Beurteilung mit Noten für eine Klasse. Experimentiere mit den Anpassungsmöglichkeiten dieser Beurteilungen.', help: 'beurteilungen' },
+                            { text: 'Beurteile dabei je 3 SuS.', help: 'beurteilungen' },
+                            { text: 'Probiere die verschiedenen Druckausgaben aus.', help: 'beurteilungen' },
+                            { text: 'Füge die Kompetenzen des LP 21 zu den Beurteilungen hinzu. Wie findest du rasch die passenden Kompetenzstufen?', help: 'beurteilungen' },
+                            { text: 'Erweiterter Auftrag: Notiere dir Punkte, welchen Einfluss die unterschiedlichen Beurteilungsskalen auf die SuS / LPs haben könnten und diskutiere diese mit anderen Lehrpersonen.', advanced: true },
+                            { text: 'Erweiterter Auftrag: Nutze die Funktion «Bestehende Beurteilung kopieren» und prüfe, wie du diese später sinnvoll einsetzen kannst.', advanced: true }
+                        ]
+                    },
+                    {
+                        title: 'Überblick und Druck von Beurteilungsübersichten',
+                        tasks: [
+                            { text: 'Verschaffe dir eine Übersicht über die Beurteilungsübersicht. Passe dabei die Beurteilungen und die Resultate für die SuS in der Übersicht an.', help: 'beurteilungen' },
+                            { text: 'Erstelle und drucke eine detaillierte Übersicht aller Beurteilungen. Verwende verschiedene Einstellungen und überlege dir, welche für dich am besten sind.', help: 'beurteilungen' }
+                        ]
+                    },
+                    {
+                        title: 'Zeugnisse erstellen',
+                        tasks: [
+                            { text: 'Setze verschiedene Zeugnisnoten für unterschiedliche Fächer und drucke ein Zeugnis.', help: 'zeugnisse' },
+                            { text: 'Lege die «weiteren Zeugnisdaten» fest. (Z. B. Klassenlehrperson)', help: 'zeugnisse' },
+                            { text: 'Drucke das Zeugnis für einen Lernenden aus.', help: 'zeugnisse' },
+                            { text: 'Erweiterter Auftrag: Interpretiere die Zeugnisgrafik. Versuche daraus abzuleiten, wie dich die Grafik beim Setzen der Zeugnisnote am besten unterstützen kann.', help: 'zeugnisse', advanced: true }
+                        ]
+                    }
+                ]
+            },
+            'uefk': {
+                name: 'Überfachliche Kompetenzen',
+                icon: '👥',
+                sections: [
+                    {
+                        title: 'Journaleinträge und ÜfK-Kategorien',
+                        tasks: [
+                            { text: 'Erfasse mehrere Journaleinträge mit Überfachlichen Beobachtungen und prüfe den Zusammenzug in der Ansicht Verhaltensbeurteilungen. Wie kannst du diesen Zusammenzug für deine zukünftige Beurteilung nutzen?', help: 'uefk' },
+                            { text: 'Beurteile alle ALS-Kategorien für mindestens eine/n Schüler/in.', help: 'uefk' },
+                            { text: 'Drucke das Zeugnis mit ALS-Beurteilung aus.', help: 'uefk' }
+                        ]
+                    }
+                ]
+            },
+            'journal': {
+                name: 'Journal',
+                icon: '📝',
+                sections: [
+                    {
+                        title: 'Journaleinträge verwalten',
+                        tasks: [
+                            { text: 'Erstelle Journaleinträge zu verschiedenen Kategorien.', help: 'journal' },
+                            { text: 'Teste die unterschiedlichen Druckfunktionen.', help: 'journal' },
+                            { text: 'Nutze die verschiedenen Filterfunktionen.', help: 'journal' },
+                            { text: 'Erweiterter Auftrag: Erfasse eine Überfachliche Beobachtung und prüfe den Unterschied zu einem Journaleintrag.', help: 'journal', advanced: true },
+                            { text: 'Erweiterter Auftrag: Passe die Einstellungen der Sichtbarkeit an und prüfe ihre Auswirkungen. Lege für dich fest, in welchen Fällen du welche Einstellungen verwendest.', help: 'journal', advanced: true }
+                        ]
+                    }
+                ]
+            },
+            'foerderplaner': {
+                name: 'Förderplaner',
+                icon: '📋',
+                sections: [
+                    {
+                        title: 'Förderdossier erstellen und verwalten',
+                        tasks: [
+                            { text: 'Erstelle ein Förderdossier für einen Schüler und gib weiteren Lehrpersonen Zugriff. Dossiers können nicht mehr gelöscht, sondern nur deaktiviert werden.', help: 'förderplaner' },
+                            { text: 'Haltet für euch fest, wer die Dossiers eröffnen und die Zugriffe verwalten soll.', help: 'förderplaner' }
+                        ]
+                    },
+                    {
+                        title: 'Informationen',
+                        tasks: [
+                            { text: 'Diskutiert, welche Informationen zu den einzelnen Lernenden auf der Informationsseite festgehalten werden.' }
+                        ]
+                    },
+                    {
+                        title: 'Förderziele',
+                        tasks: [
+                            { text: 'Erfasse spezifische Förderziele und halte Fortschritte fest.', help: 'förderplaner' },
+                            { text: 'Prüfe die unterschiedlichen Druckausgaben.', help: 'förderplaner' },
+                            { text: 'Erweiterter Auftrag: Überlege dir, wie verschiedene LPs sinnvoll an einem Förderdossier zusammenarbeiten können.', help: 'förderplaner', advanced: true }
+                        ]
+                    },
+                    {
+                        title: 'Lernberichte',
+                        tasks: [
+                            { text: 'Erfasse einen Bericht aufgrund der vorhandenen Förderziele und passe die Ziele bei Bedarf an. Teste die verschiedenen Druckausgaben.', help: 'förderplaner' }
+                        ]
+                    }
+                ]
+            },
+            'optional': {
+                name: 'Optional',
+                icon: '⭐',
+                sections: [
+                    {
+                        title: 'Dokumentenverwaltung',
+                        tasks: [
+                            { text: 'Identifiziere verschiedene schulische Dokumente wie Anmeldeformulare oder ähnliche Dokumente, welche in PUPIL generiert werden können.' },
+                            { text: 'Etiketten: Prüfe, wie du verschiedene Etiketten erstellen kannst. Hinweis: Verwende zur Unterstützung den passenden Artikel in der Dokumentation.' }
+                        ]
+                    },
+                    {
+                        title: 'Schulplaner',
+                        tasks: [
+                            { text: 'Durch den Schulplaner navigieren: Verwende die verschiedenen Filter um die Lektionen der gewünschten Klasse / Gruppe / Lehrperson anzuzeigen.', help: 'schulplaner' },
+                            { text: 'Navigiere in der Datumsübersicht. Prüfe, welche Daten bereits angezeigt werden.', help: 'schulplaner' },
+                            { text: 'Erstelle eine einzelne Lektion. Fülle sie mit deiner Lektionsvorbereitung und füge eine Datei hinzu.', help: 'schulplaner' },
+                            { text: 'Erstelle eine sich wiederholende Lektion. Prüfe die Optionen, welche die Lektionen verknüpfen oder voneinander lösen.', help: 'schulplaner' },
+                            { text: 'Erweiterter Auftrag: Überlege dir, wie du den Schulplaner im Alltag einsetzen kannst. Die Vorbereitung von anderen LPs kann ebenfalls eingesehen werden und Förderlehrpersonen können in derselben Lektion ihre Planung festhalten.', help: 'schulplaner', advanced: true }
+                        ]
+                    },
+                    {
+                        title: 'Anmeldungen',
+                        tasks: [
+                            { text: 'Anmeldung erstellen und Felder hinzufügen: Erstelle eine neue Anmeldung, z.B. für einen Elternabend oder um SuS-Informationen einzuholen.' },
+                            { text: 'Füge mit dem Puzzle-Teil weitere Felder hinzu.' },
+                            { text: 'Teste eine Anmeldung: Mit dem Kopieren-Icon kannst du die URL für die Anmeldung in der Adresszeile deines Browser einfügen. Teste anschliessend deine Anmeldung.' },
+                            { text: 'Prüfe danach, ob deine Informationen korrekt erfasst wurden.' },
+                            { text: 'Erweiterter Auftrag: Überlege dir, welche Informationen du mit einer Anmeldung zukünftig einholen kannst. Du kannst die URL via E-Mail oder mit einem beliebigen Messenger verschicken.', advanced: true }
+                        ]
+                    }
+                ]
+            }
+        };
+
+        let customUrl = localStorage.getItem('pupilCustomUrlAG') || '';
+        let notes = JSON.parse(localStorage.getItem('pupilNotesAG') || '{}');
+        let completedTasks = JSON.parse(localStorage.getItem('pupilCompletedTasksAG') || '{}');
+        let lastModule = localStorage.getItem('pupilLastModuleAG') || 'welcome';
+
+        function setCustomUrl() {
+            const input = document.getElementById('customUrl');
+            customUrl = input.value.trim() || 'https://meine-schule.pupil.schule';
+            localStorage.setItem('pupilCustomUrlAG', customUrl);
+            updateExampleUrl();
+            document.getElementById('urlModal').classList.remove('active');
+            renderApp();
+        }
+
+        function updateExampleUrl() {
+            const example = customUrl || 'https://meine-schule.pupil.schule';
+            document.getElementById('exampleUrl').textContent = example;
+        }
+
+        function showHelp(taskName) {
+            const help = helpContent[taskName];
+            if (!help) return;
+            const modal = document.getElementById('helpModal');
+            const title = document.getElementById('helpTitle');
+            const content = document.getElementById('helpContent');
+            title.textContent = '💡 ' + help.title;
+            content.innerHTML = '';
+            help.sections.forEach(section => {
+                const sectionEl = document.createElement('div');
+                sectionEl.className = 'help-section';
+                sectionEl.innerHTML = `<h4>${section.title}</h4><p style="white-space:pre-line;">${section.text}</p>`;
+                content.appendChild(sectionEl);
+            });
+            if (help.links && help.links.length > 0) {
+                const linksDiv = document.createElement('div');
+                linksDiv.className = 'help-links';
+                help.links.forEach(link => {
+                    linksDiv.innerHTML += `<a href="${link.url}" target="_blank" class="help-link external">${link.text}</a>`;
+                });
+                content.appendChild(linksDiv);
+            }
+            modal.classList.add('active');
+        }
+
+        function closeHelp() {
+            document.getElementById('helpModal').classList.remove('active');
+        }
+
+        function buildWelcomeHTML() {
+            const moduleList = [
+                { key: 'pupil-allgemein', desc: 'Dashboard, Absenzen, Listen & Personendaten.' },
+                { key: 'noten-zeugnisse', desc: 'Beurteilungen erfassen, Übersichten drucken, Zeugnisse erstellen.' },
+                { key: 'uefk', desc: 'Überfachliche Beobachtungen erfassen und ÜfK-Kategorien beurteilen.' },
+                { key: 'journal', desc: 'Beobachtungen und Notizen zu Schüler/innen festhalten.' },
+                { key: 'foerderplaner', desc: 'Förderdossiers erstellen, Ziele setzen und Berichte verfassen.' },
+                { key: 'optional', desc: 'Dokumentenverwaltung, Schulplaner und Anmeldungen erkunden.' }
+            ];
+
+            const totalAll = Object.keys(modules)
+                .filter(k => !modules[k].isWelcome)
+                .reduce((s, k) => s + modules[k].sections.reduce((ss, sec) => ss + sec.tasks.length, 0), 0);
+            const doneAll = Object.keys(completedTasks).length;
+            const pctAll = totalAll > 0 ? Math.round(doneAll / totalAll * 100) : 0;
+
+            return `
+            <div class="welcome-hero">
+                <div class="welcome-hero-inner">
+                    <span class="kicker">PUPIL@AG &nbsp;·&nbsp; Kanton Aargau</span>
+                    <h2>Willkommen in deiner<br>Lernumgebung</h2>
+                    <p>Diese interaktive Schulung begleitet dich beim Einstieg in PUPIL@AG – das digitale Beurteilungstool für Lehrpersonen im Kanton Aargau. Arbeite die Aufträge in deinem eigenen Tempo durch, halte Notizen fest und exportiere deinen Fortschritt am Ende.</p>
+                    <button class="welcome-cta" onclick="navigateTo('pupil-allgemein')">Jetzt starten →</button>
+                </div>
+            </div>
+
+            ${doneAll > 0 ? `
+            <div class="module-progress" style="margin-bottom:40px;">
+                <div class="progress-label">
+                    <span>Gesamtfortschritt über alle Module</span>
+                    <span>${doneAll} / ${totalAll} Aufträge (${pctAll}%)</span>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" style="width:${pctAll}%"></div></div>
+            </div>` : ''}
+
+            <p class="welcome-section-title">Was dich erwartet</p>
+
+            <div class="welcome-feature-grid">
+                <div class="feature-card">
+                    <span class="feature-icon">✅</span>
+                    <h4>Interaktive Checklisten</h4>
+                    <p>Hake erledigte Aufträge ab und behalte deinen Fortschritt stets im Blick – pro Modul und als Gesamtübersicht.</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">💡</span>
+                    <h4>Schritt-für-Schritt-Hilfe</h4>
+                    <p>Jeder Auftrag kann einen Hilfe-Button haben. Ein Klick öffnet eine Kurzanleitung mit Links zur offiziellen Dokumentation.</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">📝</span>
+                    <h4>Persönliche Notizen</h4>
+                    <p>Halte Erkenntnisse, Fragen und Ideen direkt in der Lernumgebung fest – pro Modul, übersichtlich und jederzeit abrufbar.</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">🔗</span>
+                    <h4>Deep-Links</h4>
+                    <p>Teile direkte Links zu einzelnen Modulen, z.&nbsp;B. <code style="background:#F5F3F0;padding:2px 6px;border-radius:4px;font-size:0.85em;">${customUrl || 'deine-url'}#noten-zeugnisse</code></p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">📥</span>
+                    <h4>Export</h4>
+                    <p>Am Ende exportierst du deinen gesamten Fortschritt und alle Notizen als formatiertes HTML.</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">⭐</span>
+                    <h4>Vertiefungsaufträge</h4>
+                    <p>Einzelne Aufträge sind als optionale Vertiefung markiert – ideal für alle, die tiefer in die Materie einsteigen möchten.</p>
+                </div>
+            </div>
+
+            <p class="welcome-section-title">Die Lernmodule</p>
+
+            <div class="welcome-module-grid">
+                ${moduleList.map(m => `
+                <div class="module-card" onclick="navigateTo('${m.key}')">
+                    <span class="module-card-icon">${modules[m.key].icon}</span>
+                    <div class="module-card-body">
+                        <h4>${modules[m.key].name}</h4>
+                        <p>${m.desc}</p>
+                    </div>
+                </div>`).join('')}
+            </div>
+
+            <div class="welcome-tip-box">
+                <h4>📌 Wichtige Hinweise vor dem Start</h4>
+                <ul class="welcome-tip-list">
+                    <li>Stelle sicher, dass du Zugriff auf alle notwendigen Module, Klassen und Gruppen in PUPIL@AG hast.</li>
+                    <li>Entferne sämtliche Test-Einträge am Ende der Schulung, sofern du sie nicht weiter benötigst.</li>
+                    <li>Nutze bei Bedarf die eLearnings und die offizielle Dokumentation – Links sind direkt bei den Hilfe-Buttons verknüpft.</li>
+                    <li>Deine Notizen und dein Fortschritt werden lokal im Browser gespeichert. Exportiere sie am Ende der Schulung.</li>
+                </ul>
+                <div class="resource-chips">
+                    <a href="https://www.pupil.ch/elearning" target="_blank" class="resource-chip">🎓 eLearnings auf pupil.ch</a>
+                    <a href="https://dokumentation.pupil.ch" target="_blank" class="resource-chip">📖 PUPIL-Dokumentation</a>
+                </div>
+            </div>`;
+        }
+
+        function renderModules() {
+            const content = document.getElementById('mainContent');
+            content.innerHTML = '';
+            const PUPIL_ICON = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="15 15 516 516" aria-hidden="true"><path fill="#2884C1" d="M421.87,526.05H124.35c-57.57,0-104.25-46.67-104.25-104.25V124.29c0-57.57,46.67-104.25,104.25-104.25h297.52c57.57,0,104.25,46.67,104.25,104.25v297.52C526.11,479.38,479.44,526.05,421.87,526.05z"/><polygon fill="#fff" points="260.45,286.25 163.84,230.47 67.23,286.25 67.23,397.79 163.84,453.57 260.45,397.79"/><polygon fill="#fff" points="478.98,159.06 425.34,128.09 371.7,159.06 371.7,221 425.34,251.97 478.98,221"/><polygon fill="#fff" points="345.99,135.2 272.06,92.52 198.14,135.2 198.14,220.57 272.06,263.25 345.99,220.57"/></svg>`;
+
+            Object.keys(modules).forEach(key => {
+                const module = modules[key];
+                const moduleDiv = document.createElement('div');
+                moduleDiv.className = 'module';
+                moduleDiv.id = 'module-' + key;
+
+                if (module.isWelcome) {
+                    moduleDiv.innerHTML = buildWelcomeHTML();
+                    content.appendChild(moduleDiv);
+                    return;
+                }
+
+                const pupilLink = pupilUrl(moduleRoutes[key] || '');
+                const pupilIconImg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="15 15 516 516" class="module-title-ext" aria-hidden="true"><path fill="#2884C1" d="M421.87,526.05H124.35c-57.57,0-104.25-46.67-104.25-104.25V124.29c0-57.57,46.67-104.25,104.25-104.25h297.52c57.57,0,104.25,46.67,104.25,104.25v297.52C526.11,479.38,479.44,526.05,421.87,526.05z"/><polygon fill="#fff" points="260.45,286.25 163.84,230.47 67.23,286.25 67.23,397.79 163.84,453.57 260.45,397.79"/><polygon fill="#fff" points="478.98,159.06 425.34,128.09 371.7,159.06 371.7,221 425.34,251.97 478.98,221"/><polygon fill="#fff" points="345.99,135.2 272.06,92.52 198.14,135.2 198.14,220.57 272.06,263.25 345.99,220.57"/></svg>`;
+                const titleHtml = pupilLink
+                    ? `${module.icon} ${module.name} <a href="${pupilLink}" target="_blank" class="module-title-link" title="In PUPIL öffnen: ${pupilLink}">${pupilIconImg}</a>`
+                    : `${module.icon} ${module.name} <a href="#" onclick="event.preventDefault();document.getElementById('urlModal').classList.add('active')" class="module-title-link" title="PUPIL-URL festlegen, um dieses Modul direkt zu öffnen">${pupilIconImg}</a>`;
+
+                let html = `<div class="module-header"><h2>${titleHtml}</h2></div>`;
+
+                const totalTasks = module.sections.reduce((sum, s) => sum + s.tasks.length, 0);
+                const completedCount = Object.keys(completedTasks).filter(t => t.startsWith(key + '-')).length;
+                const percentage = totalTasks > 0 ? Math.round((completedCount / totalTasks) * 100) : 0;
+
+                html += `
+                    <div class="module-progress">
+                        <div class="progress-label">
+                            <span>Fortschritt in diesem Modul</span>
+                            <span>${completedCount}/${totalTasks} (${percentage}%)</span>
+                        </div>
+                        <div class="progress-bar"><div class="progress-fill" style="width: ${percentage}%"></div></div>
+                    </div>`;
+
+                module.sections.forEach(section => {
+                    const secLink = pupilUrl(sectionRoutes[section.title] || '');
+                    const secIconImg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="15 15 516 516" aria-hidden="true"><path fill="#2884C1" d="M421.87,526.05H124.35c-57.57,0-104.25-46.67-104.25-104.25V124.29c0-57.57,46.67-104.25,104.25-104.25h297.52c57.57,0,104.25,46.67,104.25,104.25v297.52C526.11,479.38,479.44,526.05,421.87,526.05z"/><polygon fill="#fff" points="260.45,286.25 163.84,230.47 67.23,286.25 67.23,397.79 163.84,453.57 260.45,397.79"/><polygon fill="#fff" points="478.98,159.06 425.34,128.09 371.7,159.06 371.7,221 425.34,251.97 478.98,221"/><polygon fill="#fff" points="345.99,135.2 272.06,92.52 198.14,135.2 198.14,220.57 272.06,263.25 345.99,220.57"/></svg>`;
+                    const secTitleHtml = sectionRoutes[section.title]
+                        ? (secLink
+                            ? `${section.title} <a href="${secLink}" target="_blank" class="section-pupil-link" title="In PUPIL öffnen">${secIconImg}</a>`
+                            : `${section.title} <a href="#" onclick="event.preventDefault();document.getElementById('urlModal').classList.add('active')" class="section-pupil-link" title="PUPIL-URL festlegen">${secIconImg}</a>`)
+                        : section.title;
+
+                    html += `<div class="tasks-section"><h3>${secTitleHtml}</h3>`;
+                    html += section.tasks.map((task, idx) => {
+                        const taskId = key + '-' + section.title.replace(/\s/g, '-') + '-' + idx;
+                        const isChecked = completedTasks[taskId] ? 'checked' : '';
+                        const taskText = typeof task === 'string' ? task : task.text;
+                        const helpId = task.help || null;
+                        const isAdvanced = task.advanced || false;
+                        let taskHtml = `<div class="task-item">
+                            <input type="checkbox" id="${taskId}" ${isChecked} onchange="toggleTask('${taskId}')">
+                            <label for="${taskId}" class="task-label">${taskText}`;
+                        if (isAdvanced) taskHtml += '<div class="task-advanced-badge">⭐ Vertiefung</div>';
+                        taskHtml += '</label>';
+                        if (helpId) taskHtml += `<button class="task-help-btn" onclick="showHelp('${helpId}')">💡 Hilfe</button>`;
+                        taskHtml += '</div>';
+                        return taskHtml;
+                    }).join('');
+                    html += `</div>`;
+                });
+
+                html += `
+                    <div class="content-card notes-card">
+                        <div class="notes-header">📝 Notizen zu ${module.name}</div>
+                        <textarea class="notes-textarea" id="notes-${key}"
+                            placeholder="Halte hier deine Notizen, Gedanken und Beobachtungen fest..."
+                            oninput="saveNote('${key}')"></textarea>
+                        <div class="notes-count" id="count-${key}">0 Zeichen</div>
+                    </div>`;
+
+                moduleDiv.innerHTML = `<div class="content-card">${html}</div>`;
+                content.appendChild(moduleDiv);
+                if (notes[key]) document.getElementById('notes-' + key).value = notes[key];
+                updateNoteCount(key);
+            });
+        }
+
+        function renderNav() {
+            const nav = document.getElementById('navigation');
+            nav.innerHTML = Object.keys(modules).map(key =>
+                `<button class="nav-btn" onclick="navigateTo('${key}')">${modules[key].icon} ${modules[key].name}</button>`
+            ).join('');
+        }
+
+        function renderApp() {
+            renderNav();
+            renderModules();
+            handleHash();
+        }
+
+        function toggleTask(taskId) {
+            const checkbox = document.getElementById(taskId);
+            if (checkbox.checked) completedTasks[taskId] = true;
+            else delete completedTasks[taskId];
+            localStorage.setItem('pupilCompletedTasksAG', JSON.stringify(completedTasks));
+            renderModules();
+            handleHash();
+        }
+
+        function saveNote(moduleKey) {
+            const textarea = document.getElementById('notes-' + moduleKey);
+            notes[moduleKey] = textarea.value;
+            localStorage.setItem('pupilNotesAG', JSON.stringify(notes));
+            updateNoteCount(moduleKey);
+        }
+
+        function updateNoteCount(moduleKey) {
+            const textarea = document.getElementById('notes-' + moduleKey);
+            const count = document.getElementById('count-' + moduleKey);
+            count.textContent = textarea.value.length + ' Zeichen';
+        }
+
+        function navigateTo(moduleKey) { window.location.hash = moduleKey; }
+
+        function handleHash() {
+            const hash = window.location.hash.slice(1) || lastModule || 'welcome';
+            document.querySelectorAll('.module').forEach(m => m.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            const module = document.getElementById('module-' + hash);
+            if (module) {
+                module.classList.add('active');
+                lastModule = hash;
+                localStorage.setItem('pupilLastModuleAG', hash);
+            }
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                if (btn.textContent.includes(modules[hash]?.name)) btn.classList.add('active');
+            });
+        }
+
+        function exportAsHTML() {
+            let html = `<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>PUPIL@AG Lernumgebung - Fortschritt & Notizen Export</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Plus Jakarta Sans', -apple-system, sans-serif; max-width: 900px; margin: 40px auto; line-height: 1.6; color: #1C1C1C; background: #FFFAF6; padding: 20px; }
+        h1 { color: #F43175; border-bottom: 3px solid #F43175; padding-bottom: 15px; margin-bottom: 10px; }
+        h2 { color: #F43175; margin-top: 30px; padding-left: 16px; border-left: 4px solid #F43175; font-size: 1.3em; }
+        h3 { color: #333; margin-top: 20px; margin-bottom: 10px; font-size: 1.1em; }
+        .timestamp { color: #999; font-size: 0.9em; }
+        .notes { background: #FFF9E6; border: 2px solid #F43175; padding: 16px; border-radius: 8px; margin: 16px 0; white-space: pre-wrap; }
+        .progress { margin: 20px 0; padding: 16px; background: #E3F2FD; border-left: 4px solid #3498DB; border-radius: 8px; }
+        .progress-item { margin: 12px 0; }
+        .progress-bar { background: #DDD; height: 20px; border-radius: 10px; overflow: hidden; margin: 6px 0; }
+        .progress-fill { background: #F43175; height: 100%; }
+        .task-item { margin: 8px 0; }
+        .task-completed { color: #27AE60; }
+        .task-completed::before { content: '✓ '; font-weight: bold; }
+        .task-pending { color: #999; }
+        .task-pending::before { content: '○ '; }
+        .section { margin: 20px 0; padding: 15px; background: #F5F3F0; border-radius: 6px; }
+    </style>
+</head>
+<body>
+    <h1>🎓 PUPIL@AG Lernumgebung - Fortschritt & Notizen Export</h1>
+    <p class="timestamp"><strong>Exportiert am:</strong> ${new Date().toLocaleString('de-CH')}</p>
+    <p class="timestamp"><strong>URL-Basis:</strong> ${customUrl}</p>`;
+
+            html += '<div class="progress"><h3 style="color:#1C1C1C;margin-bottom:12px;">📊 Gesamtfortschritt</h3>';
+            let totalCompleted = 0, totalTasks = 0;
+            Object.keys(modules).forEach(key => {
+                if (modules[key].isWelcome) return;
+                const completed = Object.keys(completedTasks).filter(t => t.startsWith(key + '-')).length;
+                const total = modules[key].sections.reduce((sum, s) => sum + s.tasks.length, 0);
+                totalCompleted += completed; totalTasks += total;
+                const pct = total > 0 ? Math.round((completed / total) * 100) : 0;
+                html += `<div class="progress-item"><strong>${modules[key].icon} ${modules[key].name}</strong>: ${completed}/${total} (${pct}%)<div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div></div>`;
+            });
+            html += `<p style="margin-top:12px;font-weight:700;">Gesamt: ${totalCompleted}/${totalTasks} Aufträge (${totalTasks > 0 ? Math.round(totalCompleted/totalTasks*100) : 0}%)</p></div>`;
+
+            Object.keys(modules).forEach(key => {
+                const module = modules[key];
+                if (module.isWelcome) return;
+                const completed = Object.keys(completedTasks).filter(t => t.startsWith(key + '-')).length;
+                const total = module.sections.reduce((sum, s) => sum + s.tasks.length, 0);
+                const pct = total > 0 ? Math.round((completed / total) * 100) : 0;
+                html += `<h2>${module.icon} ${module.name} (${completed}/${total} - ${pct}%)</h2>`;
+                module.sections.forEach(section => {
+                    html += `<div class="section"><h3>${section.title}</h3>`;
+                    section.tasks.forEach((task, idx) => {
+                        const taskId = key + '-' + section.title.replace(/\s/g, '-') + '-' + idx;
+                        const taskText = typeof task === 'string' ? task : task.text;
+                        const cls = completedTasks[taskId] ? 'task-completed' : 'task-pending';
+                        html += `<div class="task-item ${cls}">${taskText}</div>`;
+                    });
+                    html += `</div>`;
+                });
+                if (notes[key] && notes[key].trim()) html += `<h3>📝 Notizen zu ${module.name}</h3><div class="notes">${notes[key]}</div>`;
+            });
+
+            html += `<hr style="margin:30px 0;border:none;border-top:1px solid #E8E8E8;"><p style="color:#999;font-size:0.9em;text-align:center;">Erstellt mit PUPIL@AG Lernumgebung | pupil.ch | © 2026 Seven Education</p></body></html>`;
+            downloadFile(html, 'PUPIL_AG_Fortschritt_' + new Date().toISOString().split('T')[0] + '.html', 'text/html');
+        }
+
+        function downloadFile(content, filename, type) {
+            const blob = new Blob([content], { type: type });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url; a.download = filename;
+            document.body.appendChild(a); a.click();
+            window.URL.revokeObjectURL(url); document.body.removeChild(a);
+        }
+
+        document.addEventListener('click', function(event) {
+            if (event.target === document.getElementById('helpModal')) closeHelp();
+        });
+
+        updateExampleUrl();
+        if (customUrl) {
+            document.getElementById('urlModal').classList.remove('active');
+            document.getElementById('customUrl').value = customUrl;
+        }
+
+        renderApp();
+        window.addEventListener('hashchange', handleHash);
+        setTimeout(() => {
+            const hash = window.location.hash.slice(1) || lastModule || 'welcome';
+            if (hash !== window.location.hash.slice(1)) window.location.hash = hash;
+            handleHash();
+        }, 100);
+    </script>
+</body>
+</html>
