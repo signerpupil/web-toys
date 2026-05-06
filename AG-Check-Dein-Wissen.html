@@ -1,0 +1,1368 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AG Abschlusszertifikat &mdash; Export-Tool</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+<style>
+:root{--mg:#F43175;--bk:#0D0D0D;--ow:#FFFAF6;--wh:#FFFFFF;--or:#FF8C42;--yw:#FFD313;--bl:#072AC8;--tl:#21C2A2;--cy:#63E8F2;--g1:#F7F7F7;--g2:#EBEBEB;--g4:#9E9E9E;--g6:#555555}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Plus Jakarta Sans',Inter,sans-serif;background:var(--ow);color:var(--bk);min-height:100vh}
+
+/* HEADER */
+header{background:var(--bk);padding:14px 28px;display:flex;align-items:center;gap:14px;flex-shrink:0}
+.logo{width:30px;height:30px;background:var(--mg);border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+header h1{color:#fff;font-size:17px;font-weight:700}
+header .chip{background:var(--mg);color:#fff;font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;letter-spacing:.6px;margin-left:4px}
+
+/* TABS — no scrollbar */
+.tabs{background:var(--wh);border-bottom:2px solid var(--g2);padding:0 28px;display:flex;overflow-x:auto;gap:2px;scrollbar-width:none;-ms-overflow-style:none}
+.tabs::-webkit-scrollbar{display:none}
+.tb{padding:14px 20px;font-family:inherit;font-size:13px;font-weight:600;color:var(--g4);background:none;border:none;border-bottom:3px solid transparent;margin-bottom:-2px;cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:7px;transition:color .15s}
+.tb:hover{color:var(--bk)}
+.tb.active{color:var(--mg);border-bottom-color:var(--mg)}
+.tb.done{color:var(--tl)}
+.tb.done.active{color:var(--mg);border-bottom-color:var(--mg)}
+.tb-num{width:21px;height:21px;border-radius:50%;background:var(--g2);color:var(--g6);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .15s,color .15s}
+.tb.active .tb-num{background:var(--mg);color:#fff}
+.tb.done .tb-num{background:var(--tl);color:#fff}
+
+/* LAYOUT */
+.main{max-width:1080px;margin:0 auto;padding:28px 20px 110px}
+.panel{display:none}.panel.active{display:block}
+
+/* SETTINGS BAR */
+.sbar{background:var(--wh);border:1px solid var(--g2);border-radius:12px;padding:18px 22px;margin-bottom:20px;display:flex;flex-wrap:wrap;gap:20px;align-items:flex-end}
+.sbar-title{font-size:11px;font-weight:700;color:var(--g4);text-transform:uppercase;letter-spacing:.8px;width:100%;margin-bottom:-6px}
+
+/* FORMS */
+.fg{display:flex;flex-direction:column;gap:5px}
+label{font-size:11px;font-weight:700;color:var(--g6);text-transform:uppercase;letter-spacing:.5px}
+input[type=text],input[type=email],select,textarea{font-family:inherit;font-size:13px;padding:9px 12px;border:1.5px solid var(--g2);border-radius:7px;background:var(--wh);color:var(--bk);outline:none;transition:border-color .15s}
+input[type=text]:focus,input[type=email]:focus,select:focus,textarea:focus{border-color:var(--mg)}
+input[type=text]::placeholder,input[type=email]::placeholder,textarea::placeholder{color:var(--g4)}
+
+/* SECTION HEADING */
+.stitle{font-size:20px;font-weight:700;margin-bottom:6px}
+.sdesc{font-size:13px;color:var(--g6);margin-bottom:22px;line-height:1.65}
+.sdesc strong{color:var(--bk)}
+
+/* DROP ZONE */
+.dz{border:2px dashed var(--g2);border-radius:12px;padding:44px 28px;text-align:center;cursor:pointer;background:var(--wh);transition:all .2s}
+.dz:hover,.dz.over{border-color:var(--mg);background:#fff2f7}
+.dz svg{margin-bottom:10px;opacity:.45}
+.dz h3{font-size:15px;font-weight:700;margin-bottom:5px}
+.dz p{font-size:12px;color:var(--g4)}
+
+/* TABLE */
+.tw{background:var(--wh);border:1px solid var(--g2);border-radius:12px;overflow:hidden;margin-top:20px}
+.th{padding:13px 18px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--g2);background:var(--g1)}
+.th h3{font-size:13px;font-weight:700}
+.cnt{background:var(--mg);color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px}
+.dt{width:100%;border-collapse:collapse;font-size:12px}
+.dt th{padding:9px 11px;text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--g6);background:var(--g1);border-bottom:1px solid var(--g2);white-space:nowrap}
+.dt td{padding:9px 11px;border-bottom:1px solid var(--g2);white-space:nowrap}
+.dt tr:last-child td{border-bottom:none}
+.dt tr:hover td{background:#fef6fa}
+.dt input[type=text],.dt input[type=email]{padding:5px 8px;font-size:12px;width:100%;min-width:110px;border-radius:5px}
+.dt select{padding:5px 8px;font-size:12px;border-radius:5px}
+
+/* GRADE BADGE (read-only) */
+.gb{display:inline-flex;align-items:center;justify-content:center;width:36px;height:24px;border-radius:5px;font-size:12px;font-weight:700;background:var(--g1)}
+.gb.ilz{background:var(--yw);color:var(--bk);font-size:9px;font-weight:700;width:32px}
+.gb.ok{background:#e8faf5;color:#0b6b50}
+.gb.em{background:transparent;color:var(--g4)}
+
+/* GRADE INPUT (editable cells) */
+.grade-inp{width:56px;text-align:center;padding:5px 4px;border-radius:6px;font-size:13px;font-weight:700;border:1.5px solid var(--g2);background:var(--wh);outline:none;font-family:inherit;transition:all .15s;cursor:text}
+.grade-inp:focus{border-color:var(--mg);box-shadow:0 0 0 3px rgba(244,49,117,.1)}
+.grade-inp::placeholder{color:var(--g4);font-weight:400;font-size:11px}
+.grade-inp.hv{background:#e8faf5;color:#0b6b50;border-color:#9ee8d3}
+.grade-inp.ilzv{background:#fff8e1;color:#7a5c00;border-color:#ffd54f;font-size:10px}
+.grade-inp.errv{background:#fff0f4;border-color:var(--mg)}
+
+/* KBD */
+kbd{display:inline-block;padding:1px 6px;border-radius:4px;font-size:10px;font-weight:700;font-family:inherit;background:#f0f0f0;border:1px solid #bbb;color:#333;box-shadow:0 1px 0 #aaa}
+
+/* GRADE TOGGLE */
+.gt{display:inline-flex;background:var(--g1);border-radius:8px;padding:3px;margin-bottom:14px}
+.gt button{padding:7px 18px;font-family:inherit;font-size:12px;font-weight:600;border:none;border-radius:5px;background:transparent;color:var(--g6);cursor:pointer;transition:all .15s}
+.gt button.active{background:var(--mg);color:#fff}
+
+/* ALERTS */
+.al{padding:11px 14px;border-radius:8px;font-size:12px;line-height:1.55;margin-bottom:14px;display:flex;gap:9px;align-items:flex-start}
+.al-i{background:#e8f4ff;color:#0a4e99;border:1px solid #b5d7ff}
+.al-w{background:#fff5e6;color:#8a4a00;border:1px solid #ffd899}
+.al-s{background:#e6faf5;color:#0b6b50;border:1px solid #9ee8d3}
+.al-e{background:#fff0f4;color:#9b0028;border:1px solid #ffb3c8}
+
+/* KLASSE MAPPING */
+.km{background:var(--wh);border:1px solid var(--g2);border-radius:10px;padding:14px 18px;margin-top:14px}
+.km h4{font-size:12px;font-weight:700;margin-bottom:10px}
+.kmr{display:flex;align-items:center;gap:10px;margin-bottom:7px;flex-wrap:wrap}
+.kmt{background:var(--g1);border:1px solid var(--g2);border-radius:6px;padding:5px 11px;font-size:12px;font-weight:600;min-width:160px}
+
+/* PROJECT CARDS */
+.pc{background:var(--wh);border:1px solid var(--g2);border-radius:12px;margin-bottom:12px;overflow:hidden}
+.pch{padding:14px 18px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;background:var(--g1);user-select:none;transition:background .15s}
+.pch:hover{background:#efefef}
+.pch h3{font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px}
+.pcb{padding:18px;display:none}
+.pcb.open{display:block}
+.pbf{display:flex;gap:14px;margin-bottom:18px;flex-wrap:wrap}
+.pbf .fg{flex:1;min-width:180px}
+.wtr{display:flex;gap:12px}
+.wtr label{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:500;text-transform:none;letter-spacing:0;cursor:pointer}
+
+/* CRITERIA GRID */
+.cs{margin-bottom:18px}
+.cst{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--mg);padding:8px 11px;border-bottom:2px solid var(--mg);display:flex;align-items:center;justify-content:space-between}
+.cg{border:1px solid var(--g2);border-radius:8px;overflow:hidden}
+.chr{display:grid;grid-template-columns:1fr 210px;background:var(--g1);border-bottom:1px solid var(--g2);padding:7px 11px}
+.chr .rl{display:grid;grid-template-columns:repeat(4,1fr) 20px;gap:3px;text-align:center;font-size:9px;color:var(--g6);text-transform:uppercase;letter-spacing:.4px}
+.chr .rl>div{display:flex;flex-direction:column;align-items:center;gap:1px}
+.chr .rl .rn{font-size:11px;font-weight:700;color:var(--bk)}
+.cr{display:grid;grid-template-columns:1fr 210px;border-bottom:1px solid var(--g2);padding:7px 11px;align-items:center}
+.cr:last-child{border-bottom:none}
+.cr:nth-child(even){background:#fafafa}
+.cr.na .cl{opacity:.35}
+.cr.na .crat{opacity:.3;pointer-events:none}
+.cl{font-size:11px;font-weight:600;line-height:1.4}
+.cl .cd{font-size:10px;font-weight:400;color:var(--g4);margin-top:1px}
+.cl .cn{font-size:9px;color:var(--or);margin-top:1px;font-style:italic}
+.crat{display:grid;grid-template-columns:repeat(4,1fr) 20px;gap:4px;align-items:center}
+
+/* RATING CHIPS (colored radio buttons) */
+.rv{display:flex;flex-direction:column;align-items:center;cursor:pointer;border-radius:5px;padding:1px;user-select:none;text-transform:none;letter-spacing:0;font-weight:normal;font-size:10px;color:var(--g4)}
+.rv input[type=radio]{display:none}
+.rvs{width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:5px;font-size:13px;font-weight:700;background:var(--g2);color:var(--g6);transition:background .12s,color .12s,border-color .12s;border:2px solid transparent}
+.rv:hover .rvs{border-color:currentColor}
+.rv-1:hover .rvs{background:#fee2e2;color:#ef4444;border-color:#ef4444}
+.rv-2:hover .rvs{background:#fef3c7;color:#d97706;border-color:#d97706}
+.rv-3:hover .rvs{background:#dcfce7;color:#16a34a;border-color:#16a34a}
+.rv-4:hover .rvs{background:#bbf7d0;color:#059669;border-color:#059669}
+.rv-1 input:checked~.rvs{background:#ef4444;color:#fff;border-color:#ef4444}
+.rv-2 input:checked~.rvs{background:#d97706;color:#fff;border-color:#d97706}
+.rv-3 input:checked~.rvs{background:#16a34a;color:#fff;border-color:#16a34a}
+.rv-4 input:checked~.rvs{background:#059669;color:#fff;border-color:#059669}
+.rv input:disabled~.rvs{opacity:.3;pointer-events:none}
+
+/* CLEAR BUTTON */
+.cbtn{font-size:12px;cursor:pointer;color:var(--g2);background:none;border:none;padding:0;line-height:1;transition:color .15s}
+.cbtn:hover{color:var(--mg)}
+
+/* SET-ALL BUTTONS */
+.sab{padding:2px 7px;font-family:inherit;font-size:11px;font-weight:700;border:1.5px solid;border-radius:4px;cursor:pointer;transition:all .15s;background:var(--wh)}
+.sab-1{color:#ef4444;border-color:#ef4444}.sab-1:hover{background:#ef4444;color:#fff}
+.sab-2{color:#d97706;border-color:#d97706}.sab-2:hover{background:#d97706;color:#fff}
+.sab-3{color:#16a34a;border-color:#16a34a}.sab-3:hover{background:#16a34a;color:#fff}
+.sab-4{color:#059669;border-color:#059669}.sab-4:hover{background:#059669;color:#fff}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:7px;padding:9px 18px;font-family:inherit;font-size:13px;font-weight:700;border:none;border-radius:8px;cursor:pointer;transition:all .15s}
+.btn-p{background:var(--mg);color:#fff}.btn-p:hover{background:#d02963}
+.btn-s{background:var(--g1);color:var(--bk);border:1.5px solid var(--g2)}.btn-s:hover{background:var(--g2)}
+.btn-sm{padding:6px 13px;font-size:12px}
+
+/* EXPORT BAR */
+.xbar{position:fixed;bottom:0;left:0;right:0;background:var(--bk);padding:13px 28px;display:flex;align-items:center;gap:14px;z-index:100}
+.xbar-title{color:#fff;font-size:12px;font-weight:600;flex-shrink:0}
+.xdots{display:flex;gap:5px;margin-right:6px}
+.xd{width:7px;height:7px;border-radius:50%;background:#444}
+.xd.done{background:var(--tl)}.xd.active{background:var(--mg)}
+.xbtns{display:flex;gap:10px;flex-wrap:wrap}
+.xbtn{display:inline-flex;align-items:center;gap:6px;padding:9px 15px;font-family:inherit;font-size:12px;font-weight:700;border:none;border-radius:7px;cursor:pointer;transition:transform .15s,filter .15s;white-space:nowrap}
+.xbtn:hover{transform:translateY(-1px);filter:brightness(1.07)}
+.xbtn:disabled{opacity:.35;cursor:not-allowed;transform:none;filter:none}
+.xb-cdw{background:var(--cy);color:var(--bk)}
+.xb-marks{background:var(--mg);color:#fff}
+.xb-proj{background:var(--or);color:#fff}
+
+/* EXPORT STATUS */
+.xcard{background:var(--wh);border:1px solid var(--g2);border-radius:12px;overflow:hidden;margin-bottom:14px}
+.xcard-head{padding:13px 18px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--g2)}
+.xcard-body{padding:14px 18px}
+.xrow{display:flex;align-items:center;gap:9px;margin-bottom:7px;font-size:12px}
+.xrow:last-child{margin-bottom:0}
+
+/* MISC */
+.tag-j{display:inline-block;background:#e6faf5;color:#0b6b50;font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;margin-left:3px}
+.tag-n{display:inline-block;background:#fff5e6;color:#8a4a00;font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;margin-left:3px}
+.na-badge{font-size:8px;background:var(--g2);color:var(--g6);padding:1px 4px;border-radius:2px;font-weight:700;margin-left:4px}
+
+/* RESTORE BANNER */
+#restore-banner{position:fixed;top:10px;right:20px;background:#0b6b50;color:#fff;padding:10px 16px;border-radius:10px;font-size:12px;font-weight:600;z-index:300;display:none;align-items:center;gap:10px;box-shadow:0 4px 16px rgba(0,0,0,.2);transition:opacity .5s}
+
+@media(max-width:680px){.main{padding:16px 12px 100px}.xbar{flex-direction:column;padding:10px 14px}.xbtns{justify-content:space-around;width:100%}}
+</style>
+</head>
+<body>
+
+<!-- Restore banner -->
+<div id="restore-banner">
+  &#8617; Daten wiederhergestellt
+  <button onclick="clearLS()" style="background:rgba(255,255,255,.2);border:none;border-radius:4px;color:#fff;padding:2px 8px;font-size:11px;cursor:pointer;font-family:inherit">Löschen</button>
+</div>
+
+<header>
+  <div class="logo">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+      <circle cx="8" cy="6" r="3" fill="white"/>
+      <path d="M2 14c0-3.314 2.686-6 6-6s6 2.686 6 6" stroke="white" stroke-width="1.8" fill="none"/>
+    </svg>
+  </div>
+  <h1>AG Abschlusszertifikat &mdash; Export-Tool</h1>
+  <span class="chip">PUPIL &middot; Temporäre Lösung</span>
+</header>
+
+<div class="tabs">
+  <button class="tb active" data-tab="settings" onclick="switchTab('settings')">
+    <div class="tb-num">&#9881;</div>Einstellungen
+  </button>
+  <button class="tb" id="tbn-persons" data-tab="persons" onclick="switchTab('persons')">
+    <div class="tb-num">1</div>Personen
+  </button>
+  <button class="tb" id="tbn-grades" data-tab="grades" onclick="switchTab('grades')">
+    <div class="tb-num">2</div>Noten
+  </button>
+  <button class="tb" id="tbn-project" data-tab="project" onclick="switchTab('project')">
+    <div class="tb-num">3</div>Projektarbeit
+  </button>
+  <button class="tb" id="tbn-export" data-tab="export" onclick="switchTab('export')">
+    <div class="tb-num">&#8595;</div>Export
+  </button>
+</div>
+
+<div class="main">
+
+<!-- ═══════════ EINSTELLUNGEN ═══════════ -->
+<div class="panel active" id="panel-settings">
+  <div class="stitle">Einstellungen</div>
+  <div class="sdesc">Schulinformationen, die in allen drei Export-Dateien verwendet werden.</div>
+
+  <div class="sbar">
+    <div class="sbar-title">Schulinformationen</div>
+    <div class="fg">
+      <label for="schulort">Schulort</label>
+      <input type="text" id="schulort" placeholder="z.B. Muri AG" style="min-width:200px" oninput="saveLS()">
+    </div>
+    <div class="fg">
+      <label for="schuljahr">Schuljahr</label>
+      <input type="text" id="schuljahr" value="2025/26" style="width:110px" oninput="saveLS()">
+    </div>
+  </div>
+
+  <div class="al al-i">
+    <span>&#8505;&#65039;</span>
+    <div>
+      <strong>Ablauf:</strong>
+      Starte mit <strong>Schritt 1 &rarr; Personen</strong> und lade den PUPIL-Personenexport hoch.
+      Danach gibst du die Zeugnisnoten ein (Schritt 2) und die Projektarbeits-Bewertungen (Schritt 3).
+      Am Ende lädst du alle drei CSV-Dateien für <a href="https://user.check-dein-wissen.ch" target="_blank" style="color:inherit;font-weight:700">Check Dein Wissen</a> herunter.
+    </div>
+  </div>
+
+  <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--g2);display:flex;justify-content:space-between;align-items:center">
+    <div style="font-size:11px;color:var(--g4)">&#128190; Daten werden automatisch im Browser gespeichert.</div>
+    <button class="btn btn-sm" onclick="clearLS()" style="font-size:11px;color:var(--mg);border:1.5px solid var(--mg);background:var(--wh);border-radius:6px;padding:5px 12px;cursor:pointer;font-family:inherit;font-weight:700">&#128465; Alle Daten löschen</button>
+  </div>
+
+  <div style="text-align:right;margin-top:16px">
+    <button class="btn btn-p" onclick="switchTab('persons')">Weiter &rarr;</button>
+  </div>
+</div>
+
+<!-- ═══════════ SCHRITT 1: PERSONEN ═══════════ -->
+<div class="panel" id="panel-persons">
+  <div class="stitle">Schritt 1 &mdash; Personendaten</div>
+  <div class="sdesc">
+    Exportiere in PUPIL unter <strong>Master Data &rarr; Personen</strong> die Klasse als Excel.
+    Stelle sicher dass folgende Spalten exportiert werden:
+    <em>Nachname, Vorname, Geburtsdatum, Klasse, Geschlecht, Erstsprache, Rollen</em>.
+    Lade die Datei hier hoch &mdash; nur Schülerinnen und Schüler werden importiert.
+  </div>
+
+  <div class="dz" id="dz-p" onclick="document.getElementById('fi-p').click()"
+    ondragover="dzOver(event,'dz-p')" ondragleave="dzLeave(event,'dz-p')" ondrop="dzDrop(event,'fi-p')">
+    <svg width="40" height="40" viewBox="0 0 40 40" fill="none"><rect x="6" y="8" width="28" height="24" rx="3" stroke="#888" stroke-width="2"/><path d="M14 20h12M20 14v12" stroke="#888" stroke-width="2" stroke-linecap="round"/></svg>
+    <h3>Excel-Datei hier ablegen</h3>
+    <p>oder klicken zum Auswählen &mdash; Personenexport aus PUPIL (.xlsx)</p>
+  </div>
+  <input type="file" id="fi-p" accept=".xlsx,.xls" style="display:none" onchange="loadPersonXlsx(this)">
+
+  <div id="persons-result" style="display:none">
+    <div id="klasse-mapping-wrap"></div>
+    <div class="tw">
+      <div class="th">
+        <h3>Schülerinnen und Schüler</h3>
+        <span class="cnt" id="s-count">0</span>
+      </div>
+      <div style="overflow-x:auto">
+        <table class="dt" id="persons-table">
+          <thead><tr>
+            <th>Name</th><th>Vorname</th><th>Geburtsdatum</th>
+            <th>Klasse</th><th>Geschlecht</th><th>Erstsprache</th>
+            <th>E-Mail <span style="color:var(--g4);font-weight:400;text-transform:none">(opt.)</span></th>
+            <th>Telefon <span style="color:var(--g4);font-weight:400;text-transform:none">(opt.)</span></th>
+          </tr></thead>
+          <tbody id="persons-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+    <div style="text-align:right;margin-top:14px">
+      <button class="btn btn-p" onclick="switchTab('grades')">Weiter zu Schritt 2 &rarr;</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ SCHRITT 2: NOTEN ═══════════ -->
+<div class="panel" id="panel-grades">
+  <div class="stitle">Schritt 2 &mdash; Zeugnisnoten</div>
+
+  <!-- No students loaded -->
+  <div id="grades-no-students">
+    <div class="al al-w" style="margin-bottom:0">
+      <span>&#9888;&#65039;</span>
+      <div>Lade zuerst den <strong>Personenexport in Schritt 1</strong>, um die Notentabelle anzuzeigen.</div>
+    </div>
+  </div>
+
+  <!-- Main grades section (shown when students loaded) -->
+  <div id="grades-main" style="display:none">
+    <!-- Semester toggle -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px">
+      <div class="gt" style="margin-bottom:0">
+        <button class="active" id="gt-s1" onclick="switchGradeSem('s1',this)">S1 &mdash; Zwischenbericht</button>
+        <button id="gt-s2" onclick="switchGradeSem('s2',this)">S2 &mdash; Jahreszeugnis</button>
+      </div>
+      <div style="font-size:11px;color:var(--g4)">Manuelle Eingabe möglich &mdash; oder Excel unten hochladen</div>
+    </div>
+
+    <!-- Editable grade tables -->
+    <div id="grade-tbl-s1"></div>
+    <div id="grade-tbl-s2" style="display:none"></div>
+
+    <!-- Excel upload (collapsible) -->
+    <details style="margin-top:20px;border:1px solid var(--g2);border-radius:10px;overflow:hidden">
+      <summary style="padding:13px 18px;font-size:13px;font-weight:700;cursor:pointer;background:var(--g1);list-style:none;display:flex;align-items:center;gap:8px">
+        <span>&#128196;</span> Noten aus Excel übernehmen
+        <span style="font-size:11px;font-weight:400;color:var(--g4);margin-left:4px">(Jahreszeugnis + Zwischenbericht)</span>
+      </summary>
+      <div style="padding:16px 18px">
+        <div style="font-size:12px;font-weight:700;color:var(--bk);margin-bottom:10px">&#128203; Wie erstelle ich die Excel-Datei?</div>
+        <ol style="margin:0;padding-left:20px;font-size:12px;color:var(--g6);line-height:2.1">
+          <li>Neue leere Excel-Datei öffnen</li>
+          <li>In PUPIL: <strong>Schulalltag / LPs &rarr; Noten und Zeugnisse &rarr; Zeugnis &mdash; Klassenansicht</strong></li>
+          <li>Klasse wählen, Modus <span style="background:#e8f4fd;color:#1a6fa3;padding:1px 6px;border-radius:3px;font-weight:600">Jahreszeugnis</span> setzen</li>
+          <li>Ganze Seite markieren <kbd>Ctrl+A</kbd> &rarr; kopieren <kbd>Ctrl+C</kbd></li>
+          <li>Excel: <strong>Tabelle1</strong> &rarr; Rechtsklick &rarr; <strong>An Zielformatierung anpassen</strong></li>
+          <li>In PUPIL: Toggle auf <span style="background:#e8f4fd;color:#1a6fa3;padding:1px 6px;border-radius:3px;font-weight:600">Zwischenbericht</span> umschalten</li>
+          <li><kbd>Ctrl+A</kbd> &rarr; <kbd>Ctrl+C</kbd></li>
+          <li>Excel: <strong>Tabelle2</strong> anlegen &rarr; Rechtsklick &rarr; <strong>An Zielformatierung anpassen</strong></li>
+          <li>Datei als <strong>.xlsx</strong> speichern und hier hochladen</li>
+        </ol>
+        <div style="margin-top:10px;padding:8px 12px;background:#fff8e1;border-radius:6px;font-size:11px;color:#7a5c00">
+          <strong>Blatt-Reihenfolge:</strong> Tabelle1 = Jahreszeugnis (S2) &nbsp;|&nbsp; Tabelle2 = Zwischenbericht (S1)
+        </div>
+
+        <!-- Option A: combined 2-sheet upload -->
+        <div style="margin-top:16px;padding:12px 14px;background:var(--g1);border-radius:8px;border:1px solid var(--g2)">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--g6);margin-bottom:10px">Option A &mdash; Kombinierte Datei (beide Bl&auml;tter)</div>
+          <div style="display:flex;align-items:center;gap:12px">
+            <label class="btn btn-s" style="cursor:pointer;margin:0;font-size:12px">
+              &#128196; Kombiniert (.xlsx)
+              <input type="file" id="xlsx-grades-combined" accept=".xlsx" style="display:none" onchange="loadGradesCombined(this)">
+            </label>
+            <span id="xlsx-grades-combined-name" style="font-size:12px;color:var(--g4)">Keine Datei gew&auml;hlt</span>
+          </div>
+          <div id="grades-status" style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap"></div>
+        </div>
+
+        <!-- Option B: single auto-detect upload -->
+        <div style="margin-top:10px;padding:12px 14px;background:var(--g1);border-radius:8px;border:1px solid var(--g2)">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--g6);margin-bottom:6px">Option B &mdash; Einzelne Datei (S1 oder S2)</div>
+          <div style="font-size:11px;color:var(--g4);margin-bottom:10px">Semester wird automatisch anhand des Inhalts erkannt ("Jahreszeugnis" / "Zwischenbericht")</div>
+          <div style="display:flex;align-items:center;gap:12px">
+            <label class="btn btn-s" style="cursor:pointer;margin:0;font-size:12px">
+              &#128196; Einzelne .xlsx
+              <input type="file" id="xlsx-grades-single" accept=".xlsx" style="display:none" onchange="loadGradesSingle(this)">
+            </label>
+            <span id="xlsx-grades-single-name" style="font-size:12px;color:var(--g4)">Keine Datei gew&auml;hlt</span>
+          </div>
+          <div id="grades-single-status" style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap"></div>
+        </div>
+
+      </div>
+    </details>
+  </div>
+
+  <div style="text-align:right;margin-top:18px">
+    <button class="btn btn-p" onclick="switchTab('project')">Weiter zu Schritt 3 &rarr;</button>
+  </div>
+</div>
+
+<!-- ═══════════ SCHRITT 3: PROJEKTARBEIT ═══════════ -->
+<div class="panel" id="panel-project">
+  <div class="stitle">Schritt 3 &mdash; Projektarbeit</div>
+  <div class="sdesc">
+    Bewertungsraster gemäss <em>BKS VS Koneksa &mdash; Anhang 8</em> (Bildungsraum Nordwestschweiz).
+    Bei <strong>Einzelarbeit</strong> entfallen Proc5 &amp; Proc6; Proc2 &amp; Proc3 werden doppelt gewichtet.
+  </div>
+  <div style="display:flex;gap:8px;margin-bottom:16px">
+    <button class="btn btn-s btn-sm" onclick="expandAll()">Alle aufklappen</button>
+    <button class="btn btn-s btn-sm" onclick="collapseAll()">Alle zuklappen</button>
+  </div>
+  <div id="proj-list">
+    <div style="text-align:center;padding:40px;color:var(--g4)">
+      <div style="font-size:14px;font-weight:600;margin-bottom:4px">Keine Schülerdaten geladen</div>
+      <div style="font-size:12px">Lade zuerst den Personenexport in Schritt 1.</div>
+    </div>
+  </div>
+  <div style="text-align:right;margin-top:14px">
+    <button class="btn btn-p" onclick="switchTab('export')">Weiter zu Export &rarr;</button>
+  </div>
+</div>
+
+<!-- ═══════════ EXPORT ═══════════ -->
+<div class="panel" id="panel-export">
+  <div class="stitle">Export</div>
+  <div class="sdesc">
+    Alle drei Dateien: UTF-8, semikolongetrennt, direkt uploadfähig für
+    <strong>Check Dein Wissen</strong> &mdash;
+    <a href="https://user.check-dein-wissen.ch" target="_blank" style="color:var(--bl);font-weight:600">user.check-dein-wissen.ch</a>.
+  </div>
+  <div id="export-status"></div>
+</div>
+
+</div><!-- /main -->
+
+<!-- ═══════════ EXPORT BAR ═══════════ -->
+<div class="xbar">
+  <div class="xbar-title">CSV Download</div>
+  <div class="xdots">
+    <div class="xd" id="xd-p" title="Personen"></div>
+    <div class="xd" id="xd-g" title="Noten"></div>
+    <div class="xd" id="xd-j" title="Projektarbeit"></div>
+  </div>
+  <div class="xbtns">
+    <button class="xbtn xb-cdw" onclick="dlCDW()">&#128100; CheckDeinWissen.csv</button>
+    <button class="xbtn xb-marks" onclick="dlMarks()">&#128202; Abschlusszertifikat.csv</button>
+    <button class="xbtn xb-proj" onclick="dlProj()">&#128221; Projektarbeit.csv</button>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════════
+// DATA MODEL
+// ════════════════════════════════════════════
+let students = [];
+let gS1 = {}, gS2 = {};
+let projData = {};
+let classMap = {};
+let openCards = new Set();
+
+// ════════════════════════════════════════════
+// LOCAL STORAGE
+// ════════════════════════════════════════════
+const LS_KEY = 'ag_zert_v1';
+let lsTimer = null;
+
+function saveLS() {
+  clearTimeout(lsTimer);
+  lsTimer = setTimeout(function() {
+    try {
+      const data = {
+        students: students,
+        gS1: gS1,
+        gS2: gS2,
+        projData: projData,
+        classMap: classMap,
+        schulort: document.getElementById('schulort').value,
+        schuljahr: document.getElementById('schuljahr').value
+      };
+      localStorage.setItem(LS_KEY, JSON.stringify(data));
+    } catch(e) { /* quota exceeded */ }
+  }, 500);
+}
+
+function loadLS() {
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    if (!raw) return false;
+    const d = JSON.parse(raw);
+    if (!d.students || !d.students.length) return false;
+    students = d.students;
+    gS1 = d.gS1 || {};
+    gS2 = d.gS2 || {};
+    projData = d.projData || {};
+    classMap = d.classMap || {};
+    if (d.schulort) document.getElementById('schulort').value = d.schulort;
+    if (d.schuljahr) document.getElementById('schuljahr').value = d.schuljahr;
+    return true;
+  } catch(e) {
+    return false;
+  }
+}
+
+function clearLS() {
+  if (confirm('Alle gespeicherten Daten löschen und Seite neu laden?')) {
+    localStorage.removeItem(LS_KEY);
+    location.reload();
+  }
+}
+
+function showRestoreBanner() {
+  const b = document.getElementById('restore-banner');
+  b.style.display = 'flex';
+  b.style.opacity = '1';
+  setTimeout(function() { b.style.opacity = '0'; }, 4000);
+  setTimeout(function() { b.style.display = 'none'; }, 4600);
+}
+
+// ════════════════════════════════════════════
+// TAB SWITCHING
+// ════════════════════════════════════════════
+function switchTab(tab) {
+  document.querySelectorAll('.panel').forEach(function(p) { p.classList.remove('active'); });
+  document.querySelectorAll('.tb').forEach(function(b) { b.classList.remove('active'); });
+  document.getElementById('panel-' + tab).classList.add('active');
+  document.querySelector('[data-tab="' + tab + '"]').classList.add('active');
+  if (tab === 'project') renderProjForms();
+  if (tab === 'export') renderExportStatus();
+  if (tab === 'grades') renderGradesPanel();
+}
+
+function renderGradesPanel() {
+  if (students.length) {
+    document.getElementById('grades-no-students').style.display = 'none';
+    document.getElementById('grades-main').style.display = 'block';
+    renderGradesEditable('s1');
+    renderGradesEditable('s2');
+  } else {
+    document.getElementById('grades-no-students').style.display = 'block';
+    document.getElementById('grades-main').style.display = 'none';
+  }
+}
+
+// ════════════════════════════════════════════
+// DRAG & DROP
+// ════════════════════════════════════════════
+function dzOver(e, id) { e.preventDefault(); document.getElementById(id).classList.add('over'); }
+function dzLeave(e, id) { document.getElementById(id).classList.remove('over'); }
+function dzDrop(e, inputId) {
+  e.preventDefault();
+  document.querySelector('[id^="dz"]') && document.querySelector('[id^="dz"]').classList.remove('over');
+  const f = e.dataTransfer.files[0]; if (!f) return;
+  const dt = new DataTransfer(); dt.items.add(f);
+  const inp = document.getElementById(inputId); inp.files = dt.files;
+  inp.dispatchEvent(new Event('change'));
+}
+
+// ════════════════════════════════════════════
+// STEP 1: PERSON EXCEL IMPORT
+// ════════════════════════════════════════════
+function loadPersonXlsx(inp) {
+  const file = inp.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const wb = XLSX.read(new Uint8Array(e.target.result), {type:'array', cellDates:true});
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json(ws, {defval:''});
+
+      let raw = rows.filter(function(r) {
+        const rolle = (r['Rollen'] || r['Rolle'] || '').toString();
+        return rolle.toLowerCase().includes('schüler');
+      });
+      if (raw.length === 0) {
+        raw = rows.filter(function(r) {
+          const gb = r['Geburtsdatum'] || r['geburtsdatum'] || '';
+          return gb && gb.toString().trim() !== '';
+        });
+      }
+      if (raw.length === 0) {
+        alert('Keine Schülerinnen/Schüler gefunden. Bitte prüfe ob die Spalte "Rollen" vorhanden ist.');
+        return;
+      }
+
+      students = raw.map(function(r, i) {
+        return {
+          id: i,
+          nachname: cv(r, 'Nachname', 'nachname'),
+          vorname:  cv(r, 'Vorname', 'vorname'),
+          geburtsdatum: fmtDate(r['Geburtsdatum'] || r['geburtsdatum']),
+          klasse:   cv(r, 'Klasse', 'klasse'),
+          geschlecht: cv(r, 'Geschlecht', 'geschlecht'),
+          erstsprache: cv(r, 'Erstsprache', 'erstsprache'),
+          email:    cv(r, 'E-Mail der Schule', 'E-Mail', 'email'),
+          telefon:  cv(r, 'Telefon', 'telefon'),
+          klassenstufe: ''
+        };
+      });
+
+      // Restore klassenstufe from classMap
+      students.forEach(function(s) { if (classMap[s.klasse]) s.klassenstufe = classMap[s.klasse]; });
+
+      const cls = [...new Set(students.map(function(s) { return s.klasse; }).filter(Boolean))];
+      renderClassMapping(cls);
+      renderPersonsTable();
+      document.getElementById('persons-result').style.display = 'block';
+      document.getElementById('s-count').textContent = students.length;
+      setTabDone('persons');
+      updateDots();
+      saveLS();
+
+      // If grades panel is active, refresh it
+      if (document.getElementById('panel-grades').classList.contains('active')) {
+        renderGradesPanel();
+      }
+    } catch(err) {
+      alert('Fehler: ' + err.message);
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function cv(row) {
+  const keys = Array.prototype.slice.call(arguments, 1);
+  for (let i = 0; i < keys.length; i++) {
+    if (row[keys[i]] !== undefined && row[keys[i]] !== '') return row[keys[i]].toString().trim();
+  }
+  return '';
+}
+
+function fmtDate(v) {
+  if (!v) return '';
+  if (typeof v === 'string' && /^\d{2}\.\d{2}\.\d{4}$/.test(v)) return v;
+  if (v instanceof Date) {
+    const d = v.getUTCDate().toString().padStart(2,'0');
+    const m = (v.getUTCMonth()+1).toString().padStart(2,'0');
+    return d + '.' + m + '.' + v.getUTCFullYear();
+  }
+  if (typeof v === 'number') {
+    const d = new Date(Math.round((v - 25569) * 86400 * 1000));
+    return [d.getUTCDate(), d.getUTCMonth()+1, d.getUTCFullYear()]
+      .map(function(n, i) { return i < 2 ? String(n).padStart(2,'0') : n; }).join('.');
+  }
+  return v.toString();
+}
+
+const STUFEN = [
+  {v:'',  l:'— bitte wählen —'},
+  {v:'1', l:'1 — Kindergarten 1. Jahr'},
+  {v:'2', l:'2 — Kindergarten 2. Jahr'},
+  {v:'3', l:'3 — 1. Primarschule'},
+  {v:'4', l:'4 — 2. Primarschule'},
+  {v:'5', l:'5 — 3. Primarschule'},
+  {v:'6', l:'6 — 4. Primarschule'},
+  {v:'7', l:'7 — 5. Primarschule'},
+  {v:'8', l:'8 — 6. Primarschule'},
+  {v:'9', l:'9 — 1. Sekundarschule'},
+  {v:'10',l:'10 — 2. Sekundarschule'},
+  {v:'11',l:'11 — 3. Sekundarschule'},
+  {v:'12',l:'12 — Stufe 12'},
+  {v:'13',l:'13 — Stufe 13'},
+];
+
+function renderClassMapping(cls) {
+  if (!cls.length) return;
+  let h = '<div class="km"><h4>&#127979; Klassenstufe zuordnen (für CheckDeinWissen)</h4>';
+  h += '<p style="font-size:11px;color:var(--g6);margin-bottom:10px">Kiga=1/2, 1.PS=3, …, 6.PS=8, 1.Sek=9, 2.Sek=10, 3.Sek=11</p>';
+  cls.forEach(function(cn) {
+    const safe = cn.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+    const cur = classMap[cn] || '';
+    const opts = STUFEN.map(function(o) {
+      return '<option value="' + o.v + '"' + (o.v === cur ? ' selected' : '') + '>' + esc(o.l) + '</option>';
+    }).join('');
+    h += '<div class="kmr">' +
+      '<div class="kmt">&#128218; ' + esc(cn) + '</div>' +
+      '<span style="color:var(--g4);font-size:13px">&rarr;</span>' +
+      '<select onchange="setKlassenstufe(\'' + safe + '\',this.value)" style="min-width:210px">' + opts + '</select>' +
+      '</div>';
+  });
+  h += '</div>';
+  document.getElementById('klasse-mapping-wrap').innerHTML = h;
+}
+
+function setKlassenstufe(cls, val) {
+  classMap[cls] = val;
+  students.forEach(function(s) { if (s.klasse === cls) s.klassenstufe = val; });
+  saveLS();
+}
+
+function renderPersonsTable() {
+  const tb = document.getElementById('persons-tbody');
+  tb.innerHTML = students.map(function(s, i) {
+    const ej = s.erstsprache === 'Deutsch' ? '<span class="tag-j">j</span>' : (s.erstsprache ? '<span class="tag-n">n</span>' : '');
+    const gm = s.geschlecht === 'männlich' ? '♂ männlich' : '♀ weiblich';
+    return '<tr>' +
+      '<td><strong>' + esc(s.nachname) + '</strong></td>' +
+      '<td>' + esc(s.vorname) + '</td>' +
+      '<td>' + s.geburtsdatum + '</td>' +
+      '<td style="font-size:11px;color:var(--g6)">' + esc(s.klasse) + '</td>' +
+      '<td>' + gm + '</td>' +
+      '<td>' + esc(s.erstsprache) + ej + '</td>' +
+      '<td><input type="email" value="' + esc(s.email) + '" placeholder="optional" onchange="students[' + i + '].email=this.value;saveLS()"></td>' +
+      '<td><input type="text" value="' + esc(s.telefon) + '" placeholder="optional" onchange="students[' + i + '].telefon=this.value;saveLS()" style="width:120px"></td>' +
+      '</tr>';
+  }).join('');
+}
+
+// ════════════════════════════════════════════
+// STEP 2: EDITABLE GRADE TABLE
+// ════════════════════════════════════════════
+const SUBJ = {
+  D: ['Deutsch'],
+  E: ['Englisch'],
+  F: ['Français', 'Französisch', 'Franzoesisch'],
+  M: ['Mathematik'],
+  N: ['Natur, Mensch', 'NMG', 'Natur und Technik', 'Natur&', 'NT ', 'Natur,']
+};
+const SUBJ_LABELS = {D:'Deutsch', E:'Englisch', F:'Français', M:'Mathematik', N:'Natur & T.'};
+const CODES = ['D','E','F','M','N'];
+
+function switchGradeSem(sem, btn) {
+  document.querySelectorAll('#panel-grades .gt button').forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+  document.getElementById('grade-tbl-s1').style.display = sem === 's1' ? 'block' : 'none';
+  document.getElementById('grade-tbl-s2').style.display = sem === 's2' ? 'block' : 'none';
+}
+
+function renderGradesEditable(sem) {
+  const el = document.getElementById('grade-tbl-' + sem);
+  if (!el) return;
+  const g = sem === 's1' ? gS1 : gS2;
+
+  const filled = students.filter(function(s) {
+    const sg = g[mk(s.vorname, s.nachname)] || {};
+    return CODES.some(function(c) { return sg[c] !== null && sg[c] !== undefined; });
+  }).length;
+
+  let h = '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">';
+  h += '<div style="font-size:11px;color:var(--g6)">';
+  if (filled > 0) h += '<span style="color:var(--tl);font-weight:700">&#10003; ' + filled + '</span> / ' + students.length + ' Schüler:innen mit Noten';
+  else h += students.length + ' Schüler:innen &mdash; Noten noch leer';
+  h += '</div>';
+  h += '<div style="font-size:10px;color:var(--g4)">Format: 4.5 &middot; ILZ &middot; leer = kein Fach</div></div>';
+
+  h += '<div class="tw" style="margin-top:0"><div style="overflow-x:auto"><table class="dt">';
+  h += '<thead><tr><th>Name</th><th>Vorname</th>';
+  CODES.forEach(function(c) { h += '<th style="text-align:center">' + SUBJ_LABELS[c] + '</th>'; });
+  h += '</tr></thead><tbody>';
+
+  students.forEach(function(s) {
+    const k = mk(s.vorname, s.nachname);
+    const sg = g[k] || {};
+    const hasSomeGrade = CODES.some(function(c) { return sg[c] !== null && sg[c] !== undefined; });
+    h += '<tr>';
+    h += '<td><strong>' + esc(s.nachname) + '</strong></td>';
+    h += '<td>' + esc(s.vorname) + '</td>';
+    CODES.forEach(function(code) {
+      const v = sg[code];
+      let disp = '', cls = '';
+      if (v === 'ILZ') { disp = 'ILZ'; cls = 'ilzv'; }
+      else if (v !== null && v !== undefined) { disp = String(v); cls = 'hv'; }
+      const safeK = k.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+      h += '<td style="text-align:center;padding:6px 8px">' +
+        '<input class="grade-inp ' + cls + '" type="text" value="' + esc(disp) + '" placeholder="—"' +
+        ' onblur="setGrade(\'' + safeK + '\',\'' + sem + '\',\'' + code + '\',this.value,this)"' +
+        ' onfocus="this.select()"' +
+        ' onkeydown="gradeKeyNav(event,\'' + safeK + '\',\'' + sem + '\',\'' + code + '\')">' +
+        '</td>';
+    });
+    h += '</tr>';
+  });
+
+  h += '</tbody></table></div></div>';
+  el.innerHTML = h;
+}
+
+function setGrade(k, sem, code, rawVal, el) {
+  const g = sem === 's1' ? gS1 : gS2;
+  if (!g[k]) g[k] = {_vn: '', _nn: ''};
+  const parsed = parseGrade(rawVal);
+  g[k][code] = parsed;
+
+  if (el) {
+    el.classList.remove('hv', 'ilzv', 'errv');
+    if (parsed === 'ILZ') {
+      el.value = 'ILZ';
+      el.classList.add('ilzv');
+    } else if (parsed !== null) {
+      el.value = String(parsed);
+      el.classList.add('hv');
+    } else if (rawVal.trim() !== '' && rawVal.trim() !== '—') {
+      el.classList.add('errv');
+    } else {
+      el.value = '';
+    }
+  }
+  setTabDone('grades');
+  updateDots();
+  saveLS();
+}
+
+function gradeKeyNav(e, k, sem, code) {
+  // Tab and Enter navigate to next cell; already handled by browser Tab
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    e.target.blur();
+    // Find next input in table
+    const inputs = Array.from(document.querySelectorAll('#grade-tbl-' + sem + ' .grade-inp'));
+    const idx = inputs.indexOf(e.target);
+    if (idx >= 0 && idx < inputs.length - 1) inputs[idx + 1].focus();
+  }
+}
+
+// ════════════════════════════════════════════
+// EXCEL GRADE IMPORT (combined 2-sheet)
+// ════════════════════════════════════════════
+function parseGrade(v) {
+  if (v === null || v === undefined) return null;
+  if (typeof v === 'number') return (v >= 1 && v <= 6) ? v : null;
+  const s = v.toString().replace(/ /g, ' ').trim();
+  if (!s || /^[\s]*$/.test(s) || s === '—') return null;
+  if (/^(ILZ\*?|aLz|ilz)/i.test(s)) return 'ILZ';
+  const n = parseFloat(s.replace(',', '.'));
+  if (!isNaN(n) && n >= 1 && n <= 6) return n;
+  return null;
+}
+
+function detectSemester(rows) {
+  for (let r = 0; r < Math.min(rows.length, 30); r++) {
+    const row = rows[r] || [];
+    for (let c = 0; c < row.length; c++) {
+      const v = (row[c] || '').toString().toLowerCase();
+      if (v.includes('jahreszeugnis')) return 's2';
+      if (v.includes('zwischenbericht')) return 's1';
+    }
+  }
+  return null;
+}
+
+function parseSheetRows(rows) {
+  let vr = -1, vc = -1;
+  outer: for (let r = 0; r < rows.length; r++) {
+    for (let c = 0; c < (rows[r] || []).length; c++) {
+      const v = (rows[r][c] || '').toString().trim();
+      if (v === 'Vorname') { vr = r; vc = c; break outer; }
+    }
+  }
+  if (vr === -1) return null;
+  const hdr = rows[vr];
+  const nc = hdr.findIndex(function(c) { return (c || '').toString().trim() === 'Name'; });
+  const cols = {};
+  for (let c = 0; c < hdr.length; c++) {
+    const cell = (hdr[c] || '').toString().trim();
+    for (const code in SUBJ) {
+      if (cols[code] !== undefined) continue;
+      if (SUBJ[code].some(function(p) { return cell.includes(p); })) cols[code] = c;
+    }
+  }
+  if (!Object.keys(cols).length) return null;
+  const parsed = {};
+  for (let r = vr + 1; r < rows.length; r++) {
+    const row = rows[r] || [];
+    const vn = (row[vc] || '').toString().replace(/ /g, ' ').trim();
+    if (!vn || /^[\s]*$/.test(vn)) continue;
+    if (vn.startsWith('Ø') || vn === 'Ø Fach') continue;
+    const nn = nc >= 0 ? (row[nc] || '').toString().replace(/ /g, ' ').trim() : '';
+    const grades = {};
+    for (const code in cols) {
+      grades[code] = parseGrade(row[cols[code]]);
+    }
+    parsed[mk(vn, nn)] = Object.assign({}, grades, {_vn: vn, _nn: nn});
+  }
+  return Object.keys(parsed).length ? {parsed: parsed, cols: cols} : null;
+}
+
+function loadGradesCombined(input) {
+  const file = input.files[0]; if (!file) return;
+  document.getElementById('xlsx-grades-combined-name').textContent = file.name;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const wb = XLSX.read(new Uint8Array(e.target.result), {type:'array'});
+    const sc = document.getElementById('grades-status');
+    sc.innerHTML = '';
+    let anyLoaded = false;
+
+    wb.SheetNames.forEach(function(name) {
+      const rows = XLSX.utils.sheet_to_json(wb.Sheets[name], {header:1, defval:null});
+      const detected = detectSemester(rows);
+      const r = parseSheetRows(rows);
+      if (!r) return;
+
+      const sem = detected || (name.toLowerCase().includes('zwischen') ? 's1' : 's2');
+      if (sem === 's1') gS1 = r.parsed;
+      else gS2 = r.parsed;
+      anyLoaded = true;
+
+      const semLabel = sem === 's1' ? 'S1 Zwischenbericht' : 'S2 Jahreszeugnis';
+      const detectedNote = detected ? '' : ' (Blattname)';
+      sc.innerHTML += chipHtml(semLabel + detectedNote, true, Object.keys(r.parsed).length + ' Schüler');
+    });
+
+    if (!anyLoaded) sc.innerHTML = chipHtml('Keine Noten erkannt', false, 'Bitte Datei prüfen');
+
+    renderGradesEditable('s1');
+    renderGradesEditable('s2');
+    if (anyLoaded) { setTabDone('grades'); updateDots(); saveLS(); }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function chipHtml(label, ok, detail) {
+  return '<div style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:20px;font-size:11px;font-weight:600;background:' + (ok ? '#d4edda' : '#fff3cd') + ';color:' + (ok ? '#1a5c2a' : '#7a5c00') + '">' + (ok ? '&#10003;' : '&#9888;') + ' ' + label + (detail ? ' &mdash; ' + detail : '') + '</div>';
+}
+
+function loadGradesSingle(input) {
+  const file = input.files[0]; if (!file) return;
+  document.getElementById('xlsx-grades-single-name').textContent = file.name;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const wb = XLSX.read(new Uint8Array(e.target.result), {type:'array'});
+    const sc = document.getElementById('grades-single-status');
+    sc.innerHTML = '';
+    let anyLoaded = false;
+
+    wb.SheetNames.forEach(function(name) {
+      const rows = XLSX.utils.sheet_to_json(wb.Sheets[name], {header:1, defval:null});
+      const detected = detectSemester(rows);
+      const r = parseSheetRows(rows);
+      if (!r) return;
+
+      if (!detected) {
+        sc.innerHTML += chipHtml('Semester nicht erkannt', false, 'Weder "Jahreszeugnis" noch "Zwischenbericht" gefunden');
+        return;
+      }
+
+      if (detected === 's1') gS1 = r.parsed;
+      else gS2 = r.parsed;
+      anyLoaded = true;
+
+      const semLabel = detected === 's1' ? 'S1 Zwischenbericht' : 'S2 Jahreszeugnis';
+      sc.innerHTML += chipHtml(semLabel, true, Object.keys(r.parsed).length + ' Schüler erkannt');
+      renderGradesEditable(detected);
+    });
+
+    if (!anyLoaded && sc.innerHTML === '') sc.innerHTML = chipHtml('Keine Noten erkannt', false, 'Bitte Datei prüfen');
+    if (anyLoaded) { setTabDone('grades'); updateDots(); saveLS(); }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+// ════════════════════════════════════════════
+// STEP 3: PROJEKTARBEIT FORMS
+// ════════════════════════════════════════════
+const CRIT = {
+  Proc: [
+    {k:'Proc1', l:'Planvolles Vorgehen',       d:'Projekt zeitlich, inhaltlich und materiell planen und durchführen'},
+    {k:'Proc2', l:'Einsatz und Ausdauer',       d:'Mit Ausdauer aktiv für den Projekterfolg einsetzen', note:'* Doppelt gewichtet bei Einzelarbeit'},
+    {k:'Proc3', l:'Selbstständigkeit',          d:'Selbstständig arbeiten und Arbeitsplatz organisieren', note:'* Doppelt gewichtet bei Einzelarbeit'},
+    {k:'Proc4', l:'Effizienz',                  d:'Effizient arbeiten: Zeit nutzen, zielorientiert, priorisieren'},
+    {k:'Proc5', l:'Kommunikation im Team',      d:'Angemessen interagieren, alle zu Wort kommen lassen, sachlich argumentieren', note:'** Entfällt bei Einzelarbeit', team:true},
+    {k:'Proc6', l:'Zusammenarbeit im Team',     d:'Im Team zusammenarbeiten, Teamerfolg fördern, Aufgaben ausgewogen verteilen', note:'** Entfällt bei Einzelarbeit', team:true},
+    {k:'Proc7', l:'Informationsbeschaffung',    d:'Geeignete Informationen und Materialien in Internet/Bibliotheken suchen und finden'},
+    {k:'Proc8', l:'Umgang mit Informationen',   d:'Informationen, Materialien und Geräte gezielt und kompetent einsetzen'},
+  ],
+  Prod: [
+    {k:'Prod1', l:'Formale Korrektheit',                 d:'Schriftliche Arbeit/Dokumentation formal korrekt — Vorgaben, Umfang, Quellenangaben'},
+    {k:'Prod2', l:'Vollständigkeit & Verarbeitungstiefe',d:'Leitfrage beantwortet, Projektziele erreicht, neue Wissenskenntnisse sichtbar'},
+    {k:'Prod3', l:'Nachvollziehbarkeit & roter Faden',   d:'Systematisch und logisch aufgebaut, sachlogische Kapitelabfolge'},
+    {k:'Prod4', l:'Vielfalt & Qualität der Informationen',d:'Wichtigste und geeignetste Informationen verarbeitet, breite Palette'},
+    {k:'Prod5', l:'Eigenleistung & Kreativität',         d:'Eigenleistung gut erkennbar, Informationen sinnvoll und kreativ eingesetzt'},
+    {k:'Prod6', l:'Schriftlicher Ausdruck',              d:'Klar und verständlich formuliert, grammatikalisch und orthographisch korrekt'},
+    {k:'Prod7', l:'Gestaltung & Layout',                 d:'Sauber und ästhetisch überzeugend, einheitliches und übersichtliches Layout'},
+  ],
+  Pres: [
+    {k:'Pres1', l:'Inhalt',          d:'Inhalte überzeugend vorstellen: verständlich, relevant, gehaltvoll, Zeit einhalten'},
+    {k:'Pres2', l:'Aufbau',          d:'Geeigneter Aufbau: klar strukturiert, roter Faden, abwechslungsreich, ausgewogen'},
+    {k:'Pres3', l:'Medieneinsatz',   d:'Medien und Hilfsmittel gekonnt auswählen, angemessen einsetzen, im Griff haben'},
+    {k:'Pres4', l:'Mündlicher Ausdruck', d:'In Standardsprache verständlich vortragen, Augenkontakt, angemessene Lautstärke'},
+    {k:'Pres5', l:'Rede und Antwort',d:'Fragen aus dem Publikum kompetent und vollständig beantworten'},
+  ]
+};
+const RL = ['kaum','teilw.','überw.','vollst.'];
+
+function renderProjForms() {
+  if (!students.length) return;
+  students.forEach(function(s) {
+    const k = mk(s.vorname, s.nachname);
+    if (!projData[k]) projData[k] = {workTitle:'', workType:'individual', ratings:{}, comment:''};
+  });
+  document.getElementById('proj-list').innerHTML = students.map(function(s, i) { return buildCard(s, i); }).join('');
+  openCards.forEach(function(i) {
+    const b = document.getElementById('pcb-' + i);
+    const t = document.getElementById('pct-' + i);
+    if (b) { b.classList.add('open'); if (t) t.textContent = '▲'; }
+  });
+}
+
+function buildCard(s, idx) {
+  const k = mk(s.vorname, s.nachname);
+  const p = projData[k];
+  const isTeam = p.workType === 'partner';
+  const allK = [].concat(CRIT.Proc, CRIT.Prod, CRIT.Pres);
+  const applicable = allK.filter(function(c) { return !(c.team && !isTeam); });
+  const filled = applicable.filter(function(c) { return p.ratings[c.k] !== undefined && p.ratings[c.k] !== ''; }).length;
+  const total = applicable.length;
+  const pct = total > 0 ? Math.round(filled / total * 100) : 0;
+  const safeK = k.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+
+  let prog = '';
+  if (filled > 0) {
+    const pc = filled === total ? 'var(--tl)' : 'var(--or)';
+    prog = '<div style="width:60px;height:4px;background:var(--g2);border-radius:2px;overflow:hidden;margin-left:8px">' +
+           '<div style="width:' + pct + '%;height:100%;background:' + pc + ';border-radius:2px"></div></div>';
+  }
+
+  return '<div class="pc" id="pc-' + idx + '">' +
+    '<div class="pch" onclick="toggleCard(' + idx + ')">' +
+      '<h3><span style="color:var(--mg)">&#9679;</span> ' + esc(s.nachname) + ', ' + esc(s.vorname) +
+        '<span style="font-size:10px;font-weight:400;color:var(--g4)">(' + filled + '/' + total + ' Kriterien)</span>' +
+        prog +
+      '</h3>' +
+      '<span id="pct-' + idx + '">&#9660;</span>' +
+    '</div>' +
+    '<div class="pcb" id="pcb-' + idx + '">' +
+      '<div class="pbf">' +
+        '<div class="fg"><label>Titel der Projektarbeit</label>' +
+          '<input type="text" value="' + esc(p.workTitle) + '" placeholder="z.B. Klimawandel und seine Folgen"' +
+          ' oninput="projData[\'' + safeK + '\'].workTitle=this.value;refreshCardProgress(' + idx + ',\'' + safeK + '\');saveLS()"></div>' +
+        '<div class="fg" style="flex:0 0 auto;min-width:180px"><label>Arbeitsform</label>' +
+          '<div class="wtr">' +
+            '<label><input type="radio" name="wt-' + idx + '" value="individual"' + (!isTeam ? ' checked' : '') +
+              ' onchange="setWT(\'' + safeK + '\',' + idx + ',\'individual\')"> Einzelarbeit</label>' +
+            '<label><input type="radio" name="wt-' + idx + '" value="partner"' + (isTeam ? ' checked' : '') +
+              ' onchange="setWT(\'' + safeK + '\',' + idx + ',\'partner\')"> Partnerarbeit</label>' +
+          '</div></div>' +
+      '</div>' +
+      buildSection('Prozess', 'var(--mg)', 'Proc', CRIT.Proc, k, safeK, idx, isTeam) +
+      buildSection('Produkt', 'var(--bl)', 'Prod', CRIT.Prod, k, safeK, idx, isTeam) +
+      buildSection('Präsentation', 'var(--tl)', 'Pres', CRIT.Pres, k, safeK, idx, isTeam) +
+      '<div class="fg" style="margin-top:14px"><label>Kommentar (optional)</label>' +
+        '<textarea rows="2" style="width:100%;resize:vertical;font-size:12px"' +
+        ' oninput="projData[\'' + safeK + '\'].comment=this.value;saveLS()">' + esc(p.comment) + '</textarea></div>' +
+    '</div>' +
+  '</div>';
+}
+
+function buildSection(title, color, sectionKey, criteria, k, safeK, idx, isTeam) {
+  let h = '<div class="cs">' +
+    '<div class="cst" style="color:' + color + ';border-bottom-color:' + color + '">' +
+      '<span>' + title + '</span>' +
+      '<div style="display:flex;align-items:center;gap:4px">' +
+        '<span style="font-size:10px;font-weight:500;color:var(--g6);margin-right:2px">Alle:</span>' +
+        [1,2,3,4].map(function(v) {
+          return '<button class="sab sab-' + v + '" onclick="setAllSection(\'' + safeK + '\',' + idx + ',\'' + sectionKey + '\',' + v + ')" title="Alle ' + title + '-Kriterien auf ' + v + ' setzen">' + v + '</button>';
+        }).join('') +
+      '</div>' +
+    '</div>' +
+    '<div class="cg">' +
+      '<div class="chr">' +
+        '<div style="font-size:10px;font-weight:700;color:var(--g6);text-transform:uppercase;letter-spacing:.4px">Kriterium</div>' +
+        '<div class="rl">' +
+          RL.map(function(r, i) {
+            return '<div><span class="rn">' + (i+1) + '</span>' + r + '</div>';
+          }).join('') +
+          '<div></div>' +
+        '</div>' +
+      '</div>';
+
+  criteria.forEach(function(c) {
+    const na = c.team && !isTeam;
+    const cur = projData[k] && projData[k].ratings ? (projData[k].ratings[c.k] || '') : '';
+    h += '<div class="cr' + (na ? ' na' : '') + '" id="cr-' + idx + '-' + c.k + '">' +
+      '<div class="cl">' +
+        esc(c.l) + (na ? '<span class="na-badge">N/A</span>' : '') +
+        (c.note ? '<div class="cn">' + esc(c.note) + '</div>' : '') +
+        '<div class="cd">' + esc(c.d) + '</div>' +
+      '</div>' +
+      '<div class="crat">' +
+        [1,2,3,4].map(function(v) {
+          return '<label class="rv rv-' + v + '" title="' + RL[v-1] + '">' +
+            '<input type="radio" name="' + k + '-' + c.k + '" value="' + v + '"' +
+            (cur == v ? ' checked' : '') + (na ? ' disabled' : '') +
+            ' onchange="projData[\'' + safeK + '\'].ratings[\'' + c.k + '\']=this.value;refreshCardProgress(' + idx + ',\'' + safeK + '\');saveLS()">' +
+            '<span class="rvs">' + v + '</span>' +
+            '</label>';
+        }).join('') +
+        '<button class="cbtn" title="Löschen" onclick="clearR(\'' + safeK + '\',\'' + c.k + '\',' + idx + ',\'' + k + '-' + c.k + '\')"' + (na ? ' disabled' : '') + '>&#x2715;</button>' +
+      '</div>' +
+    '</div>';
+  });
+
+  h += '</div></div>';
+  return h;
+}
+
+function setAllSection(safeK, idx, sectionKey, val) {
+  const k = safeK.replace(/\\'/g, "'").replace(/\\\\/g, '\\');
+  const section = CRIT[sectionKey];
+  const p = projData[k];
+  if (!p) return;
+  const isTeam = p.workType === 'partner';
+  section.forEach(function(c) {
+    if (c.team && !isTeam) return;
+    p.ratings[c.k] = String(val);
+    [1,2,3,4].forEach(function(v) {
+      const inp = document.querySelector('input[name="' + k + '-' + c.k + '"][value="' + v + '"]');
+      if (inp) inp.checked = (v === val);
+    });
+  });
+  refreshCardProgress(idx, k);
+  saveLS();
+}
+
+function setWT(safeK, idx, type) {
+  const k = safeK.replace(/\\'/g, "'").replace(/\\\\/g, '\\');
+  projData[k].workType = type;
+  const wasOpen = openCards.has(idx);
+  const s = students[idx];
+  const card = document.getElementById('pc-' + idx);
+  const tmp = document.createElement('div');
+  tmp.innerHTML = buildCard(s, idx);
+  card.replaceWith(tmp.firstChild);
+  if (wasOpen) {
+    const b = document.getElementById('pcb-' + idx);
+    const t = document.getElementById('pct-' + idx);
+    if (b) { b.classList.add('open'); if (t) t.textContent = '▲'; }
+  }
+  saveLS();
+}
+
+function clearR(safeK, ck, idx, name) {
+  const k = safeK.replace(/\\'/g, "'").replace(/\\\\/g, '\\');
+  delete projData[k].ratings[ck];
+  document.querySelectorAll('input[name="' + name + '"]').forEach(function(r) { r.checked = false; });
+  refreshCardProgress(idx, k);
+  saveLS();
+}
+
+function toggleCard(idx) {
+  const b = document.getElementById('pcb-' + idx);
+  const t = document.getElementById('pct-' + idx);
+  if (!b) return;
+  if (openCards.has(idx)) {
+    openCards.delete(idx); b.classList.remove('open'); if (t) t.textContent = '▼';
+  } else {
+    openCards.add(idx); b.classList.add('open'); if (t) t.textContent = '▲';
+  }
+}
+
+function expandAll() {
+  students.forEach(function(_, i) {
+    openCards.add(i);
+    const b = document.getElementById('pcb-' + i);
+    const t = document.getElementById('pct-' + i);
+    if (b) { b.classList.add('open'); if (t) t.textContent = '▲'; }
+  });
+}
+function collapseAll() {
+  openCards.clear();
+  document.querySelectorAll('[id^="pcb-"]').forEach(function(b) { b.classList.remove('open'); });
+  document.querySelectorAll('[id^="pct-"]').forEach(function(t) { t.textContent = '▼'; });
+}
+
+function refreshCardProgress(idx, k) {
+  const p = projData[k]; if (!p) return;
+  const isTeam = p.workType === 'partner';
+  const all = [].concat(CRIT.Proc, CRIT.Prod, CRIT.Pres);
+  const applicable = all.filter(function(c) { return !(c.team && !isTeam); });
+  const filled = applicable.filter(function(c) { return p.ratings[c.k] !== undefined && p.ratings[c.k] !== ''; }).length;
+  const total = applicable.length;
+  const hdr = document.querySelector('#pc-' + idx + ' .pch h3 span:last-of-type');
+  if (hdr) hdr.textContent = '(' + filled + '/' + total + ' Kriterien)';
+  updateDots();
+}
+
+// ════════════════════════════════════════════
+// CSV GENERATION
+// ════════════════════════════════════════════
+function today() { return new Date().toISOString().slice(0, 10); }
+function toCSV(rows) {
+  return rows.map(function(r) {
+    return r.map(function(v) {
+      const s = String(v != null ? v : '');
+      return s.includes(';') || s.includes('"') || s.includes('\n') ? '"' + s.replace(/"/g, '""') + '"' : s;
+    }).join(';');
+  }).join('\r\n');
+}
+function dlFile(name, content) {
+  const b = new Blob(['﻿' + content], {type: 'text/csv;charset=utf-8'});
+  const u = URL.createObjectURL(b);
+  const a = document.createElement('a'); a.href = u; a.download = name; a.click();
+  URL.revokeObjectURL(u);
+}
+
+function dlCDW() {
+  if (!students.length) { alert('Keine Personendaten geladen — bitte zuerst Schritt 1 ausfüllen.'); return; }
+  const hdr = ['Vorname','Name','E-Mail','Geburtsdatum','Telefon','Geschlecht',
+    'Klassenstufe','Erstsprache Deutsch','ilz Deutsch','ilz Mathematik',
+    'ilz Englisch','ilz Französisch','ilz Naturwissenschaften'];
+  const rows = students.map(function(s) {
+    const k = mk(s.vorname, s.nachname);
+    const g = gS2[k] || {};
+    return [
+      s.vorname, s.nachname, s.email || '', s.geburtsdatum, s.telefon || '',
+      s.geschlecht === 'männlich' ? 'm' : 'w',
+      s.klassenstufe || '',
+      s.erstsprache === 'Deutsch' ? 'j' : 'n',
+      ilzFlag(g,'D'), ilzFlag(g,'M'), ilzFlag(g,'E'), ilzFlag(g,'F'), ilzFlag(g,'N'),
+    ];
+  });
+  dlFile('CheckDeinWissen-' + today() + '.csv', toCSV([hdr].concat(rows)));
+}
+
+function ilzFlag(g, code) { return g[code] === 'ILZ' ? 'j' : 'n'; }
+
+function dlMarks() {
+  if (!students.length) { alert('Keine Personendaten geladen — bitte zuerst Schritt 1 ausfüllen.'); return; }
+  const sl = document.getElementById('schulort').value;
+  const sy = document.getElementById('schuljahr').value;
+  const hdr = ['First_Name','Surname','Date_Of_Birth','School_Year','School_Place',
+    'D_S1','D_S2','E_S1','E_S2','F_S1','F_S2','M_S1','M_S2','N_S1','N_S2'];
+  const rows = students.map(function(s) {
+    const k = mk(s.vorname, s.nachname);
+    const g1 = gS1[k] || {}, g2 = gS2[k] || {};
+    const gv = function(g, c) { const v = g[c]; return (v === null || v === undefined || v === 'ILZ') ? '' : v; };
+    return [
+      s.vorname, s.nachname, s.geburtsdatum, sy, sl,
+      gv(g1,'D'), gv(g2,'D'),
+      gv(g1,'E'), gv(g2,'E'),
+      gv(g1,'F'), gv(g2,'F'),
+      gv(g1,'M'), gv(g2,'M'),
+      gv(g1,'N'), gv(g2,'N'),
+    ];
+  });
+  dlFile('Abschlusszertifikat-' + today() + '.csv', toCSV([hdr].concat(rows)));
+}
+
+function dlProj() {
+  if (!students.length) { alert('Keine Personendaten geladen — bitte zuerst Schritt 1 ausfüllen.'); return; }
+  const sl = document.getElementById('schulort').value;
+  const sy = document.getElementById('schuljahr').value;
+  const hdr = ['First_Name','Surname','Date_Of_Birth','School_Year','School_Place',
+    'Work_Title','Work_Type',
+    'Proc1','Proc2','Proc3','Proc4','Proc5','Proc6','Proc7','Proc8',
+    'Prod1','Prod2','Prod3','Prod4','Prod5','Prod6','Prod7',
+    'Pres1','Pres2','Pres3','Pres4','Pres5','Comment'];
+  const allK = [].concat(CRIT.Proc, CRIT.Prod, CRIT.Pres).map(function(c) { return c.k; });
+  const rows = students.map(function(s) {
+    const k = mk(s.vorname, s.nachname);
+    const p = projData[k] || {};
+    const r = p.ratings || {};
+    return [
+      s.vorname, s.nachname, s.geburtsdatum, sy, sl,
+      p.workTitle || '', p.workType === 'partner' ? 'partner' : 'individual',
+    ].concat(allK.map(function(ck) { return r[ck] || ''; })).concat([p.comment || '']);
+  });
+  dlFile('Projektarbeit-' + today() + '.csv', toCSV([hdr].concat(rows)));
+}
+
+// ════════════════════════════════════════════
+// EXPORT STATUS PAGE
+// ════════════════════════════════════════════
+function renderExportStatus() {
+  const s1c = Object.keys(gS1).length, s2c = Object.keys(gS2).length;
+  const projFilled = students.filter(function(s) {
+    const p = projData[mk(s.vorname, s.nachname)];
+    return p && Object.keys(p.ratings).length > 0;
+  }).length;
+  const allKlasse = students.length > 0 && students.every(function(s) { return s.klassenstufe; });
+
+  const cards = [
+    {
+      emoji: '&#128100;', label: 'CheckDeinWissen.csv', color: 'var(--cy)',
+      items: [
+        {l:'Personendaten', ok:students.length>0, m:students.length>0 ? students.length+' Schüler:innen' : 'Fehlend → Schritt 1'},
+        {l:'Klassenstufen-Zuordnung', ok:allKlasse, m:allKlasse ? 'Vollständig' : 'Noch nicht alle zugeordnet'},
+        {l:'ILZ-Flags (aus S2-Noten)', ok:s2c>0, m:s2c>0 ? 'Erkannt' : 'Optional — ohne Noten S2 alle "n"'},
+      ]
+    },
+    {
+      emoji: '&#128202;', label: 'Abschlusszertifikat.csv', color: 'var(--mg)',
+      items: [
+        {l:'Personendaten', ok:students.length>0, m:students.length>0 ? students.length+' Schüler:innen' : 'Fehlend → Schritt 1'},
+        {l:'Noten S1 (Zwischenbericht)', ok:s1c>0, m:s1c>0 ? s1c+' Einträge' : 'Fehlend → Schritt 2'},
+        {l:'Noten S2 (Jahreszeugnis)', ok:s2c>0, m:s2c>0 ? s2c+' Einträge' : 'Fehlend → Schritt 2'},
+        {l:'Schulort & Schuljahr', ok:!!(document.getElementById('schulort').value && document.getElementById('schuljahr').value), m:'Einstellungen'},
+      ]
+    },
+    {
+      emoji: '&#128221;', label: 'Projektarbeit.csv', color: 'var(--or)',
+      items: [
+        {l:'Personendaten', ok:students.length>0, m:students.length>0 ? students.length+' Schüler:innen' : 'Fehlend → Schritt 1'},
+        {l:'Projektbewertungen', ok:projFilled>0, m:projFilled>0 ? projFilled+'/'+students.length+' Schüler:innen' : 'Fehlend → Schritt 3'},
+      ]
+    }
+  ];
+
+  document.getElementById('export-status').innerHTML = cards.map(function(c) {
+    const ready = c.items.filter(function(i) { return !i.ok; }).length === 0;
+    return '<div class="xcard">' +
+      '<div class="xcard-head" style="border-left:4px solid ' + c.color + '">' +
+        '<h3 style="font-size:14px;font-weight:700">' + c.emoji + ' ' + c.label + '</h3>' +
+        '<span style="font-size:11px;font-weight:700;color:' + (ready ? 'var(--tl)' : 'var(--or)') + '">' +
+          (ready ? '&#9989; Bereit' : '&#9888;&#65039; Unvollständig') +
+        '</span>' +
+      '</div>' +
+      '<div class="xcard-body">' +
+        c.items.map(function(it) {
+          return '<div class="xrow">' +
+            '<span style="font-size:14px">' + (it.ok ? '&#9989;' : '&#9888;&#65039;') + '</span>' +
+            '<strong>' + esc(it.l) + ':</strong>' +
+            '<span style="color:var(--g6)">' + esc(it.m) + '</span>' +
+          '</div>';
+        }).join('') +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+// ════════════════════════════════════════════
+// HELPERS
+// ════════════════════════════════════════════
+function mk(vn, nn) {
+  return ((vn || '') + '_' + (nn || '')).toLowerCase().replace(/\s+/g, ' ').trim();
+}
+function esc(s) {
+  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function setTabDone(tab) {
+  const b = document.getElementById('tbn-' + tab);
+  if (b) { b.classList.add('done'); b.querySelector('.tb-num').textContent = '✓'; }
+}
+function updateDots() {
+  document.getElementById('xd-p').className = 'xd' + (students.length > 0 ? ' done' : '');
+  const hg = Object.keys(gS1).length > 0 || Object.keys(gS2).length > 0;
+  document.getElementById('xd-g').className = 'xd' + (hg ? ' done' : '');
+  const pf = students.filter(function(s) {
+    const p = projData[mk(s.vorname, s.nachname)];
+    return p && Object.keys(p.ratings).length > 0;
+  }).length;
+  document.getElementById('xd-j').className = 'xd' + (pf > 0 ? ' done' : '');
+}
+
+// ════════════════════════════════════════════
+// PAGE LOAD — RESTORE
+// ════════════════════════════════════════════
+window.addEventListener('load', function() {
+  const restored = loadLS();
+  if (restored) {
+    const cls = [...new Set(students.map(function(s) { return s.klasse; }).filter(Boolean))];
+    renderClassMapping(cls);
+    renderPersonsTable();
+    document.getElementById('persons-result').style.display = 'block';
+    document.getElementById('s-count').textContent = students.length;
+    setTabDone('persons');
+    if (Object.keys(gS1).length || Object.keys(gS2).length) setTabDone('grades');
+    updateDots();
+    showRestoreBanner();
+  }
+});
+</script>
+</body>
+</html>
