@@ -667,17 +667,21 @@ const STUFEN = [
 ];
 
 function renderClassMapping(cls) {
-  if (!cls.length) return;
+  // Always show at least one row — fall back to a catch-all when no class data
+  const rows = cls.length ? cls : [''];
   let h = '<div class="km"><h4>&#127979; Klassenstufe zuordnen (für CheckDeinWissen)</h4>';
   h += '<p style="font-size:11px;color:var(--g6);margin-bottom:10px">Kiga=1/2, 1.PS=3, …, 6.PS=8, 1.Sek=9, 2.Sek=10, 3.Sek=11</p>';
-  cls.forEach(function(cn) {
+  rows.forEach(function(cn) {
     const safe = cn.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
     const cur = classMap[cn] || '';
     const opts = STUFEN.map(function(o) {
       return '<option value="' + o.v + '"' + (o.v === cur ? ' selected' : '') + '>' + esc(o.l) + '</option>';
     }).join('');
+    const label = cn || 'Alle Schüler:innen';
+    const icon = cn ? '&#128218;' : '&#128101;';
+    const note = cn ? '' : ' <span style="font-size:10px;color:var(--g4)">(keine Klasse im Export)</span>';
     h += '<div class="kmr">' +
-      '<div class="kmt">&#128218; ' + esc(cn) + '</div>' +
+      '<div class="kmt">' + icon + ' ' + esc(label) + note + '</div>' +
       '<span style="color:var(--g4);font-size:13px">&rarr;</span>' +
       '<select onchange="setKlassenstufe(\'' + safe + '\',this.value)" style="min-width:210px">' + opts + '</select>' +
       '</div>';
@@ -688,7 +692,11 @@ function renderClassMapping(cls) {
 
 function setKlassenstufe(cls, val) {
   classMap[cls] = val;
-  students.forEach(function(s) { if (s.klasse === cls) s.klassenstufe = val; });
+  if (cls === '') {
+    students.forEach(function(s) { s.klassenstufe = val; });
+  } else {
+    students.forEach(function(s) { if (s.klasse === cls) s.klassenstufe = val; });
+  }
   saveLS();
 }
 
