@@ -1243,7 +1243,7 @@ function dlMarks() {
   const rows = students.map(function(s) {
     const k = mk(s.vorname, s.nachname);
     const g1 = gS1[k] || {}, g2 = gS2[k] || {};
-    const gv = function(g, c) { const v = g[c]; return (v === null || v === undefined || v === 'ILZ') ? '' : v; };
+    const gv = function(g, c) { const v = g[c]; if (v === null || v === undefined || v === 'ILZ') return ''; return typeof v === 'number' ? v.toFixed(1) : v; };
     return [
       s.vorname, s.nachname, fmtDate(s.geburtsdatum), sy, sl,
       gv(g1,'D'), gv(g2,'D'),
