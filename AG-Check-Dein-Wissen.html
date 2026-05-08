@@ -335,15 +335,15 @@ kbd{display:inline-block;padding:1px 6px;border-radius:4px;font-size:10px;font-w
     <!-- Semester toggle -->
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px">
       <div class="gt" style="margin-bottom:0">
-        <button class="active" id="gt-s1" onclick="switchGradeSem('s1',this)">S1 &mdash; Zwischenbericht</button>
-        <button id="gt-s2" onclick="switchGradeSem('s2',this)">S2 &mdash; Jahreszeugnis</button>
+        <button id="gt-s1" onclick="switchGradeSem('s1',this)">S1 &mdash; Zwischenbericht <span class="na-badge" style="background:#e8f4fd;color:#1a6fa3">optional</span></button>
+        <button class="active" id="gt-s2" onclick="switchGradeSem('s2',this)">S2 &mdash; Jahreszeugnis</button>
       </div>
       <div style="font-size:11px;color:var(--g4)">Manuelle Eingabe möglich &mdash; oder Excel unten hochladen</div>
     </div>
 
     <!-- Editable grade tables -->
-    <div id="grade-tbl-s1"></div>
-    <div id="grade-tbl-s2" style="display:none"></div>
+    <div id="grade-tbl-s1" style="display:none"></div>
+    <div id="grade-tbl-s2"></div>
 
     <!-- Excel upload (collapsible) -->
     <details style="margin-top:20px;border:1px solid var(--g2);border-radius:10px;overflow:hidden">
@@ -359,9 +359,9 @@ kbd{display:inline-block;padding:1px 6px;border-radius:4px;font-size:10px;font-w
           <li>Klasse wählen, Modus <span style="background:#e8f4fd;color:#1a6fa3;padding:1px 6px;border-radius:3px;font-weight:600">Jahreszeugnis</span> setzen</li>
           <li>Ganze Seite markieren <kbd>Ctrl+A</kbd> &rarr; kopieren <kbd>Ctrl+C</kbd></li>
           <li>Excel: <strong>Tabelle1</strong> &rarr; Rechtsklick &rarr; <strong>An Zielformatierung anpassen</strong></li>
-          <li>In PUPIL: Toggle auf <span style="background:#e8f4fd;color:#1a6fa3;padding:1px 6px;border-radius:3px;font-weight:600">Zwischenbericht</span> umschalten</li>
-          <li><kbd>Ctrl+A</kbd> &rarr; <kbd>Ctrl+C</kbd></li>
-          <li>Excel: <strong>Tabelle2</strong> anlegen &rarr; Rechtsklick &rarr; <strong>An Zielformatierung anpassen</strong></li>
+          <li style="color:var(--g4)"><em>Optional:</em> In PUPIL: Toggle auf <span style="background:#e8f4fd;color:#1a6fa3;padding:1px 6px;border-radius:3px;font-weight:600">Zwischenbericht</span> umschalten</li>
+          <li style="color:var(--g4)"><em>Optional:</em> <kbd>Ctrl+A</kbd> &rarr; <kbd>Ctrl+C</kbd></li>
+          <li style="color:var(--g4)"><em>Optional:</em> Excel: <strong>Tabelle2</strong> anlegen &rarr; Rechtsklick &rarr; <strong>An Zielformatierung anpassen</strong></li>
           <li>Datei als <strong>.xlsx</strong> speichern und hier hochladen</li>
         </ol>
         <div style="margin-top:10px;padding:8px 12px;background:#fff8e1;border-radius:6px;font-size:11px;color:#7a5c00">
@@ -1302,7 +1302,7 @@ function renderExportStatus() {
       emoji: '&#128202;', label: 'Abschlusszertifikat.csv', color: 'var(--mg)',
       items: [
         {l:'Personendaten', ok:students.length>0, m:students.length>0 ? students.length+' Schüler:innen' : 'Fehlend → Schritt 1'},
-        {l:'Noten S1 (Zwischenbericht)', ok:s1c>0, m:s1c>0 ? s1c+' Einträge' : 'Fehlend → Schritt 2'},
+        {l:'Noten S1 (Zwischenbericht)', ok:s1c>0, m:s1c>0 ? s1c+' Einträge' : 'Nicht geladen — Spalten bleiben leer', opt:true},
         {l:'Noten S2 (Jahreszeugnis)', ok:s2c>0, m:s2c>0 ? s2c+' Einträge' : 'Fehlend → Schritt 2'},
         {l:'Schulort & Schuljahr', ok:!!(document.getElementById('schulort').value && document.getElementById('schuljahr').value), m:'Einstellungen'},
       ]
@@ -1317,7 +1317,7 @@ function renderExportStatus() {
   ];
 
   document.getElementById('export-status').innerHTML = cards.map(function(c) {
-    const ready = c.items.filter(function(i) { return !i.ok; }).length === 0;
+    const ready = c.items.filter(function(i) { return !i.ok && !i.opt; }).length === 0;
     return '<div class="xcard">' +
       '<div class="xcard-head" style="border-left:4px solid ' + c.color + '">' +
         '<h3 style="font-size:14px;font-weight:700">' + c.emoji + ' ' + c.label + '</h3>' +
@@ -1327,9 +1327,11 @@ function renderExportStatus() {
       '</div>' +
       '<div class="xcard-body">' +
         c.items.map(function(it) {
+          const icon = it.ok ? '&#9989;' : (it.opt ? 'ℹ️' : '&#9888;&#65039;');
+          const labelSuffix = it.opt ? ' <span class="na-badge" style="background:#e8f4fd;color:#1a6fa3">optional</span>' : '';
           return '<div class="xrow">' +
-            '<span style="font-size:14px">' + (it.ok ? '&#9989;' : '&#9888;&#65039;') + '</span>' +
-            '<strong>' + esc(it.l) + ':</strong>' +
+            '<span style="font-size:14px">' + icon + '</span>' +
+            '<strong>' + esc(it.l) + '</strong>' + labelSuffix + ':' +
             '<span style="color:var(--g6)">' + esc(it.m) + '</span>' +
           '</div>';
         }).join('') +
