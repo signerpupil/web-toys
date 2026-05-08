@@ -1191,6 +1191,13 @@ function refreshCardProgress(idx, k) {
 // CSV GENERATION
 // ════════════════════════════════════════════
 function today() { return new Date().toISOString().slice(0, 10); }
+function fmtDate(d) {
+  if (!d) return '';
+  if (/^\d{4}-\d{2}-\d{2}$/.test(d)) return d;
+  const m = d.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
+  if (m) return m[3] + '-' + m[2].padStart(2,'0') + '-' + m[1].padStart(2,'0');
+  return d;
+}
 function toCSV(rows) {
   return rows.map(function(r) {
     return r.map(function(v) {
@@ -1215,7 +1222,7 @@ function dlCDW() {
     const k = mk(s.vorname, s.nachname);
     const g = gS2[k] || {};
     return [
-      s.vorname, s.nachname, s.email || '', s.geburtsdatum, s.telefon || '',
+      s.vorname, s.nachname, s.email || '', fmtDate(s.geburtsdatum), s.telefon || '',
       s.geschlecht === 'männlich' ? 'm' : 'w',
       s.klassenstufe || '',
       s.erstsprache === 'Deutsch' ? 'j' : 'n',
@@ -1238,7 +1245,7 @@ function dlMarks() {
     const g1 = gS1[k] || {}, g2 = gS2[k] || {};
     const gv = function(g, c) { const v = g[c]; return (v === null || v === undefined || v === 'ILZ') ? '' : v; };
     return [
-      s.vorname, s.nachname, s.geburtsdatum, sy, sl,
+      s.vorname, s.nachname, fmtDate(s.geburtsdatum), sy, sl,
       gv(g1,'D'), gv(g2,'D'),
       gv(g1,'E'), gv(g2,'E'),
       gv(g1,'F'), gv(g2,'F'),
@@ -1264,9 +1271,9 @@ function dlProj() {
     const p = projData[k] || {};
     const r = p.ratings || {};
     return [
-      s.vorname, s.nachname, s.geburtsdatum, sy, sl,
+      s.vorname, s.nachname, fmtDate(s.geburtsdatum), sy, sl,
       p.workTitle || '', p.workType === 'partner' ? 'partner' : 'individual',
-    ].concat(allK.map(function(ck) { return r[ck] || ''; })).concat([p.comment || '']);
+    ].concat(allK.map(function(ck) { return r[ck] || '0'; })).concat([p.comment || '']);
   });
   dlFile('Projektarbeit-' + today() + '.csv', toCSV([hdr].concat(rows)));
 }
