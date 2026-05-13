@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PUPIL@AG – Funktionsübersicht Kanton Aargau</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --pupil-blue: #1a56db;
+    --pupil-blue-light: #e8effc;
+    --pupil-blue-mid: #3b7ddd;
+    --accent-green: #059669;
+    --accent-green-light: #d1fae5;
+    --accent-amber: #d97706;
+    --accent-amber-light: #fef3c7;
+    --accent-violet: #7c3aed;
+    --accent-violet-light: #ede9fe;
+    --gray-50: #f8fafc;
+    --gray-100: #f1f5f9;
+    --gray-200: #e2e8f0;
+    --gray-300: #cbd5e1;
+    --gray-400: #94a3b8;
+    --gray-500: #64748b;
+    --gray-600: #475569;
+    --gray-700: #334155;
+    --gray-800: #1e293b;
+    --gray-900: #0f172a;
+    --radius: 12px;
+    --radius-sm: 8px;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.04);
+    --shadow-lg: 0 12px 40px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.04);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: var(--gray-800);
+    background: var(--gray-50);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #1a56db 100%);
+    color: white;
+    padding: 4rem 2rem 3.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -40%; right: -20%;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(59,125,221,0.3) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -30%; left: -10%;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(5,150,105,0.2) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+  .hero-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,255,255,0.12);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 100px;
+    padding: 6px 16px;
+    font-size: 0.82rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    margin-bottom: 1.5rem;
+    color: rgba(255,255,255,0.9);
+  }
+  .hero-badge .dot {
+    width: 7px; height: 7px;
+    background: #34d399;
+    border-radius: 50%;
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+  .hero h1 {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 400;
+    line-height: 1.15;
+    margin-bottom: 1rem;
+    letter-spacing: -0.01em;
+  }
+  .hero h1 span { color: #6ee7b7; }
+  .hero p {
+    font-size: 1.05rem;
+    color: rgba(255,255,255,0.75);
+    max-width: 600px;
+    line-height: 1.7;
+  }
+  .hero-meta {
+    display: flex;
+    gap: 2rem;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.55);
+    flex-wrap: wrap;
+  }
+  .hero-meta-item { display: flex; flex-direction: column; gap: 2px; }
+  .hero-meta-item strong {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: white;
+    line-height: 1;
+    font-family: 'DM Serif Display', Georgia, serif;
+  }
+  .hero-meta-item strong span { color: #6ee7b7; }
+
+  /* ── CONTAINER ── */
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+
+  /* ── CONTROLS ── */
+  .controls {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 2rem;
+  }
+
+  /* ── LEGEND ── */
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+    padding: 0.85rem 1.1rem;
+    background: white;
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius);
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.82rem;
+    color: var(--gray-600);
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+    border-radius: var(--radius-sm);
+    padding: 4px 8px;
+    margin: -4px -8px;
+    user-select: none;
+  }
+  .legend-item:hover { background: var(--gray-50); }
+  .legend-item.dimmed { opacity: 0.35; }
+
+  /* ── ROLE TABS ── */
+  .role-tabs {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .role-tab {
+    padding: 7px 16px;
+    border-radius: 100px;
+    font-size: 0.82rem;
+    font-weight: 500;
+    border: 1px solid var(--gray-200);
+    background: white;
+    color: var(--gray-600);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .role-tab:hover { border-color: var(--gray-300); color: var(--gray-800); }
+  .role-tab.active {
+    background: var(--gray-900);
+    color: white;
+    border-color: var(--gray-900);
+  }
+
+  /* ── SECTION ── */
+  .section-header {
+    margin: 3.5rem 0 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section-icon {
+    width: 40px; height: 40px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.15rem;
+    flex-shrink: 0;
+  }
+  .section-header h2 {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: 1.5rem;
+    font-weight: 400;
+    color: var(--gray-900);
+  }
+  .section-desc {
+    color: var(--gray-500);
+    font-size: 0.92rem;
+    margin-bottom: 1.5rem;
+    padding-left: 52px;
+  }
+
+  /* ── FEATURE CARDS ── */
+  .features-grid { display: grid; gap: 14px; }
+  .feature-card[data-roles] { display: none; }
+  .feature-card.visible { display: block; }
+
+  .feature-card {
+    background: white;
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius);
+    padding: 1.25rem 1.5rem;
+    transition: all 0.2s ease;
+  }
+  .feature-card:hover {
+    border-color: var(--gray-300);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-1px);
+  }
+  .card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 0.5rem;
+  }
+  .feature-card h3 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--gray-800);
+    line-height: 1.4;
+  }
+  .feature-card p {
+    font-size: 0.87rem;
+    color: var(--gray-500);
+    line-height: 1.6;
+  }
+  .card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-top: 0.6rem;
+    flex-wrap: wrap;
+  }
+  .card-roles { display: flex; gap: 4px; flex-wrap: wrap; }
+  .role-chip {
+    font-size: 0.72rem;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 100px;
+    background: var(--gray-100);
+    color: var(--gray-500);
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+
+  /* ── STATUS BADGES ── */
+  .status {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 10px;
+    border-radius: 100px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .status--live    { background: var(--accent-green-light);  color: var(--accent-green); }
+  .status--dev     { background: var(--accent-amber-light);  color: var(--accent-amber); }
+  .status--planned { background: var(--accent-violet-light); color: var(--accent-violet); }
+  .status--later   { background: var(--gray-100);            color: var(--gray-500); }
+  .status-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+  /* ── RELEASE LINK ── */
+  .release-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.8rem;
+    color: var(--pupil-blue);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.15s;
+  }
+  .release-link:hover { color: var(--pupil-blue-mid); text-decoration: underline; }
+  .release-link svg { width: 13px; height: 13px; flex-shrink: 0; }
+
+  /* ── INFO BOX ── */
+  .info-box {
+    background: var(--pupil-blue-light);
+    border: 1px solid #bfdbfe;
+    border-radius: var(--radius);
+    padding: 1rem 1.25rem;
+    font-size: 0.87rem;
+    color: var(--gray-700);
+    margin-top: 1.5rem;
+    line-height: 1.65;
+  }
+  .info-box a { color: var(--pupil-blue); font-weight: 600; text-decoration: none; }
+  .info-box a:hover { text-decoration: underline; }
+
+  /* ── FOOTER ── */
+  footer {
+    margin-top: 4rem;
+    padding: 2rem;
+    text-align: center;
+    font-size: 0.82rem;
+    color: var(--gray-400);
+    border-top: 1px solid var(--gray-200);
+  }
+  footer a { color: var(--pupil-blue); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+
+  /* ── EMPTY STATE ── */
+  .empty-state {
+    display: none;
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--gray-400);
+    font-size: 0.9rem;
+  }
+  .empty-state.visible { display: block; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 640px) {
+    .hero { padding: 3rem 1.25rem 2.5rem; }
+    .container { padding: 0 1.25rem; }
+    .hero-meta { flex-direction: column; gap: 0.75rem; }
+    .section-desc { padding-left: 0; }
+    .card-top { flex-direction: column; }
+    .controls { gap: 0.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-inner">
+    <div class="hero-badge"><span class="dot"></span> Stand Mai 2026</div>
+    <h1>PUPIL<span>@AG</span> — Kanton Aargau</h1>
+    <p>Übersicht aller Funktionen, die für den Kanton Aargau angepasst oder entwickelt wurden.</p>
+  </div>
+</header>
+
+<main class="container">
+
+  <!-- CONTROLS -->
+  <div class="controls">
+    <div class="legend" id="legend">
+      <div class="legend-item" data-status="live">
+        <span class="status status--live"><span class="status-dot"></span>Live</span> Verfügbar
+      </div>
+      <div class="legend-item" data-status="dev">
+        <span class="status status--dev"><span class="status-dot"></span>In Entwicklung</span> Wird aktuell umgesetzt <span style="color:var(--gray-400);font-size:0.8em;">(Live in ca. 2–4 Wochen)</span>
+      </div>
+      <div class="legend-item" data-status="planned">
+        <span class="status status--planned"><span class="status-dot"></span>Geplant</span> Im Backlog <span style="color:var(--gray-400);font-size:0.8em;">(Live in ca. 4–8 Wochen)</span>
+      </div>
+      <div class="legend-item" data-status="later">
+        <span class="status status--later"><span class="status-dot"></span>Roadmap</span> Für später vorgesehen
+      </div>
+    </div>
+    <p style="font-size:0.78rem;color:var(--gray-400);margin-top:0.5rem;font-style:italic;">Alle Zeitangaben sind ohne Gewähr.</p>
+    <div class="role-tabs" id="roleTabs">
+      <button class="role-tab active" data-filter="all">Alle Funktionen</button>
+      <button class="role-tab" data-filter="lp">Lehrpersonen</button>
+      <button class="role-tab" data-filter="sv">Schulverwaltung</button>
+      <button class="role-tab" data-filter="sl">Schulleitung</button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- 1. NOTEN UND ZEUGNISSE                         -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <div class="section-wrap" id="section-noten">
+    <div class="section-header">
+      <div class="section-icon" style="background:#dbeafe;color:#1d4ed8;">📝</div>
+      <h2>Noten und Zeugnisse</h2>
+    </div>
+    <p class="section-desc">Das Aargauer Jahreszeugnismodell mit Zwischenbericht, Durchschnittsberechnung und Notenvorschlag.</p>
+    <div class="features-grid">
+
+      <!-- Live (ABC) -->
+      <div class="feature-card visible" data-roles="lp,sl" data-status="live">
+        <div class="card-top">
+          <h3>Aargau-spezifische Notenskala</h3>
+          <span class="status status--live"><span class="status-dot"></span>Live</span>
+        </div>
+        <p>Vollständige Notenskala 1–6 in Halbschritten, inkl. Sonderwerte «disp.» (dispensiert), «aLz» (Lernzielanpassung) und «leer». Kompetenzbereiche mit Prädikaten (sehr gut / gut / genügend / ungenügend).</p>
+        <div class="card-footer" style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:0.6rem;flex-wrap:wrap;background:transparent;padding:0;border:none;"><div class="card-roles" style="display:flex;gap:4px;flex-wrap:wrap;align-items:center;"><span class="role-chip" style="display:inline-block;font-size:0.72rem;font-weight:500;padding:2px 8px;border-radius:100px;background:#f1f5f9;color:#64748b;letter-spacing:0.02em;text-transform:uppercase;">LP</span><span class="role-chip" style="display:inline-block;font-size:0.72rem;font-weight:500;padding:2px 8px;border-radius:100px;background:#f1f5f9;color:#64748b;letter-spacing:0.02em;text-transform:uppercase;">SL</span></div></div>
+      </div>
+
+      <div class="feature-card visible" data-roles="lp,sl" data-status="live">
+        <div class="card-top">
+          <h3>Aargau-spezifische Notenskala für nicht promotionsrelevante Fächer</h3>
+          <span class="status status--live"><span class="status-dot"></span>Live</span>
+        </div>
+        <p>Optionen «besucht» und «Beilage» für nicht promotionsrelevante Fächer. Konfigurierbar pro Fach und Schulstufe.</p>
+        <div class="card-footer" style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:0.6rem;flex-wrap:wrap;background:transparent;padding:0;border:none;"><div class="card-roles" style="display:flex;gap:4px;flex-wrap:wrap;align-items:center;"><span class="role-chip" style="display:inline-block;font-size:0.72rem;font-weight:500;padding:2px 8px;border-radius:100px;background:#f1f5f9;color:#64748b;letter-spacing:0.02em;text-transform:uppercase;">LP</span><span class="role-chip" style="display:inline-block;font-size:0.72rem;font-weight:500;padding:2px 8px;border-radius:100px;background:#f1f5f9;color:#64748b;letter-spacing:0.02em;text-transform:uppercase;">SL</span></div></div>
+      </div>
+
+      <div class="feature-card visible" data-roles="lp,sl" data-status="live">
+        <div class="card-top">
+          <h3>Beurteilungsansicht &amp; Kompetenzbereiche</h3>
+          <span class="status status--live"><span class="status-dot"></span>Live</span>
+        </div>
+        <p>Bei Klassen mit jahresbasiertem Zeugnis zeigt die Beurteilungsansicht im 2. Semester auch die Beurteilungen aus dem 1. Semester. Neuer Schalter zum Ein-/Ausblenden von Kompetenzbereichen in der Zeugnis-Klassenansicht.</p>
+        <div class="card-footer" style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:0.6rem;flex-wrap:wrap;background:transparent;padding:0;border:none;">
+          <div class="card-roles" style="display:flex;gap:4px;flex-wrap:wrap;align-items:center;"><span class="role-chip" style="display:inline-block;font-size:0.72rem;font-weight:500;padding:2px 8px;border-radius:100px;background:#f1f5f9;color:#64748b;letter-spacing:0.02em;text-transform:uppercase;">LP</span><span class="role-chip" style="display:inline-block;font-size:0.72rem;font-weight:500;padding:2px 8px;border-radius:100px;background:#f1f5f9;color:#64748b;letter-spacing:0.02em;text-transform:uppercase;">SL</span></div>
+          <a class="release-link" href="https://pupilag.atlassian.net/wiki/spaces/RELEASENOTES/pages/53379242/Schulalltag+LPs+-+Noten+Zeugnisse#16.02.2026---22.02.2026" target="_blank" rel="noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-4.5-6H18m0 0v4.5m0-4.5L10.5 13.5"/></svg>
+            Release Notes – Noten &amp; Zeugnisse (16.02.2026)
+          </a>
+        </div>
+      </div>
+
+      <div class="feature-card visible" data-roles="lp,sl" data-status="live">
+        <div class="card-top">
+          <h3>Jahreszeugnismodell &amp; Zwischenbericht</h3>
+          <span class="status status--live"><span class="status-dot"></span>Live</span>
+        </div>
+        <p>Umstellung auf jahresbasiertes Zeugnismodell (statt Semesterzeugnis). Automatischer Notenvorschlag pro Fach basierend auf den Beurteilungen des 1. Semesters. Lehrpersonen sehen den Vorschlag in den Beurteilungsübersichten und können ihn übernehmen oder anpassen.</p>
+        <div class="card-footer" style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:0.6rem;flex-wrap:wrap;background:transparent;padding:0;border:none;">
+          <div class="card-roles" style="display:flex;gap:4px;flex-wrap:wrap;align-items:center;"><span class="role-chip" style="display:inline-block;font-size:0.72rem;font-weight:500;padding:2px 8px;border-radius:100px;background:#f1f5f9;color:#64748b;letter-spacing:0.02em;text-transform:uppercase;">LP</span><span class="role-chip" style="display:inline-block;font-size:0.72rem;font-weight:500;padding:2px 8px;border-radius:100px;background:#f1f5f9;color:#64748b;letter-spacing:0.02em;text-transform:uppercase;">SL</span></div>
+        </div>
+      </div>
+
+      <div class="feature-card visible" data-roles="sv,sl" data-status="live">
+        <div class="card-top">
+          <h3>Semester-Sperre &amp; erweiterte Konfiguration</h3>
+          <span class="status status--live"><span class="status-dot"></span>Live</span>
+        </div>
+        <p>Konfiguration der Semester-Sperre für Zwischenberichte und Jahreszeugnisse. Erweiterte Notenoptionen und zusätzliche Zeugnisdatenfelder gemäss kantonalen Anforderungen.</p>
+        <div class="card-footer" style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:0.6rem;flex-wrap:wrap;background:transparent;padding:0;border:none;"><div class="card-roles" style="display:flex;gap:4px;flex-wrap:wrap;align-items:center;"><span class="role-chip" style="display:inline-block;font-size:0.72rem;font-weight:500;padding:2px 8px;border-radius:100px;background:#f1f5f9;color:#64748b;letter-spacing:0.02em;text-transform:uppercase;">SV</span><span class="role-chip" style="display:inline-block;font-size:0.72rem;font-weight:500;padding:2px 8px;border-radius:100px;background:#f1f5f9;color:#64748b;letter-spacing:0.02em;text-transform:uppercase;">SL</span></div></div>
+      </div>
+
+      <div class="feature-card visible" data-roles="lp,sl" data-status="live">
+        <div class="card-top">
+          <h3>Zeugnis-Druckmodal</h3>
+          <span class="status status--live"><span class="status-dot"></span>Live</span>
+        </div>
+        <p>AG-spezifisches Druckmodal mit den passenden Optionen für Zwischenbericht und Jahreszeugnis.</p>
+        <div class="card-footer" style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:0.6rem;flex-wrap:wrap;background:transparent;padding:0;border:none;"><div class="card-roles" style="display:flex;gap:4px;flex-wrap:wrap;align-items:center;"><span class="role-chip" style="display:inline-block;font-size:0.72rem;font-weight:500;padding:2px 8px;border-radius:100px;background:#f1f5f9;color:#64748b;letter-spacing:0.02em;text-transform:uppercase;">LP</span><span class="role-chip" style="display:inline-block;font-size:0.72rem;font-weight:500;padding:2px 8px;border-radius:100px;background:#f1f5f9;color:#64748b;letter-spacing:0.02em;text-transform:uppercase;">SL</span></div></div>
+      </div>
+
+      <!-- In Entwicklung (ABC) -->
+      <div class="feature-card visible" data-roles="lp,sl" data-status="dev">
+        <div class="card-top">
+          <h3>Kompetenzbereichs-Notenvorschlag für Zwischenbericht &amp; Jahreszeugnis</h3>
+          <span class="status status--dev"><span class="status-dot"></span>In Entwicklung</span>
+        </div>
+        <p>Automatischer Notenvorschlag für Kompetenzbereiche basierend auf den Beurteilungen des 1. Semesters — analog zum bestehenden Fachnotenvorschlag. Berücksichtigt manuelle Noten und kantonale Semesterlogik.</p>
+        <div class="card-footer" style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:0.6rem;flex-wrap:wrap;background:transparent;padding:0;border:none;"><div class="card-roles" style="display:flex;gap:4px;flex-wrap:wrap;align-items:center;"><span class="role-chip" style="display:inline-block;font-size:0.72rem;font-weight:500;padding:2px 8px;border-radius:100px;background:#f1f5f9;color:#64748b;letter-spacing:0.02em;text-transform:uppercase;">LP</span><span class="role-chip" style="display:inline-block;font-size:0.72rem;font-weight:500;padding:2px 8px;border-radius:100px;background:#f1f5f9;color:#64748b;letter-spacing:0.02em;text-transform:uppercase;">SL</span></div></div>
+      </div>
+
+      <div class="feature-card visible" data-roles="lp,sl" data-status="dev">
+        <div class="card-top">
+          <h3>Promotionsrelevante Werte in weiteren Zeugnisdaten</h3>
+          <span class="status status--dev"><span class="status-dot"></span>In Entwicklung</span>
+        </div>
+        <p>In den weiteren Zeugnisdaten werden den Lehrpersonen die Promotionsdurchschnitte angezeigt, sodass sie ihren Promotionsentscheid dementsprechend fällen können.</p>
+        <div class="card-footer" style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:0.6rem;flex-wrap:wrap;background:transparent;padding:0;border:none;"><div class="card-roles" style="display:flex;gap:4px;flex-wrap:wrap;align-items:center;"><span class="role-chip" style="display:inline-block;font-size:0.72rem;font-weight:500;padding:2px 8px;border-radius:100px;background:#f1f5f9;color:#64748b;letter-spacing:0.02em;text-transform:uppercase;">LP</span><span class="role-chip" style="display:inline-block;font-size:0.72rem;font-weight:500;padding:2px 8px;border-radius:100px;background:#f1f5f9;color:#64748b;letter-spacing:0.02em;text-transform:uppercase;">SL</span></div></div>
+      </div>
+
+      <div class="feature-card visible" data-roles="lp,sl" data-status="dev">
+        <div class="card-top">
+          <h3>Sammelfächer auf Zeugnis-Druck</h3>
+          <span class="status status--dev"><span class="status-dot"></span>In Entwicklung</span>
+        </div>
+        <p>Korrekte Darstellung von Sammelfächern (kombinierte Fächer) auf dem gedruckten Jahreszeugnis und Zwischenbericht gemäss kantonalen Vorgaben.</p>
+        <div class="card-footer" style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:0.6rem;flex-wrap:wrap;background:transparent;padding:0;border:none;"><div class="card-roles" style="display:flex;gap:4px;flex-wrap:wrap;align-items:center;"><span class="role-chip" style="display:inline-block;font-size:0.72rem;font-weight:500;padding:2px 8px;border-radius:100px;background:#f1f5f9;color:#64748b;letter-spacing:0.02em;text-transform:uppercase;">LP</span><span class="role-chip" style="display:inline-block;font-size:0.72rem;font-weight:500;padding:2px 8px;border-radius:100px;background:#f1f5f9;color:#64748b;letter-spacing:0.02em;text-transform:uppercase;">SL</span></div></div>
+      </div>
+
+      <div class="feature-card visible" data-roles="lp,sl" data-status="dev">
+        <div class="card-top">
+          <h3>Zeugnis-Druckausgabe</h3>
+          <span class="status status--dev"><span class="status-dot"></span>In Entwicklung</span>
+        </div>
+        <p>PDF-Druckausgabe des kantonalen Jahreszeugnisses für alle Klassen und Jahrgangsstufen gemäss dem Aargauer Beurteilungsreglement.</p>
+        <div class="card-footer" style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:0.6rem;flex-wrap:wrap;background:transparent;padding:0;border:none;"><div class="card-roles" style="display:flex;gap:4px;flex-wrap:wrap;align-items:center;"><span class="role-chip" style="display:inline-block;font-size:0.72rem;font-weight:500;padding:2px 8px;border-radius:100px;background:#f1f5f9;color:#64748b;letter-spacing:0.02em;text-transform:uppercase;">LP</span><span class="role-chip" style="display:inline-block;font-size:0.72rem;font-weight:500;padding:2px 8px;border-radius:100px;background:#f1f5f9;color:#64748b;letter-spacing:0.02em;text-transform:uppercase;">SL</span></div></div>
+      </div>
+
+      <!-- Geplant (ABC) -->
+      <div class="feature-card visible" data-roles="lp,sl" data-status="planned">
+        <div class="card-top">
+          <h3>SeKo-Druckauswahl im Zeugnis</h3>
+          <span class="status status--planned"><span class="status-dot"></span>Geplant</span>
+        </div>
+        <p>Auswahl, welche Einschätzung aus dem Überfachliche Beurteilungen-Modul (Selbst- und Sozialkompetenzen) auf dem Jahreszeugnis und Zwischenbericht gedruckt werden sollen.</p>
+        <div class="card-footer" style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:0.6rem;flex-wrap:wrap;background:transparent;padding:0;border:none;"><div class="card-roles" style="display:flex;gap:4px;flex-wrap:wrap;align-items:center;"><span class="role-chip" style="display:inline-block;font-size:0.72rem;font-weight:500;padding:2px 8px;border-radius:100px;background:#f1f5f9;color:#64748b;letter-spacing:0.02em;text-transform:uppercase;">LP</span><span class="role-chip" style="display:inline-block;font-size:0.72rem;font-weight:500;padding:2px 8px;border-radius:100px;background:#f1f5f9;color:#64748b;letter-spacing:0.02em;text-transform:uppercase;">SL</span></div></div>
+      </div>
+
+      <div class="feature-card visible" data-roles="lp,sl" data-status="planned">
+        <div class="card-top">
+          <h3>Weitere Informationen auf Zeugnis</h3>
+          <span class="status status--planned"><span class="status-dot"></span>Geplant</span>
+        </div>
+        <p>Verwaltung von «Instrumentalunterricht», «Freifach lokal» und «Weiteres Angebot der Schule» in der Ansicht «Weitere Zeugnisdaten».</p>
+        <div class="card-footer" style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:0.6rem;flex-wrap:wrap;background:transparent;padding:0;border:none;"><div class="card-roles" style="display:flex;gap:4px;flex-wrap:wrap;align-items:center;"><span class="role-chip" style="display:inline-block;font-size:0.72rem;font-weight:500;padding:2px 8px;border-radius:100px;background:#f1f5f9;color:#64748b;letter-spacing:0.02em;text-transform:uppercase;">LP</span><span class="role-chip" style="display:inline-block;font-size:0.72rem;font-weight:500;padding:2px 8px;border-radius:100px;background:#f1f5f9;color:#64748b;letter-spacing:0.02em;text-transform:uppercase;">SL</span></div></div>
+      </div>
+
+      <!-- Roadmap -->
+      <div class="feature-card visible" data-roles="lp,sl" data-status="later">
+        <div class="card-top">
+          <h3>Projektarbeit-Bewertungsformular</h3>
+          <span class="status status--later"><span class="status-dot"></span>Roadmap</span>
+        </div>
+        <p>Formular zur Bewertung von Projektarbeiten, angepasst an die Vorgaben des Kantons Aargau.</p>
+        <div class="card-footer" style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:0.6rem;flex-wrap:wrap;background:transparent;padding:0;border:none;"><div class="card-roles" style="display:flex;gap:4px;flex-wrap:wrap;align-items:center;"><span class="role-chip" style="display:inline-block;font-size:0.72rem;font-weight:500;padding:2px 8px;border-radius:100px;background:#f1f5f9;color:#64748b;letter-spacing:0.02em;text-transform:uppercase;">LP</span><span class="role-chip" style="display:inline-block;font-size:0.72rem;font-weight:500;padding:2px 8px;border-radius:100px;background:#f1f5f9;color:#64748b;letter-spacing:0.02em;text-transform:uppercase;">SL</span></div></div>
+      </div>
+
+      <div class="feature-card visible" data-roles="lp,sl" data-status="later">
+        <div class="card-top">
+          <h3>Promotionsansicht für Klassenlehrpersonen</h3>
+          <span class="status status--later"><span class="status-dot"></span>Roadmap</span>
+        </div>
+        <p>Klassenübersicht mit automatisch berechnetem Promotionsentscheid gemäss kantonaler Verordnung. Regelwerk-Konfiguration pro Schultyp, dynamische Fachkategorie-Zuordnung und provisorischer Promotionstatus.</p>
+        <div class="card-footer" style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:0.6rem;flex-wrap:wrap;background:transparent;padding:0;border:none;"><div class="card-roles" style="display:flex;gap:4px;flex-wrap:wrap;align-items:center;"><span class="role-chip" style="display:inline-block;font-size:0.72rem;font-weight:500;padding:2px 8px;border-radius:100px;background:#f1f5f9;color:#64748b;letter-spacing:0.02em;text-transform:uppercase;">LP</span><span class="role-chip" style="display:inline-block;font-size:0.72rem;font-weight:500;padding:2px 8px;border-radius:100px;background:#f1f5f9;color:#64748b;letter-spacing:0.02em;text-transform:uppercase;">SL</span></div></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- 2. EINSCHÄTZUNGSBOGEN / SEKO                   -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <div class="section-wrap" id="section-seko">
+    <div class="section-header">
+      <div class="section-icon" style="background:#d1fae5;color:#059669;">📊</div>
+      <h2>Einschätzungsbogen / Selbst- und Sozialkompetenzen</h2>
+    </div>
+    <p class="section-desc">Das ALSV-Modul vollständig adaptiert für den Kanton Aargau — Einschätzungsbögen, Beurteilungsplanungen und Journal für alle Schulstufen mit kantonalen Aspekten, Indikatoren und Skala.</p>
+    <div class="features-grid">
+
+      <!-- Live (ABC) -->
+      <div class="feature-card visible" data-roles="lp,sl" data-status="live">
+        <div class="card-top">
+          <h3>Einschätzungsbogen Kindergarten</h3>
+          <span class="status status--live"><span class="status-dot"></span>Live</span>
+        </div>
+        <p>KiGa-spezifischer Einschätzungsbogen mit Aspekten und Beobachtungspunkten vorübergehend als Word-Druckvorlage.</p>
+        <div class="card-footer" style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:0.6rem;flex-wrap:wrap;background:transparent;padding:0;border:none;">
+          <div class="card-roles" style="display:flex;gap:4px;flex-wrap:wrap;align-items:center;"><span class="role-chip" style="display:inline-block;font-size:0.72rem;font-weight:500;padding:2px 8px;border-radius:100px;background:#f1f5f9;color:#64748b;letter-spacing:0.02em;text-transform:uppercase;">LP</span><span class="role-chip" style="display:inline-block;font-size:0.72rem;font-weight:500;padding:2px 8px;border-radius:100px;background:#f1f5f9;color:#64748b;letter-spacing:0.02em;text-transform:uppercase;">SL</span></div>
+          <a class="release-link" href="https://pupilag.atlassian.net/wiki/spaces/RELEASENOTES/pages/53379242/Schulalltag+LPs+-+Noten+Zeugnisse#02.02.2026---08.02.2026" target="_blank" rel="noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-4.5-6H18m0 0v4.5m0-4.5L10.5 13.5"/></svg>
+            Release Notes – Noten &amp; Zeugnisse (02.02.2026)
+          </a>
+        </div>
+      </div>
+
+      <div class="feature-card visible" data-roles="lp,sl" data-status="live">
+        <div class="card-top">
+          <h3>Einschätzungsplanungen</h3>
+          <span class="status status--live"><span class="status-dot"></span>Live</span>
+        </div>
+        <p>Das ALSV-Modul wurde vollständig für den Kanton Aargau adaptiert: alle kantonalen Aspekte und Indikatoren sind eingepflegt, die Skala entspricht den kantonalen Vorgaben (4-stufig). Einschätzungsplanungen werden automatisch für Primar- und Sekundarschulstufe erstellt.</p>
+        <div class="card-footer" style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:0.6rem;flex-wrap:wrap;background:transparent;padding:0;border:none;">
+          <div class="card-roles" style="display:flex;gap:4px;flex-wrap:wrap;align-items:center;"><span class="role-chip" style="display:inline-block;font-size:0.72rem;font-weight:500;padding:2px 8px;border-radius:100px;background:#f1f5f9;color:#64748b;letter-spacing:0.02em;text-transform:uppercase;">LP</span><span class="role-chip" style="display:inline-block;font-size:0.72rem;font-weight:500;padding:2px 8px;border-radius:100px;background:#f1f5f9;color:#64748b;letter-spacing:0.02em;text-transform:uppercase;">SL</span></div>
+          <a class="release-link" href="https://pupilag.atlassian.net/wiki/spaces/RELEASENOTES/pages/53543000/Schulalltag+LPs#02.03.2026---08.03.2026" target="_blank" rel="noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-4.5-6H18m0 0v4.5m0-4.5L10.5 13.5"/></svg>
+            Release Notes – Schulalltag / LPs (02.03.2026)
+          </a>
+        </div>
+      </div>
+
+      <div class="feature-card visible" data-roles="lp,sl" data-status="live">
+        <div class="card-top">
+          <h3>Journal (SeKo-kompatibel)</h3>
+          <span class="status status--live"><span class="status-dot"></span>Live</span>
+        </div>
+        <p>Journal-Einträge mit angepasster Skala für den Kanton Aargau zur Nutzung im Kontext der Selbst- und Sozialkompetenzen (SeKo).</p>
+        <div class="card-footer" style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:0.6rem;flex-wrap:wrap;background:transparent;padding:0;border:none;"><div class="card-roles" style="display:flex;gap:4px;flex-wrap:wrap;align-items:center;"><span class="role-chip" style="display:inline-block;font-size:0.72rem;font-weight:500;padding:2px 8px;border-radius:100px;background:#f1f5f9;color:#64748b;letter-spacing:0.02em;text-transform:uppercase;">LP</span><span class="role-chip" style="display:inline-block;font-size:0.72rem;font-weight:500;padding:2px 8px;border-radius:100px;background:#f1f5f9;color:#64748b;letter-spacing:0.02em;text-transform:uppercase;">SL</span></div></div>
+      </div>
+
+      <!-- In Entwicklung -->
+      <div class="feature-card visible" data-roles="lp,sl" data-status="dev">
+        <div class="card-top">
+          <h3>Druckausgabe Einschätzungsbogen Kindergarten</h3>
+          <span class="status status--dev"><span class="status-dot"></span>In Entwicklung</span>
+        </div>
+        <p>Direkte PDF-Druckausgabe des KiGa-Einschätzungsbogens aus dem Modul — löst die vorübergehende Word-Druckvorlage ab.</p>
+        <div class="card-footer" style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:0.6rem;flex-wrap:wrap;background:transparent;padding:0;border:none;"><div class="card-roles" style="display:flex;gap:4px;flex-wrap:wrap;align-items:center;"><span class="role-chip" style="display:inline-block;font-size:0.72rem;font-weight:500;padding:2px 8px;border-radius:100px;background:#f1f5f9;color:#64748b;letter-spacing:0.02em;text-transform:uppercase;">LP</span><span class="role-chip" style="display:inline-block;font-size:0.72rem;font-weight:500;padding:2px 8px;border-radius:100px;background:#f1f5f9;color:#64748b;letter-spacing:0.02em;text-transform:uppercase;">SL</span></div></div>
+      </div>
+
+      <div class="feature-card visible" data-roles="lp,sl" data-status="dev">
+        <div class="card-top">
+          <h3>Fachlehrpersonen-Einschätzung in ALSV-Planungen</h3>
+          <span class="status status--dev"><span class="status-dot"></span>In Entwicklung</span>
+        </div>
+        <p>Fachlehrpersonen können eigene Einschätzungen direkt in die ALSV-Planungen eintragen — bisher nur für Klassenlehrpersonen möglich.</p>
+        <div class="card-footer" style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:0.6rem;flex-wrap:wrap;background:transparent;padding:0;border:none;"><div class="card-roles" style="display:flex;gap:4px;flex-wrap:wrap;align-items:center;"><span class="role-chip" style="display:inline-block;font-size:0.72rem;font-weight:500;padding:2px 8px;border-radius:100px;background:#f1f5f9;color:#64748b;letter-spacing:0.02em;text-transform:uppercase;">LP</span><span class="role-chip" style="display:inline-block;font-size:0.72rem;font-weight:500;padding:2px 8px;border-radius:100px;background:#f1f5f9;color:#64748b;letter-spacing:0.02em;text-transform:uppercase;">SL</span></div></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- 3. FÖRDERPLANUNG                               -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <div class="section-wrap" id="section-foerder">
+    <div class="section-header">
+      <div class="section-icon" style="background:#fce7f3;color:#db2777;">📋</div>
+      <h2>Förderplanung</h2>
+    </div>
+    <p class="section-desc">Förderplaner mit kantonsspezifischen Einstellungen, Diagnostik-Bereichen und LehrerOffice-Importen für den Kanton Aargau.</p>
+    <div class="features-grid">
+
+      <!-- In Entwicklung (ABC) -->
+      <div class="feature-card visible" data-roles="lp,sl" data-status="dev">
+        <div class="card-top">
+          <h3>Bericht Angepasste Lernziele (PDF)</h3>
+          <span class="status status--dev"><span class="status-dot"></span>In Entwicklung</span>
+        </div>
+        <p>PDF-Druckausgabe des Berichts «Angepasste Lernziele» für Lernende mit angepassten Lernzielen (aLz) in der Regelklasse.</p>
+        <div class="card-footer" style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:0.6rem;flex-wrap:wrap;background:transparent;padding:0;border:none;"><div class="card-roles" style="display:flex;gap:4px;flex-wrap:wrap;align-items:center;"><span class="role-chip" style="display:inline-block;font-size:0.72rem;font-weight:500;padding:2px 8px;border-radius:100px;background:#f1f5f9;color:#64748b;letter-spacing:0.02em;text-transform:uppercase;">LP</span><span class="role-chip" style="display:inline-block;font-size:0.72rem;font-weight:500;padding:2px 8px;border-radius:100px;background:#f1f5f9;color:#64748b;letter-spacing:0.02em;text-transform:uppercase;">SL</span></div></div>
+      </div>
+
+      <div class="feature-card visible" data-roles="lp,sl" data-status="dev">
+        <div class="card-top">
+          <h3>Diagnostik: Umbenennung &amp; Umstrukturierung</h3>
+          <span class="status status--dev"><span class="status-dot"></span>In Entwicklung</span>
+        </div>
+        <p>Umbenennung des Bereichs «Informationen» zu «Diagnostik» sowie Verknüpfung von Förderzielen mit Diagnostikbereichen gemäss aktueller Praxis.</p>
+        <div class="card-footer" style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:0.6rem;flex-wrap:wrap;background:transparent;padding:0;border:none;"><div class="card-roles" style="display:flex;gap:4px;flex-wrap:wrap;align-items:center;"><span class="role-chip" style="display:inline-block;font-size:0.72rem;font-weight:500;padding:2px 8px;border-radius:100px;background:#f1f5f9;color:#64748b;letter-spacing:0.02em;text-transform:uppercase;">LP</span><span class="role-chip" style="display:inline-block;font-size:0.72rem;font-weight:500;padding:2px 8px;border-radius:100px;background:#f1f5f9;color:#64748b;letter-spacing:0.02em;text-transform:uppercase;">SL</span></div></div>
+      </div>
+
+      <div class="feature-card visible" data-roles="lp,sv" data-status="dev">
+        <div class="card-top">
+          <h3>LehrerOffice Förderplanung-Import</h3>
+          <span class="status status--dev"><span class="status-dot"></span>In Entwicklung</span>
+        </div>
+        <p>Import von bestehenden Förderplanungen aus LehrerOffice nach PUPIL@AG, damit bisherige Dokumentationen nahtlos weitergeführt werden können.</p>
+        <div class="card-footer" style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:0.6rem;flex-wrap:wrap;background:transparent;padding:0;border:none;"><div class="card-roles" style="display:flex;gap:4px;flex-wrap:wrap;align-items:center;"><span class="role-chip" style="display:inline-block;font-size:0.72rem;font-weight:500;padding:2px 8px;border-radius:100px;background:#f1f5f9;color:#64748b;letter-spacing:0.02em;text-transform:uppercase;">LP</span><span class="role-chip" style="display:inline-block;font-size:0.72rem;font-weight:500;padding:2px 8px;border-radius:100px;background:#f1f5f9;color:#64748b;letter-spacing:0.02em;text-transform:uppercase;">SV</span></div></div>
+      </div>
+
+      <div class="feature-card visible" data-roles="lp,sv" data-status="dev">
+        <div class="card-top">
+          <h3>LehrerOffice Lernbericht-Import</h3>
+          <span class="status status--dev"><span class="status-dot"></span>In Entwicklung</span>
+        </div>
+        <p>Import bestehender Lernberichte aus LehrerOffice nach PUPIL@AG als Self-Service-Funktion für Schulverwaltungen.</p>
+        <div class="card-footer" style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:0.6rem;flex-wrap:wrap;background:transparent;padding:0;border:none;"><div class="card-roles" style="display:flex;gap:4px;flex-wrap:wrap;align-items:center;"><span class="role-chip" style="display:inline-block;font-size:0.72rem;font-weight:500;padding:2px 8px;border-radius:100px;background:#f1f5f9;color:#64748b;letter-spacing:0.02em;text-transform:uppercase;">LP</span><span class="role-chip" style="display:inline-block;font-size:0.72rem;font-weight:500;padding:2px 8px;border-radius:100px;background:#f1f5f9;color:#64748b;letter-spacing:0.02em;text-transform:uppercase;">SV</span></div></div>
+      </div>
+
+      <!-- Geplant (ABC) -->
+      <div class="feature-card visible" data-roles="lp,sv" data-status="planned">
+        <div class="card-top">
+          <h3>LehrerOffice Diagnostik-Import</h3>
+          <span class="status status--planned"><span class="status-dot"></span>Geplant</span>
+        </div>
+        <p>Import bestehender Diagnostik-Daten aus LehrerOffice nach PUPIL@AG.</p>
+        <div class="card-footer" style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:0.6rem;flex-wrap:wrap;background:transparent;padding:0;border:none;"><div class="card-roles" style="display:flex;gap:4px;flex-wrap:wrap;align-items:center;"><span class="role-chip" style="display:inline-block;font-size:0.72rem;font-weight:500;padding:2px 8px;border-radius:100px;background:#f1f5f9;color:#64748b;letter-spacing:0.02em;text-transform:uppercase;">LP</span><span class="role-chip" style="display:inline-block;font-size:0.72rem;font-weight:500;padding:2px 8px;border-radius:100px;background:#f1f5f9;color:#64748b;letter-spacing:0.02em;text-transform:uppercase;">SV</span></div></div>
+      </div>
+
+      <!-- Roadmap -->
+      <div class="feature-card visible" data-roles="lp,sl" data-status="later">
+        <div class="card-top">
+          <h3>Bericht Angepasste Lernziele HPS (PDF)</h3>
+          <span class="status status--later"><span class="status-dot"></span>Roadmap</span>
+        </div>
+        <p>PDF-Druckausgabe des Berichts «Angepasste Lernziele» für Lernende mit angepassten Lernzielen (aLz) in der HPS.</p>
+        <div class="card-footer" style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:0.6rem;flex-wrap:wrap;background:transparent;padding:0;border:none;"><div class="card-roles" style="display:flex;gap:4px;flex-wrap:wrap;align-items:center;"><span class="role-chip" style="display:inline-block;font-size:0.72rem;font-weight:500;padding:2px 8px;border-radius:100px;background:#f1f5f9;color:#64748b;letter-spacing:0.02em;text-transform:uppercase;">LP</span><span class="role-chip" style="display:inline-block;font-size:0.72rem;font-weight:500;padding:2px 8px;border-radius:100px;background:#f1f5f9;color:#64748b;letter-spacing:0.02em;text-transform:uppercase;">SL</span></div></div>
+      </div>
+
+      <div class="feature-card visible" data-roles="lp,sv" data-status="later">
+        <div class="card-top">
+          <h3>LehrerOffice Beurteilungsbogen-Import</h3>
+          <span class="status status--later"><span class="status-dot"></span>Roadmap</span>
+        </div>
+        <p>Import von Beurteilungsbögen (Ausgangslage) aus LehrerOffice nach PUPIL@AG, damit bisherige Einschätzungen nahtlos weitergeführt werden können.</p>
+        <div class="card-footer" style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:0.6rem;flex-wrap:wrap;background:transparent;padding:0;border:none;"><div class="card-roles" style="display:flex;gap:4px;flex-wrap:wrap;align-items:center;"><span class="role-chip" style="display:inline-block;font-size:0.72rem;font-weight:500;padding:2px 8px;border-radius:100px;background:#f1f5f9;color:#64748b;letter-spacing:0.02em;text-transform:uppercase;">LP</span><span class="role-chip" style="display:inline-block;font-size:0.72rem;font-weight:500;padding:2px 8px;border-radius:100px;background:#f1f5f9;color:#64748b;letter-spacing:0.02em;text-transform:uppercase;">SV</span></div></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- 4. SCHULSTRUKTUR & STAMMDATEN                  -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <div class="section-wrap" id="section-schulstruktur">
+    <div class="section-header">
+      <div class="section-icon" style="background:#fef3c7;color:#d97706;">🏫</div>
+      <h2>Schulstruktur &amp; Stammdaten</h2>
+    </div>
+    <p class="section-desc">Aargau-spezifische Schultypen, Sektionen, Jahrgänge, Fächer und Lektionentafel im System.</p>
+    <div class="features-grid">
+
+      <!-- Live (ABC) -->
+      <div class="feature-card visible" data-roles="sv,sl" data-status="live">
+        <div class="card-top">
+          <h3>Aargau-spezifische Sektionen &amp; Schultypen</h3>
+          <span class="status status--live"><span class="status-dot"></span>Live</span>
+        </div>
+        <p>Bezirksschule, Sekundarschule, Realschule und Kleinklasse als Sektionen. Neue Klassentypen für den Kanton Aargau. Korrekte Konfiguration in der Codebase.</p>
+        <div class="card-footer" style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:0.6rem;flex-wrap:wrap;background:transparent;padding:0;border:none;">
+          <div class="card-roles" style="display:flex;gap:4px;flex-wrap:wrap;align-items:center;"><span class="role-chip" style="display:inline-block;font-size:0.72rem;font-weight:500;padding:2px 8px;border-radius:100px;background:#f1f5f9;color:#64748b;letter-spacing:0.02em;text-transform:uppercase;">SV</span><span class="role-chip" style="display:inline-block;font-size:0.72rem;font-weight:500;padding:2px 8px;border-radius:100px;background:#f1f5f9;color:#64748b;letter-spacing:0.02em;text-transform:uppercase;">SL</span></div>
+          <a class="release-link" href="https://pupilag.atlassian.net/wiki/spaces/RELEASENOTES/pages/53543018/Schulverwaltung#19.01.2026---25.01.2026" target="_blank" rel="noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-4.5-6H18m0 0v4.5m0-4.5L10.5 13.5"/></svg>
+            Release Notes – Schulverwaltung (19.01.2026)
+          </a>
+        </div>
+      </div>
+
+      <div class="feature-card visible" data-roles="sv" data-status="live">
+        <div class="card-top">
+          <h3>Neuer Jahrgang «Nachobligatorischer Unterricht»</h3>
+          <span class="status status--live"><span class="status-dot"></span>Live</span>
+        </div>
+        <p>Neues Schuljahr-Level für den nachobligatorischen Unterricht im Kanton Aargau.</p>
+        <div class="card-footer" style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:0.6rem;flex-wrap:wrap;background:transparent;padding:0;border:none;"><div class="card-roles" style="display:flex;gap:4px;flex-wrap:wrap;align-items:center;"><span class="role-chip" style="display:inline-block;font-size:0.72rem;font-weight:500;padding:2px 8px;border-radius:100px;background:#f1f5f9;color:#64748b;letter-spacing:0.02em;text-transform:uppercase;">SV</span></div></div>
+      </div>
+
+      <!-- In Entwicklung (ABC) -->
+      <div class="feature-card visible" data-roles="sv,sl" data-status="dev">
+        <div class="card-top">
+          <h3>Fächer &amp; Fachbereiche AG-Konfiguration</h3>
+          <span class="status status--dev"><span class="status-dot"></span>In Entwicklung</span>
+        </div>
+        <p>Vollständige kantonale Konfiguration der Fächer und Fachbereiche für den Kanton Aargau, inkl. Zuordnung zu Schulstufen und Schultypen.</p>
+        <div class="card-footer" style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:0.6rem;flex-wrap:wrap;background:transparent;padding:0;border:none;"><div class="card-roles" style="display:flex;gap:4px;flex-wrap:wrap;align-items:center;"><span class="role-chip" style="display:inline-block;font-size:0.72rem;font-weight:500;padding:2px 8px;border-radius:100px;background:#f1f5f9;color:#64748b;letter-spacing:0.02em;text-transform:uppercase;">SV</span><span class="role-chip" style="display:inline-block;font-size:0.72rem;font-weight:500;padding:2px 8px;border-radius:100px;background:#f1f5f9;color:#64748b;letter-spacing:0.02em;text-transform:uppercase;">SL</span></div></div>
+      </div>
+
+      <div class="feature-card visible" data-roles="sv,sl" data-status="dev">
+        <div class="card-top">
+          <h3>Lektionentafel AG-Migration</h3>
+          <span class="status status--dev"><span class="status-dot"></span>In Entwicklung</span>
+        </div>
+        <p>Migration der kantonalen Lektionentafel für den Kanton Aargau in das PUPIL-System.</p>
+        <div class="card-footer" style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:0.6rem;flex-wrap:wrap;background:transparent;padding:0;border:none;"><div class="card-roles" style="display:flex;gap:4px;flex-wrap:wrap;align-items:center;"><span class="role-chip" style="display:inline-block;font-size:0.72rem;font-weight:500;padding:2px 8px;border-radius:100px;background:#f1f5f9;color:#64748b;letter-spacing:0.02em;text-transform:uppercase;">SV</span><span class="role-chip" style="display:inline-block;font-size:0.72rem;font-weight:500;padding:2px 8px;border-radius:100px;background:#f1f5f9;color:#64748b;letter-spacing:0.02em;text-transform:uppercase;">SL</span></div></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- 5. IMPORT & MIGRATION                          -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <div class="section-wrap" id="section-import">
+    <div class="section-header">
+      <div class="section-icon" style="background:#ede9fe;color:#7c3aed;">🔄</div>
+      <h2>Import &amp; Migration</h2>
+    </div>
+    <p class="section-desc">Datenmigration von LehrerOffice zu PUPIL@AG und laufende Import-Funktionen.</p>
+    <div class="features-grid">
+
+      <!-- Live (ABC) -->
+      <div class="feature-card visible" data-roles="sv,sl" data-status="live">
+        <div class="card-top">
+          <h3>Erweiterte Klasseninformationen im Import</h3>
+          <span class="status status--live"><span class="status-dot"></span>Live</span>
+        </div>
+        <p>Beim Import von Schülerdaten aus LehrerOffice werden die Felder «Art der Schulklasse», «Jahrgang» und «Schulart» automatisch befüllt. Eine manuelle Nachbearbeitung dieser Felder nach dem Import entfällt.</p>
+        <div class="card-footer" style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:0.6rem;flex-wrap:wrap;background:transparent;padding:0;border:none;">
+          <div class="card-roles" style="display:flex;gap:4px;flex-wrap:wrap;align-items:center;"><span class="role-chip" style="display:inline-block;font-size:0.72rem;font-weight:500;padding:2px 8px;border-radius:100px;background:#f1f5f9;color:#64748b;letter-spacing:0.02em;text-transform:uppercase;">SV</span><span class="role-chip" style="display:inline-block;font-size:0.72rem;font-weight:500;padding:2px 8px;border-radius:100px;background:#f1f5f9;color:#64748b;letter-spacing:0.02em;text-transform:uppercase;">SL</span></div>
+          <a class="release-link" href="https://pupilag.atlassian.net/wiki/spaces/RELEASENOTES/pages/53543018/Schulverwaltung#16.03.2026---22.03.2026" target="_blank" rel="noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-4.5-6H18m0 0v4.5m0-4.5L10.5 13.5"/></svg>
+            Release Notes – Schulverwaltung (16.03.2026)
+          </a>
+        </div>
+      </div>
+
+      <div class="feature-card visible" data-roles="sv,sl" data-status="live">
+        <div class="card-top">
+          <h3>LehrerOffice Self-Service Import</h3>
+          <span class="status status--live"><span class="status-dot"></span>Live</span>
+        </div>
+        <p>Schulverwaltungen können den Datenimport aus LehrerOffice eigenständig durchführen. Personenimport und Übersicht verfügbarer Imports im Self-Service-Portal.</p>
+        <div class="card-footer" style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:0.6rem;flex-wrap:wrap;background:transparent;padding:0;border:none;">
+          <div class="card-roles" style="display:flex;gap:4px;flex-wrap:wrap;align-items:center;"><span class="role-chip" style="display:inline-block;font-size:0.72rem;font-weight:500;padding:2px 8px;border-radius:100px;background:#f1f5f9;color:#64748b;letter-spacing:0.02em;text-transform:uppercase;">SV</span><span class="role-chip" style="display:inline-block;font-size:0.72rem;font-weight:500;padding:2px 8px;border-radius:100px;background:#f1f5f9;color:#64748b;letter-spacing:0.02em;text-transform:uppercase;">SL</span></div>
+          <a class="release-link" href="https://pupilag.atlassian.net/wiki/spaces/RELEASENOTES/pages/53543018/Schulverwaltung" target="_blank" rel="noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-4.5-6H18m0 0v4.5m0-4.5L10.5 13.5"/></svg>
+            Release Notes – Schulverwaltung
+          </a>
+        </div>
+      </div>
+
+      <div class="feature-card visible" data-roles="sv,sl" data-status="live">
+        <div class="card-top">
+          <h3>Zeugnis-Import ins Personendossier</h3>
+          <span class="status status--live"><span class="status-dot"></span>Live</span>
+        </div>
+        <p>Zeugnisse aus LehrerOffice können mit korrekter Bezeichnung direkt in die Personendossiers der Lernenden importiert werden.</p>
+        <div class="card-footer" style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:0.6rem;flex-wrap:wrap;background:transparent;padding:0;border:none;">
+          <div class="card-roles" style="display:flex;gap:4px;flex-wrap:wrap;align-items:center;"><span class="role-chip" style="display:inline-block;font-size:0.72rem;font-weight:500;padding:2px 8px;border-radius:100px;background:#f1f5f9;color:#64748b;letter-spacing:0.02em;text-transform:uppercase;">SV</span><span class="role-chip" style="display:inline-block;font-size:0.72rem;font-weight:500;padding:2px 8px;border-radius:100px;background:#f1f5f9;color:#64748b;letter-spacing:0.02em;text-transform:uppercase;">SL</span></div>
+          <a class="release-link" href="https://pupilag.atlassian.net/wiki/spaces/RELEASENOTES/pages/86736969/Master+Data#02.03.2026---08.03.2026" target="_blank" rel="noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-4.5-6H18m0 0v4.5m0-4.5L10.5 13.5"/></svg>
+            Release Notes – Master Data (02.03.2026)
+          </a>
+        </div>
+      </div>
+
+      <!-- In Entwicklung (ABC) -->
+      <div class="feature-card visible" data-roles="lp,sv" data-status="dev">
+        <div class="card-top">
+          <h3>LehrerOffice Förderplanungs-Import</h3>
+          <span class="status status--dev"><span class="status-dot"></span>In Entwicklung</span>
+        </div>
+        <p>Import von bestehenden Förderplanungs-Einträgen aus LehrerOffice nach PUPIL@AG, um den Übergang für Lehrpersonen zu erleichtern. (Für weitere Details, siehe <a href="#section-foerder" style="color:var(--pupil-blue);font-weight:500;text-decoration:none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">Bereich Förderplanung</a>)</p>
+        <div class="card-footer" style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:0.6rem;flex-wrap:wrap;background:transparent;padding:0;border:none;"><div class="card-roles" style="display:flex;gap:4px;flex-wrap:wrap;align-items:center;"><span class="role-chip" style="display:inline-block;font-size:0.72rem;font-weight:500;padding:2px 8px;border-radius:100px;background:#f1f5f9;color:#64748b;letter-spacing:0.02em;text-transform:uppercase;">LP</span><span class="role-chip" style="display:inline-block;font-size:0.72rem;font-weight:500;padding:2px 8px;border-radius:100px;background:#f1f5f9;color:#64748b;letter-spacing:0.02em;text-transform:uppercase;">SV</span></div></div>
+      </div>
+
+      <div class="feature-card visible" data-roles="lp,sv" data-status="dev">
+        <div class="card-top">
+          <h3>LehrerOffice Journal-Import</h3>
+          <span class="status status--dev"><span class="status-dot"></span>In Entwicklung</span>
+        </div>
+        <p>Import von bestehenden Journal-Einträgen aus LehrerOffice nach PUPIL@AG, um den Übergang für Lehrpersonen zu erleichtern.</p>
+        <div class="card-footer" style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:0.6rem;flex-wrap:wrap;background:transparent;padding:0;border:none;"><div class="card-roles" style="display:flex;gap:4px;flex-wrap:wrap;align-items:center;"><span class="role-chip" style="display:inline-block;font-size:0.72rem;font-weight:500;padding:2px 8px;border-radius:100px;background:#f1f5f9;color:#64748b;letter-spacing:0.02em;text-transform:uppercase;">LP</span><span class="role-chip" style="display:inline-block;font-size:0.72rem;font-weight:500;padding:2px 8px;border-radius:100px;background:#f1f5f9;color:#64748b;letter-spacing:0.02em;text-transform:uppercase;">SV</span></div></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- EMPTY STATE -->
+  <div class="empty-state" id="emptyState">
+    Keine Funktionen für diese Auswahl gefunden.
+  </div>
+
+  <!-- INFO BOX -->
+  <div class="info-box">
+    <strong>💡 Dokumentation &amp; Schulung:</strong> Ausführliche Informationen zu PUPIL im Kanton Aargau finden Sie auf der <a href="https://www.schulen-aargau.ch/regelschule/schulorganisation/planung-ressourcen/pupil" target="_blank" rel="noopener">offiziellen Kantonsseite</a>. eLearnings und Schulungsvideos stehen unter <a href="https://pupil.ch/ag-elearning" target="_blank" rel="noopener">pupil.ch/ag-elearning</a> zur Verfügung.
+  </div>
+
+</main>
+
+<footer>
+  <p>PUPIL@AG · Kanton Aargau Funktionsübersicht · Stand: Mai 2026</p>
+  <p style="margin-top:0.4rem;">
+    <a href="https://release.pupil.ch/" target="_blank" rel="noopener">Release Notes</a> ·
+    <a href="https://www.schulen-aargau.ch/regelschule/schulorganisation/planung-ressourcen/pupil" target="_blank" rel="noopener">Kanton Aargau – PUPIL</a> ·
+    <a href="https://pupil.ch/ag-elearning" target="_blank" rel="noopener">eLearnings</a>
+  </p>
+</footer>
+
+<script>
+  const roleTabs    = document.querySelectorAll('.role-tab');
+  const allCards    = document.querySelectorAll('.feature-card[data-roles]');
+  const legendItems = document.querySelectorAll('.legend-item');
+  const emptyState  = document.getElementById('emptyState');
+
+  let activeRole   = 'all';
+  let activeStatus = null;
+
+  function applyFilters() {
+    let anyVisible = false;
+    allCards.forEach(card => {
+      const matchesRole   = activeRole === 'all' || card.dataset.roles.split(',').includes(activeRole);
+      const matchesStatus = !activeStatus || card.dataset.status === activeStatus;
+      const visible = matchesRole && matchesStatus;
+      card.classList.toggle('visible', visible);
+      if (visible) anyVisible = true;
+    });
+    document.querySelectorAll('.section-wrap').forEach(wrap => {
+      wrap.style.display = wrap.querySelector('.feature-card.visible') ? '' : 'none';
+    });
+    emptyState.classList.toggle('visible', !anyVisible);
+  }
+
+  roleTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      roleTabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      activeRole = tab.dataset.filter;
+      applyFilters();
+    });
+  });
+
+  legendItems.forEach(item => {
+    item.addEventListener('click', () => {
+      const key = item.dataset.status;
+      if (activeStatus === key) {
+        activeStatus = null;
+        legendItems.forEach(li => li.classList.remove('dimmed'));
+      } else {
+        activeStatus = key;
+        legendItems.forEach(li => li.classList.toggle('dimmed', li.dataset.status !== key));
+      }
+      applyFilters();
+    });
+  });
+</script>
+</body>
+</html>
