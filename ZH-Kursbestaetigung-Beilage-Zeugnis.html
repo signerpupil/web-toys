@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Serienbrief Generator – Sekundarstufe</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, sans-serif; background: #f0f2f5; color: #222; }
+
+  #app {
+    max-width: 620px;
+    margin: 48px auto;
+    background: #fff;
+    border-radius: 12px;
+    padding: 40px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.10);
+  }
+  h1 { font-size: 20pt; margin-bottom: 6px; }
+  .sub { color: #666; font-size: 10pt; margin-bottom: 28px; }
+
+  #drop-zone {
+    border: 2px dashed #bbb;
+    border-radius: 8px;
+    padding: 44px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all .2s;
+    color: #777;
+    user-select: none;
+  }
+  #drop-zone:hover, #drop-zone.over { border-color: #0070c0; background: #eaf3fb; color: #0070c0; }
+  #drop-zone .ico { font-size: 32pt; margin-bottom: 10px; }
+  #file-input { display: none; }
+
+  #status-box {
+    display: none;
+    margin-top: 20px;
+    background: #f6fafe;
+    border: 1px solid #c8dff5;
+    border-radius: 8px;
+    padding: 16px 20px;
+  }
+  #status-text { font-size: 10pt; color: #0070c0; margin-bottom: 14px; }
+
+  #meta-box {
+    display: none;
+    margin-top: 16px;
+    background: #fff;
+    border: 1px solid #dde;
+    border-radius: 8px;
+    padding: 16px 20px;
+  }
+  #meta-box h3 { font-size: 10.5pt; margin-bottom: 12px; color: #333; }
+  .meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 20px; }
+  .meta-field label { display: block; font-size: 8.5pt; color: #666; margin-bottom: 3px; }
+  .meta-field input {
+    width: 100%; padding: 6px 8px; border: 1px solid #ccc;
+    border-radius: 4px; font-size: 10pt; font-family: Arial, sans-serif;
+  }
+  .meta-field input:focus { outline: none; border-color: #0070c0; }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 24px;
+    border: none;
+    border-radius: 6px;
+    font-size: 10.5pt;
+    font-family: Arial, sans-serif;
+    cursor: pointer;
+    transition: background .2s;
+  }
+  .btn-primary { background: #0070c0; color: #fff; }
+  .btn-primary:hover { background: #005a9e; }
+  .btn-secondary { background: #e8e8e8; color: #333; margin-left: 8px; }
+  .btn-secondary:hover { background: #d5d5d5; }
+
+  #error-box {
+    display: none;
+    margin-top: 16px;
+    padding: 12px 16px;
+    background: #fff0f0;
+    border: 1px solid #e00;
+    border-radius: 6px;
+    color: #c00;
+    font-size: 9.5pt;
+  }
+
+  .preview-list {
+    margin-top: 14px;
+    max-height: 180px;
+    overflow-y: auto;
+    font-size: 9pt;
+    color: #444;
+    border-top: 1px solid #e0e8f0;
+    padding-top: 10px;
+  }
+  .preview-list div { padding: 2px 0; }
+  .preview-list .has-kurse { color: #0070c0; }
+  .preview-list .no-kurse  { color: #aaa; }
+
+  #progress {
+    display: none;
+    margin-top: 10px;
+    font-size: 9pt;
+    color: #888;
+  }
+
+  /* Anleitung */
+  #anleitung {
+    background: #f0f6ff;
+    border: 1px solid #c8dff5;
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-bottom: 24px;
+  }
+  #anleitung h3 { font-size: 10.5pt; color: #0070c0; margin-bottom: 12px; }
+  .anl-step {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 10px;
+    align-items: flex-start;
+    font-size: 9.5pt;
+    color: #333;
+  }
+  .anl-step:last-child { margin-bottom: 0; }
+  .anl-num {
+    flex-shrink: 0;
+    width: 20px; height: 20px;
+    background: #0070c0; color: #fff;
+    border-radius: 50%;
+    font-size: 8pt; font-weight: bold;
+    display: flex; align-items: center; justify-content: center;
+    margin-top: 1px;
+  }
+  .anl-url-row { display: flex; gap: 8px; margin-top: 6px; align-items: center; flex-wrap: wrap; }
+  .anl-url-row input {
+    flex: 1; min-width: 180px;
+    padding: 5px 8px; border: 1px solid #bcd; border-radius: 4px;
+    font-size: 9pt; font-family: Arial, sans-serif;
+  }
+  .anl-url-row input:focus { outline: none; border-color: #0070c0; }
+  #pupil-link {
+    font-size: 9pt; color: #0070c0; text-decoration: none; white-space: nowrap;
+    padding: 4px 10px; border: 1px solid #0070c0; border-radius: 4px;
+  }
+  #pupil-link:hover { background: #0070c0; color: #fff; }
+  #pupil-link.disabled { color: #aaa; border-color: #ccc; pointer-events: none; }
+</style>
+</head>
+<body>
+<div id="app">
+  <h1>Serienbrief Generator</h1>
+  <p class="sub">Sekundarstufe – Angebot der Schule &nbsp;·&nbsp; erzeugt eine Word-Datei</p>
+
+  <!-- Anleitung -->
+  <div id="anleitung">
+    <h3>So funktioniert's</h3>
+    <div class="anl-step">
+      <span class="anl-num">1</span>
+      <div>
+        <div>Gehe in PUPIL zu <strong>Adressbuch / Listen</strong></div>
+        <div class="anl-url-row">
+          <input type="text" id="pupil-url-input" placeholder="https://sg-test2-a.pupil-dev.ch" oninput="updatePupilLink(this.value)">
+          <a id="pupil-link" class="disabled" href="#" target="_blank">→ Adressbuch / Listen öffnen</a>
+        </div>
+      </div>
+    </div>
+    <div class="anl-step">
+      <span class="anl-num">2</span>
+      <div>Wähle bei den Adresslisten die Konfiguration <strong>«Kursbestätigung – Beilage zum Zeugnis»</strong></div>
+    </div>
+    <div class="anl-step">
+      <span class="anl-num">3</span>
+      <div>Klicke auf <strong>Exportieren</strong> und speichere die Datei als <strong>.xlsx</strong></div>
+    </div>
+    <div class="anl-step">
+      <span class="anl-num">4</span>
+      <div>Lade die Datei unten hoch und klicke auf <strong>Word-Datei erstellen</strong></div>
+    </div>
+  </div>
+
+  <div id="drop-zone"
+       onclick="document.getElementById('file-input').click()"
+       ondragover="ev(event,'add')" ondragleave="ev(event,'rm')" ondrop="drop(event)">
+    <div class="ico">📂</div>
+    <strong>Excel-Datei auswählen</strong>
+    <div style="font-size:9pt;margin-top:6px;color:#999">oder hier reinziehen (.xlsx)</div>
+  </div>
+  <input type="file" id="file-input" accept=".xlsx,.xls" onchange="readFile(this.files[0])">
+
+  <div id="error-box"></div>
+
+  <!-- Allgemeine Angaben -->
+  <div id="meta-box">
+    <h3>Allgemeine Angaben anpassen</h3>
+    <div class="meta-grid">
+      <div class="meta-field">
+        <label>Semester</label>
+        <input type="text" id="meta-semester" value="2">
+      </div>
+      <div class="meta-field">
+        <label>Schuljahr</label>
+        <input type="text" id="meta-schuljahr" value="2025/2026">
+      </div>
+      <div class="meta-field">
+        <label>Schulhaus</label>
+        <input type="text" id="meta-schulhaus" placeholder="aus Excel">
+      </div>
+      <div class="meta-field">
+        <label>Schulort</label>
+        <input type="text" id="meta-schulort" placeholder="z.B. Musterstadt">
+      </div>
+      <div class="meta-field" style="grid-column:1/-1">
+        <label>Lehrperson 1 (Name)</label>
+        <input type="text" id="meta-lp1" placeholder="z.B. Muster Maria">
+      </div>
+      <div class="meta-field" style="grid-column:1/-1">
+        <label>Lehrperson 2 (Name, optional)</label>
+        <input type="text" id="meta-lp2" placeholder="z.B. Beispiel Beat">
+      </div>
+    </div>
+  </div>
+
+  <div id="status-box">
+    <div id="status-text"></div>
+    <div class="preview-list" id="preview-list"></div>
+    <div id="progress"></div>
+    <div style="margin-top:14px">
+      <button class="btn btn-primary" onclick="generateDocx()">📄 Word-Datei erstellen</button>
+      <button class="btn btn-secondary" onclick="reset()">↩ Andere Datei</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Globals ──────────────────────────────────────────────────────────────
+let gData = [], gCols = {};
+
+// ── PUPIL-Link ───────────────────────────────────────────────────────────
+function updatePupilLink(val) {
+  const link = document.getElementById('pupil-link');
+  let base = val.trim().replace(/\/$/, '');
+  if (!base) { link.href = '#'; link.className = 'disabled'; return; }
+  if (!base.startsWith('http')) base = 'https://' + base;
+  try { base = new URL(base).origin; } catch(e) { /* keep as-is */ }
+  link.href = base + '/listexports';
+  link.className = '';
+}
+
+// ── Drag & Drop helpers ──────────────────────────────────────────────────
+function ev(e, action) {
+  e.preventDefault();
+  document.getElementById('drop-zone').classList[action === 'add' ? 'add' : 'remove']('over');
+}
+function drop(e) {
+  e.preventDefault();
+  document.getElementById('drop-zone').classList.remove('over');
+  const f = e.dataTransfer.files[0];
+  if (f) readFile(f);
+}
+function reset() {
+  gData = []; gCols = {};
+  document.getElementById('status-box').style.display = 'none';
+  document.getElementById('meta-box').style.display   = 'none';
+  document.getElementById('error-box').style.display  = 'none';
+  document.getElementById('drop-zone').style.display  = 'block';
+  document.getElementById('file-input').value = '';
+}
+
+// ── Datei lesen ──────────────────────────────────────────────────────────
+function readFile(file) {
+  if (!file) return;
+  err('');
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const wb   = XLSX.read(e.target.result, { type: 'array' });
+      const ws   = wb.Sheets[wb.SheetNames[0]];
+      const data = XLSX.utils.sheet_to_json(ws, { defval: '' });
+      if (!data.length) throw new Error('Keine Daten gefunden.');
+      const cols = Object.keys(data[0]);
+      if (cols.length < 4) throw new Error('Mindestens 4 Spalten erwartet (Nachname, Vorname, Klasse, WF…).');
+      gCols = {
+        nachname: cols[0],
+        vorname:  cols[1],
+        klasse:   cols[2],
+        wfCols:   cols.slice(3)
+      };
+      gData = data;
+      showPreview(data);
+    } catch(e) { err('⚠️ ' + e.message); }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function showPreview(data) {
+  const list = document.getElementById('preview-list');
+  list.innerHTML = '';
+  data.forEach(row => {
+    const kurse = getKurse(row);
+    const div = document.createElement('div');
+    div.className = kurse.length ? 'has-kurse' : 'no-kurse';
+    div.textContent = `${row[gCols.nachname]} ${row[gCols.vorname]} — ${kurse.length ? kurse.join(', ') : 'keine Kurse'}`;
+    list.appendChild(div);
+  });
+
+  // Schulhaus aus dem ersten Datensatz vorausfüllen
+  if (data.length > 0) {
+    const { schulhaus } = parseKlasse(data[0][gCols.klasse] || '');
+    if (schulhaus) document.getElementById('meta-schulhaus').value = schulhaus;
+  }
+
+  document.getElementById('status-text').textContent = `✓ ${data.length} Schüler/innen geladen`;
+  document.getElementById('drop-zone').style.display  = 'none';
+  document.getElementById('meta-box').style.display   = 'block';
+  document.getElementById('status-box').style.display = 'block';
+}
+
+function err(msg) {
+  const el = document.getElementById('error-box');
+  el.textContent = msg;
+  el.style.display = msg ? 'block' : 'none';
+}
+
+// ── Hilfsfunktionen ──────────────────────────────────────────────────────
+function getKurse(row) {
+  return gCols.wfCols.filter(col => {
+    const v = String(row[col]).trim().toUpperCase();
+    return v === 'X' || v === 'BES' || v === 'BES.';
+  }).map(shortenWF);
+}
+
+function shortenWF(name) {
+  return name
+    .replace(/\s*\(Gruppenzuweisung\)/gi, '')
+    .replace(/\s*\(Geometrie\)/gi, '')
+    .replace(/^WF\s+/i, '')
+    .trim();
+}
+
+function parseKlasse(s) {
+  const str = String(s).trim();
+  const parts = str.split(/\s+/);
+  const klasse = parts[0] || '';
+  const m = str.match(/Schule\s+\S+/i);
+  return { klasse, schulhaus: m ? m[0] : '' };
+}
+
+function datumDE() {
+  const m = ['Januar','Februar','März','April','Mai','Juni',
+             'Juli','August','September','Oktober','November','Dezember'];
+  const d = new Date();
+  return `${d.getDate()}. ${m[d.getMonth()]} ${d.getFullYear()}`;
+}
+
+function xmlEsc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── Word XML Bausteine ───────────────────────────────────────────────────
+const W = 'http://schemas.openxmlformats.org/wordprocessingml/2006/main';
+
+// Seitenbreite A4 / asymmetrische Ränder
+const PAGE_W   = 11906;
+const PAGE_H   = 16838;
+const LEFT_MAR = 1701;
+const RIGHT_MAR= 1841;
+const TOP_MAR  = 1418;
+const BOT_MAR  = 2699;
+
+// Tabellenspalten (DXA)
+const INFO_W   = [1600, 2635, 600, 1600, 1929]; // tblW=8364, tblInd=10
+const ANGB_W   = [2100, 4973, 576];              // tblW=7649, tblInd=719
+const FOOT_W   = [3261, 425, 4111];              // tblW=7797, tblInd=577
+
+function rPr(bold, sizeHalf) {
+  return `<w:rPr>${bold?'<w:b/>':''}<w:sz w:val="${sizeHalf}"/><w:szCs w:val="${sizeHalf}"/></w:rPr>`;
+}
+
+function para(content, opts = {}) {
+  const { before=0, after=0, align='', pBdr='' } = opts;
+  const jc = align ? `<w:jc w:val="${align}"/>` : '';
+  return `<w:p>
+    <w:pPr><w:spacing w:before="${before}" w:after="${after}"/>${jc}${pBdr}</w:pPr>
+    ${content}
+  </w:p>`;
+}
+
+function run(text, bold=false, size=20) {
+  if (!text) return '';
+  return `<w:r>${rPr(bold, size)}<w:t xml:space="preserve">${xmlEsc(text)}</w:t></w:r>`;
+}
+
+function emptyPara() {
+  return `<w:p><w:pPr><w:spacing w:before="0" w:after="0"/></w:pPr></w:p>`;
+}
+
+function rowH(dxa, rule='exact') {
+  return `<w:trPr><w:trHeight w:val="${dxa}" w:hRule="${rule}"/></w:trPr>`;
+}
+
+function tcBorders(sides) {
+  const s = Object.entries(sides).map(([k,v]) =>
+    `<w:${k} w:val="${v.val}" w:sz="${v.sz||0}" w:space="0" w:color="${v.color||'auto'}"/>`
+  ).join('');
+  return `<w:tcBorders>${s}</w:tcBorders>`;
+}
+
+const NONE_BORDER = { val:'none', sz:0 };
+const DOT_BOTTOM  = { val:'dotted', sz:6, color:'808080' };
+const SLD_BOTTOM  = { val:'single', sz:4, color:'000000' };
+const WHT_BOTTOM  = { val:'single', sz:3, color:'FFFFFF' };
+const B_NONE = tcBorders({ top:NONE_BORDER, left:NONE_BORDER, right:NONE_BORDER, bottom:NONE_BORDER });
+
+function tcPr(width, borders, shading='', vAlign='center') {
+  const shd = shading
+    ? `<w:shd w:val="clear" w:color="auto" w:fill="${shading}"/>`
+    : '';
+  return `<w:tcPr>
+    <w:tcW w:w="${width}" w:type="dxa"/>
+    ${borders}${shd}
+    <w:vAlign w:val="${vAlign}"/>
+  </w:tcPr>`;
+}
+
+function cell(width, content, borders, shading='', vAlign='center', leftMar=0) {
+  const shd = shading ? `<w:shd w:val="clear" w:color="auto" w:fill="${shading}"/>` : '';
+  const mar = leftMar ? `<w:tcMar><w:left w:w="${leftMar}" w:type="dxa"/></w:tcMar>` : '';
+  return `<w:tc><w:tcPr>
+    <w:tcW w:w="${width}" w:type="dxa"/>
+    ${borders}${shd}${mar}
+    <w:vAlign w:val="${vAlign}"/>
+  </w:tcPr>${content}</w:tc>`;
+}
+
+// ── Titelabsatz ──────────────────────────────────────────────────────────
+function makeTitlePara() {
+  const pBdr = `<w:pBdr>
+    <w:bottom w:val="dotted" w:sz="4" w:space="1" w:color="808080"/>
+  </w:pBdr>`;
+  return para(run('Sekundarstufe', true, 26), { before: 0, after: 80, pBdr });
+}
+
+// ── Info-Tabelle ─────────────────────────────────────────────────────────
+function makeInfoTable(student) {
+  const rows = [
+    ['Semester',  student.semester,  'Klasse',       student.klasse],
+    ['Schuljahr', student.schuljahr, 'Name',         student.nachname],
+    ['Schulhaus', student.schulhaus, 'Vorname',      student.vorname],
+    ['Schulort',  student.schulort,  'Geburtsdatum', ''],
+  ];
+
+  const bDot  = tcBorders({ top:NONE_BORDER, left:NONE_BORDER, right:NONE_BORDER, bottom:DOT_BOTTOM });
+  const bNone = tcBorders({ top:NONE_BORDER, left:NONE_BORDER, right:NONE_BORDER, bottom:NONE_BORDER });
+
+  const tableRows = rows.map(([l1,v1,l2,v2]) => `
+    <w:tr>${rowH(430)}
+      ${cell(INFO_W[0], para(run(l1,true,20),  {before:0,after:0}), bDot)}
+      ${cell(INFO_W[1], para(run(v1,false,20), {before:0,after:0}), bDot)}
+      ${cell(INFO_W[2], para('',              ), bNone)}
+      ${cell(INFO_W[3], para(run(l2,true,20),  {before:0,after:0}), bDot)}
+      ${cell(INFO_W[4], para(run(v2,false,20), {before:0,after:0}), bDot)}
+    </w:tr>`).join('');
+
+  return `<w:tbl>
+    <w:tblPr>
+      <w:tblW w:w="8364" w:type="dxa"/>
+      <w:tblInd w:w="10" w:type="dxa"/>
+      <w:tblBorders>
+        <w:insideH w:val="none"/><w:insideV w:val="none"/>
+      </w:tblBorders>
+      <w:tblCellMar>
+        <w:left w:w="10" w:type="dxa"/>
+        <w:right w:w="10" w:type="dxa"/>
+      </w:tblCellMar>
+    </w:tblPr>
+    <w:tblGrid>
+      ${INFO_W.map(w=>`<w:gridCol w:w="${w}"/>`).join('')}
+    </w:tblGrid>
+    ${tableRows}
+  </w:tbl>`;
+}
+
+// ── Angebot-Tabelle ──────────────────────────────────────────────────────
+function makeAngebotTable(kurse) {
+  // Nur Zeilen mit Fächern – keine leeren Zeilen
+  const totalRows = Math.max(kurse.length, 1);
+
+  const bKurs = tcBorders({
+    top: NONE_BORDER, left: NONE_BORDER, right: NONE_BORDER, bottom: DOT_BOTTOM
+  });
+  const bBes = tcBorders({
+    top: NONE_BORDER, left: NONE_BORDER, right: NONE_BORDER, bottom: WHT_BOTTOM
+  });
+  const bLbl = tcBorders({
+    top: NONE_BORDER, left: NONE_BORDER, right: NONE_BORDER, bottom: NONE_BORDER
+  });
+
+  const labelContent = para(
+    `${run('Angebot der', true, 20)}<w:br/>${run('Schule', true, 20)}`,
+    { before: 60, after: 0 }
+  );
+  const labelCellFirst = `<w:tc>
+    <w:tcPr>
+      <w:tcW w:w="${ANGB_W[0]}" w:type="dxa"/>
+      ${bLbl}<w:vMerge w:val="restart"/><w:vAlign w:val="top"/>
+    </w:tcPr>
+    ${labelContent}
+  </w:tc>`;
+  const labelCellCont = `<w:tc>
+    <w:tcPr>
+      <w:tcW w:w="${ANGB_W[0]}" w:type="dxa"/>
+      ${bLbl}<w:vMerge/>
+    </w:tcPr>
+    ${emptyPara()}
+  </w:tc>`;
+
+  let tableRows = '';
+  for (let i = 0; i < totalRows; i++) {
+    const kursText = kurse[i] || '';
+    const besText  = kurse[i] ? 'bes.' : '';
+    const lblCell  = i === 0 ? labelCellFirst : labelCellCont;
+    const kursCell = cell(ANGB_W[1],
+      para(run(kursText, false, 20), { before:0, after:0 }), bKurs);
+    const besCell  = cell(ANGB_W[2],
+      para(run(besText, false, 16), { before:0, after:0, align:'center' }),
+      bBes, 'BFBFBF');
+    tableRows += `<w:tr>${rowH(397, 'atLeast')}${lblCell}${kursCell}${besCell}</w:tr>`;
+  }
+
+  return `<w:tbl>
+    <w:tblPr>
+      <w:tblW w:w="7649" w:type="dxa"/>
+      <w:tblInd w:w="719" w:type="dxa"/>
+      <w:tblBorders>
+        <w:insideH w:val="none"/><w:insideV w:val="none"/>
+      </w:tblBorders>
+      <w:tblCellMar>
+        <w:left w:w="10" w:type="dxa"/>
+        <w:right w:w="10" w:type="dxa"/>
+      </w:tblCellMar>
+    </w:tblPr>
+    <w:tblGrid>
+      ${ANGB_W.map(w=>`<w:gridCol w:w="${w}"/>`).join('')}
+    </w:tblGrid>
+    ${tableRows}
+  </w:tbl>`;
+}
+
+// ── Word-Seitenfuss (footer1.xml) ────────────────────────────────────────
+function makeFooterXml(datum, lp1='', lp2='') {
+  const bLbl = tcBorders({ top:NONE_BORDER, left:NONE_BORDER, right:NONE_BORDER, bottom:NONE_BORDER });
+  const DOT_BLK   = { val:'dotted', sz:4, color:'000000' };
+  const bValBot   = tcBorders({ top:NONE_BORDER, left:NONE_BORDER, right:NONE_BORDER, bottom:DOT_BLK });
+  const bValTopBot= tcBorders({ top:DOT_BLK,     left:NONE_BORDER, right:NONE_BORDER, bottom:DOT_BLK });
+
+  // Row 1: Datum
+  const row1 = `<w:tr>${rowH(510)}
+    ${cell(FOOT_W[0], para(run('Datum',true,20),{before:0,after:0,align:'right'}), bLbl)}
+    ${cell(FOOT_W[1], para(''), B_NONE)}
+    ${cell(FOOT_W[2], para(run(datum,false,20),{before:0,after:0}), bValBot)}
+  </w:tr>`;
+  // Row 2: Name LP1
+  const row2 = `<w:tr>${rowH(510)}
+    ${cell(FOOT_W[0], para(run('Lehrperson/en | ',true,20)+run('Name/n',false,20),{before:0,after:0,align:'right'}), bLbl)}
+    ${cell(FOOT_W[1], para(''), B_NONE)}
+    ${cell(FOOT_W[2], para(run(lp1,false,20),{before:0,after:0}), bValTopBot)}
+  </w:tr>`;
+  // Row 3: Name LP2 (leer wenn nicht angegeben)
+  const row3 = `<w:tr>${rowH(510)}
+    ${cell(FOOT_W[0], para(''), bLbl)}
+    ${cell(FOOT_W[1], para(''), B_NONE)}
+    ${cell(FOOT_W[2], para(run(lp2,false,20),{before:0,after:0}), bValTopBot)}
+  </w:tr>`;
+  // Row 4: Unterschrift
+  const row4 = `<w:tr>${rowH(510)}
+    ${cell(FOOT_W[0], para(run('Lehrperson/en | ',true,20)+run('Unterschrift/en',false,20),{before:0,after:0,align:'right'}), bLbl)}
+    ${cell(FOOT_W[1], para(''), B_NONE)}
+    ${cell(FOOT_W[2], para(''), bValTopBot)}
+  </w:tr>`;
+  // Row 5: leer
+  const row5 = `<w:tr>${rowH(510)}
+    ${cell(FOOT_W[0], para(''), bLbl)}
+    ${cell(FOOT_W[1], para(''), B_NONE)}
+    ${cell(FOOT_W[2], para(''), bValTopBot)}
+  </w:tr>`;
+
+  const tbl = `<w:tbl>
+    <w:tblPr>
+      <w:tblW w:w="7797" w:type="dxa"/>
+      <w:tblInd w:w="577" w:type="dxa"/>
+      <w:tblBorders><w:insideH w:val="none"/><w:insideV w:val="none"/></w:tblBorders>
+      <w:tblCellMar>
+        <w:left w:w="10" w:type="dxa"/>
+        <w:right w:w="10" w:type="dxa"/>
+      </w:tblCellMar>
+    </w:tblPr>
+    <w:tblGrid>${FOOT_W.map(w=>`<w:gridCol w:w="${w}"/>`).join('')}</w:tblGrid>
+    ${row1}${row2}${row3}${row4}${row5}
+  </w:tbl>`;
+
+  return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:ftr xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+  ${tbl}
+  <w:p><w:pPr><w:spacing w:before="0" w:after="0"/></w:pPr></w:p>
+</w:ftr>`;
+}
+
+// ── Schüler-Seite ────────────────────────────────────────────────────────
+function makeStudentXml(student) {
+  const spacers = [0,1,2,3].map(()=>emptyPara()).join('');
+  return [
+    makeTitlePara(),
+    emptyPara(),
+    makeInfoTable(student),
+    spacers,
+    makeAngebotTable(student.kurse),
+  ].join('');
+}
+
+// ── Vollständiges document.xml ────────────────────────────────────────────
+function makeDocumentXml(students) {
+  let body = '';
+  students.forEach((s, i) => {
+    if (i > 0) body += `<w:p><w:r><w:br w:type="page"/></w:r></w:p>`;
+    body += makeStudentXml(s);
+  });
+  // Footer-Referenz im Abschnitts-Properties
+  body += `<w:sectPr>
+    <w:footerReference w:type="default" r:id="rId3"/>
+    <w:pgSz w:w="${PAGE_W}" w:h="${PAGE_H}"/>
+    <w:pgMar w:top="${TOP_MAR}" w:right="${RIGHT_MAR}" w:bottom="${BOT_MAR}" w:left="${LEFT_MAR}"
+             w:header="709" w:footer="1605" w:gutter="0"/>
+  </w:sectPr>`;
+
+  return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"
+            xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"
+            xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing">
+  <w:body>${body}</w:body>
+</w:document>`;
+}
+
+// ── Statische DOCX-Dateien ───────────────────────────────────────────────
+const CONTENT_TYPES = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
+  <Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
+  <Default Extension="xml"  ContentType="application/xml"/>
+  <Override PartName="/word/document.xml"
+    ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>
+  <Override PartName="/word/styles.xml"
+    ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/>
+  <Override PartName="/word/settings.xml"
+    ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.settings+xml"/>
+  <Override PartName="/word/footer1.xml"
+    ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.footer+xml"/>
+</Types>`;
+
+const RELS = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+  <Relationship Id="rId1"
+    Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument"
+    Target="word/document.xml"/>
+</Relationships>`;
+
+const WORD_RELS = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+  <Relationship Id="rId1"
+    Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles"
+    Target="styles.xml"/>
+  <Relationship Id="rId2"
+    Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/settings"
+    Target="settings.xml"/>
+  <Relationship Id="rId3"
+    Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/footer"
+    Target="footer1.xml"/>
+</Relationships>`;
+
+const STYLES = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+  <w:docDefaults>
+    <w:rPrDefault>
+      <w:rPr>
+        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial"/>
+        <w:sz w:val="20"/><w:szCs w:val="20"/>
+      </w:rPr>
+    </w:rPrDefault>
+    <w:pPrDefault>
+      <w:pPr><w:spacing w:before="0" w:after="0"/></w:pPr>
+    </w:pPrDefault>
+  </w:docDefaults>
+</w:styles>`;
+
+const SETTINGS = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:settings xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+  <w:defaultTabStop w:val="720"/>
+</w:settings>`;
+
+// ── DOCX generieren ──────────────────────────────────────────────────────
+async function generateDocx() {
+  if (!gData.length) return;
+
+  const prog = document.getElementById('progress');
+  prog.style.display = 'block';
+  prog.textContent = 'Erstelle Word-Datei…';
+
+  // Kurze Pause damit UI aktualisiert
+  await new Promise(r => setTimeout(r, 50));
+
+  const heute    = datumDE();
+  const semester = document.getElementById('meta-semester').value.trim();
+  const schuljahr= document.getElementById('meta-schuljahr').value.trim();
+  const schulhaus= document.getElementById('meta-schulhaus').value.trim();
+  const schulort = document.getElementById('meta-schulort').value.trim();
+  const lp1      = document.getElementById('meta-lp1').value.trim();
+  const lp2      = document.getElementById('meta-lp2').value.trim();
+
+  const students = gData.map(row => {
+    const parsed = parseKlasse(row[gCols.klasse] || '');
+    return {
+      nachname: row[gCols.nachname] || '',
+      vorname:  row[gCols.vorname]  || '',
+      klasse:   parsed.klasse,
+      schulhaus: schulhaus || parsed.schulhaus,
+      schulort,
+      semester,
+      schuljahr,
+      kurse:    getKurse(row),
+      datum:    heute,
+    };
+  });
+
+  try {
+    const docXml = makeDocumentXml(students);
+
+    const zip = new JSZip();
+    zip.file('[Content_Types].xml',          CONTENT_TYPES);
+    zip.file('_rels/.rels',                  RELS);
+    zip.file('word/document.xml',            docXml);
+    zip.file('word/_rels/document.xml.rels', WORD_RELS);
+    zip.file('word/styles.xml',              STYLES);
+    zip.file('word/settings.xml',            SETTINGS);
+    zip.file('word/footer1.xml',             makeFooterXml(heute, lp1, lp2));
+
+    const blob = await zip.generateAsync({
+      type: 'blob',
+      mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    });
+
+    saveAs(blob, 'Serienbrief_Sekundarstufe.docx');
+    prog.textContent = `✓ ${students.length} Seiten erstellt und heruntergeladen.`;
+  } catch(e) {
+    prog.style.display = 'none';
+    err('Fehler beim Erstellen: ' + e.message);
+  }
+}
+</script>
+</body>
+</html>
