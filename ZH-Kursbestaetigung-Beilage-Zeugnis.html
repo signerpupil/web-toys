@@ -734,7 +734,7 @@ async function generateDocx() {
       kurse:    getKurse(row),
       datum:    heute,
     };
-  });
+  }).filter(s => s.kurse.length > 0);
 
   try {
     const docXml = makeDocumentXml(students);
