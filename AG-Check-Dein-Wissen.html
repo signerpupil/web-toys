@@ -574,8 +574,12 @@ function loadPersonXlsx(inp) {
         };
       });
 
+      // Apply default Stufe 11 for any class not yet in classMap
+      const cls0 = [...new Set(students.map(function(s) { return s.klasse; }).filter(Boolean))];
+      cls0.forEach(function(cn) { if (!classMap[cn]) classMap[cn] = '11'; });
+      if (!cls0.length && !classMap['']) classMap[''] = '11';
       // Restore klassenstufe from classMap
-      students.forEach(function(s) { if (classMap[s.klasse]) s.klassenstufe = classMap[s.klasse]; });
+      students.forEach(function(s) { s.klassenstufe = classMap[s.klasse] || classMap[''] || '11'; });
 
       const cls = [...new Set(students.map(function(s) { return s.klasse; }).filter(Boolean))];
       renderClassMapping(cls);
@@ -633,7 +637,6 @@ function normalizeGeschlecht(v) {
 }
 
 const STUFEN = [
-  {v:'',  l:'— bitte wählen —'},
   {v:'1', l:'1 — Kindergarten 1. Jahr'},
   {v:'2', l:'2 — Kindergarten 2. Jahr'},
   {v:'3', l:'3 — 1. Primarschule'},
@@ -645,8 +648,6 @@ const STUFEN = [
   {v:'9', l:'9 — 1. Sekundarschule'},
   {v:'10',l:'10 — 2. Sekundarschule'},
   {v:'11',l:'11 — 3. Sekundarschule'},
-  {v:'12',l:'12 — Stufe 12'},
-  {v:'13',l:'13 — Stufe 13'},
 ];
 
 function renderClassMapping(cls) {
@@ -656,7 +657,7 @@ function renderClassMapping(cls) {
   h += '<p style="font-size:11px;color:var(--g6);margin-bottom:10px">Kiga=1/2, 1.PS=3, …, 6.PS=8, 1.Sek=9, 2.Sek=10, 3.Sek=11</p>';
   rows.forEach(function(cn) {
     const safe = cn.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
-    const cur = classMap[cn] || '';
+    const cur = classMap[cn] || '11';
     const opts = STUFEN.map(function(o) {
       return '<option value="' + o.v + '"' + (o.v === cur ? ' selected' : '') + '>' + esc(o.l) + '</option>';
     }).join('');
