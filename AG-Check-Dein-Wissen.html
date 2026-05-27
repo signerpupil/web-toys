@@ -332,24 +332,18 @@ kbd{display:inline-block;padding:1px 6px;border-radius:4px;font-size:10px;font-w
 
   <!-- Main grades section (shown when students loaded) -->
   <div id="grades-main" style="display:none">
-    <!-- Semester toggle -->
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px">
-      <div class="gt" style="margin-bottom:0">
-        <button id="gt-s1" onclick="switchGradeSem('s1',this)">S1 &mdash; Zwischenbericht <span class="na-badge" style="background:#e8f4fd;color:#1a6fa3">optional</span></button>
-        <button class="active" id="gt-s2" onclick="switchGradeSem('s2',this)">S2 &mdash; Jahreszeugnis</button>
-      </div>
+      <div style="font-size:13px;font-weight:700;color:var(--bk)">Jahreszeugnis</div>
       <div style="font-size:11px;color:var(--g4)">Manuelle Eingabe möglich &mdash; oder Excel unten hochladen</div>
     </div>
 
-    <!-- Editable grade tables -->
-    <div id="grade-tbl-s1" style="display:none"></div>
+    <!-- Editable grade table (S2 only) -->
     <div id="grade-tbl-s2"></div>
 
     <!-- Excel upload (collapsible) -->
     <details style="margin-top:20px;border:1px solid var(--g2);border-radius:10px;overflow:hidden">
       <summary style="padding:13px 18px;font-size:13px;font-weight:700;cursor:pointer;background:var(--g1);list-style:none;display:flex;align-items:center;gap:8px">
         <span>&#128196;</span> Noten aus Excel übernehmen
-        <span style="font-size:11px;font-weight:400;color:var(--g4);margin-left:4px">(Jahreszeugnis + Zwischenbericht)</span>
       </summary>
       <div style="padding:16px 18px">
         <div style="font-size:12px;font-weight:700;color:var(--bk);margin-bottom:10px">&#128203; Wie erstelle ich die Excel-Datei?</div>
@@ -358,41 +352,19 @@ kbd{display:inline-block;padding:1px 6px;border-radius:4px;font-size:10px;font-w
           <li>In PUPIL: <strong>Schulalltag / LPs &rarr; Noten und Zeugnisse &rarr; Zeugnis &mdash; Klassenansicht</strong></li>
           <li>Klasse wählen, Modus <span style="background:#e8f4fd;color:#1a6fa3;padding:1px 6px;border-radius:3px;font-weight:600">Jahreszeugnis</span> setzen</li>
           <li>Ganze Seite markieren <kbd>Ctrl+A</kbd> &rarr; kopieren <kbd>Ctrl+C</kbd></li>
-          <li>Excel: <strong>Tabelle1</strong> &rarr; Rechtsklick &rarr; <strong>An Zielformatierung anpassen</strong></li>
-          <li style="color:var(--g4)"><em>Optional:</em> In PUPIL: Toggle auf <span style="background:#e8f4fd;color:#1a6fa3;padding:1px 6px;border-radius:3px;font-weight:600">Zwischenbericht</span> umschalten</li>
-          <li style="color:var(--g4)"><em>Optional:</em> <kbd>Ctrl+A</kbd> &rarr; <kbd>Ctrl+C</kbd></li>
-          <li style="color:var(--g4)"><em>Optional:</em> Excel: <strong>Tabelle2</strong> anlegen &rarr; Rechtsklick &rarr; <strong>An Zielformatierung anpassen</strong></li>
+          <li>Excel: Rechtsklick &rarr; <strong>An Zielformatierung anpassen</strong></li>
           <li>Datei als <strong>.xlsx</strong> speichern und hier hochladen</li>
         </ol>
-        <div style="margin-top:10px;padding:8px 12px;background:#fff8e1;border-radius:6px;font-size:11px;color:#7a5c00">
-          <strong>Blatt-Reihenfolge:</strong> Tabelle1 = Jahreszeugnis (S2) &nbsp;|&nbsp; Tabelle2 = Zwischenbericht (S1)
-        </div>
 
-        <!-- Option A: combined 2-sheet upload -->
         <div style="margin-top:16px;padding:12px 14px;background:var(--g1);border-radius:8px;border:1px solid var(--g2)">
-          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--g6);margin-bottom:10px">Option A &mdash; Kombinierte Datei (beide Bl&auml;tter)</div>
           <div style="display:flex;align-items:center;gap:12px">
             <label class="btn btn-s" style="cursor:pointer;margin:0;font-size:12px">
-              &#128196; Kombiniert (.xlsx)
-              <input type="file" id="xlsx-grades-combined" accept=".xlsx" style="display:none" onchange="loadGradesCombined(this)">
+              &#128196; Jahreszeugnis (.xlsx)
+              <input type="file" id="xlsx-grades-s2" accept=".xlsx" style="display:none" onchange="loadGradesS2(this)">
             </label>
-            <span id="xlsx-grades-combined-name" style="font-size:12px;color:var(--g4)">Keine Datei gew&auml;hlt</span>
+            <span id="xlsx-grades-s2-name" style="font-size:12px;color:var(--g4)">Keine Datei gew&auml;hlt</span>
           </div>
           <div id="grades-status" style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap"></div>
-        </div>
-
-        <!-- Option B: single auto-detect upload -->
-        <div style="margin-top:10px;padding:12px 14px;background:var(--g1);border-radius:8px;border:1px solid var(--g2)">
-          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--g6);margin-bottom:6px">Option B &mdash; Einzelne Datei (S1 oder S2)</div>
-          <div style="font-size:11px;color:var(--g4);margin-bottom:10px">Semester wird automatisch anhand des Inhalts erkannt ("Jahreszeugnis" / "Zwischenbericht")</div>
-          <div style="display:flex;align-items:center;gap:12px">
-            <label class="btn btn-s" style="cursor:pointer;margin:0;font-size:12px">
-              &#128196; Einzelne .xlsx
-              <input type="file" id="xlsx-grades-single" accept=".xlsx" style="display:none" onchange="loadGradesSingle(this)">
-            </label>
-            <span id="xlsx-grades-single-name" style="font-size:12px;color:var(--g4)">Keine Datei gew&auml;hlt</span>
-          </div>
-          <div id="grades-single-status" style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap"></div>
         </div>
 
       </div>
@@ -539,7 +511,6 @@ function renderGradesPanel() {
   if (students.length) {
     document.getElementById('grades-no-students').style.display = 'none';
     document.getElementById('grades-main').style.display = 'block';
-    renderGradesEditable('s1');
     renderGradesEditable('s2');
   } else {
     document.getElementById('grades-no-students').style.display = 'block';
@@ -593,9 +564,9 @@ function loadPersonXlsx(inp) {
           id: i,
           nachname: cv(r, 'Nachname', 'nachname'),
           vorname:  cv(r, 'Vorname', 'vorname'),
-          geburtsdatum: fmtDate(r['Geburtsdatum'] || r['geburtsdatum']),
+          geburtsdatum: parseDateExcel(r['Geburtsdatum'] || r['geburtsdatum']),
           klasse:   cv(r, 'Klasse', 'klasse'),
-          geschlecht: cv(r, 'Geschlecht', 'geschlecht'),
+          geschlecht: normalizeGeschlecht(cv(r, 'Geschlecht', 'geschlecht')),
           erstsprache: cv(r, 'Erstsprache', 'erstsprache'),
           email:    cv(r, 'E-Mail der Schule', 'E-Mail', 'email'),
           telefon:  cv(r, 'Telefon', 'telefon'),
@@ -634,20 +605,31 @@ function cv(row) {
   return '';
 }
 
-function fmtDate(v) {
+// parseDateExcel: import helper — Date/number/string → DD.MM.YYYY for display
+function parseDateExcel(v) {
   if (!v) return '';
-  if (typeof v === 'string' && /^\d{2}\.\d{2}\.\d{4}$/.test(v)) return v;
+  if (typeof v === 'string') {
+    if (/^\d{1,2}\.\d{1,2}\.\d{4}$/.test(v)) return v;
+    if (/^\d{4}-\d{2}-\d{2}$/.test(v)) {
+      const p = v.split('-');
+      return p[2] + '.' + p[1] + '.' + p[0];
+    }
+  }
   if (v instanceof Date) {
-    const d = v.getUTCDate().toString().padStart(2,'0');
-    const m = (v.getUTCMonth()+1).toString().padStart(2,'0');
-    return d + '.' + m + '.' + v.getUTCFullYear();
+    return v.getUTCDate().toString().padStart(2,'0') + '.' + (v.getUTCMonth()+1).toString().padStart(2,'0') + '.' + v.getUTCFullYear();
   }
   if (typeof v === 'number') {
     const d = new Date(Math.round((v - 25569) * 86400 * 1000));
-    return [d.getUTCDate(), d.getUTCMonth()+1, d.getUTCFullYear()]
-      .map(function(n, i) { return i < 2 ? String(n).padStart(2,'0') : n; }).join('.');
+    return [d.getUTCDate(), d.getUTCMonth()+1, d.getUTCFullYear()].map(function(n, i) { return i < 2 ? String(n).padStart(2,'0') : n; }).join('.');
   }
   return v.toString();
+}
+
+function normalizeGeschlecht(v) {
+  const s = (v || '').toString().trim().toLowerCase();
+  if (s === 'm' || s === 'männlich' || s === 'maennlich' || s === 'male') return 'männlich';
+  if (s === 'w' || s === 'f' || s === 'weiblich' || s === 'female') return 'weiblich';
+  return '';
 }
 
 const STUFEN = [
@@ -704,17 +686,20 @@ function setKlassenstufe(cls, val) {
 function renderPersonsTable() {
   const tb = document.getElementById('persons-tbody');
   tb.innerHTML = students.map(function(s, i) {
-    const ej = s.erstsprache === 'Deutsch' ? '<span class="tag-j">j</span>' : (s.erstsprache ? '<span class="tag-n">n</span>' : '');
-    const gm = s.geschlecht === 'männlich' ? '♂ männlich' : '♀ weiblich';
+    const ii = String(i);
+    const gSel = '<select onchange="students['+ii+'].geschlecht=normalizeGeschlecht(this.value);saveLS()" style="min-width:90px">' +
+      '<option value="männlich"' + (s.geschlecht==='männlich'?' selected':'') + '>♂ m</option>' +
+      '<option value="weiblich"' + (s.geschlecht==='weiblich'?' selected':'') + '>♀ w</option>' +
+      '</select>';
     return '<tr>' +
-      '<td><strong>' + esc(s.nachname) + '</strong></td>' +
-      '<td>' + esc(s.vorname) + '</td>' +
-      '<td>' + s.geburtsdatum + '</td>' +
-      '<td style="font-size:11px;color:var(--g6)">' + esc(s.klasse) + '</td>' +
-      '<td>' + gm + '</td>' +
-      '<td>' + esc(s.erstsprache) + ej + '</td>' +
-      '<td><input type="email" value="' + esc(s.email) + '" placeholder="optional" onchange="students[' + i + '].email=this.value;saveLS()"></td>' +
-      '<td><input type="text" value="' + esc(s.telefon) + '" placeholder="optional" onchange="students[' + i + '].telefon=this.value;saveLS()" style="width:120px"></td>' +
+      '<td><input type="text" value="' + esc(s.nachname) + '" onchange="students['+ii+'].nachname=this.value;saveLS()" style="width:100px;font-weight:700"></td>' +
+      '<td><input type="text" value="' + esc(s.vorname) + '" onchange="students['+ii+'].vorname=this.value;saveLS()" style="width:90px"></td>' +
+      '<td><input type="text" value="' + esc(s.geburtsdatum) + '" placeholder="TT.MM.JJJJ" onchange="students['+ii+'].geburtsdatum=this.value;saveLS()" style="width:95px"></td>' +
+      '<td><input type="text" value="' + esc(s.klasse) + '" onchange="students['+ii+'].klasse=this.value;var cls=[...new Set(students.map(function(st){return st.klasse;}).filter(Boolean))];renderClassMapping(cls);saveLS()" style="width:65px;font-size:11px"></td>' +
+      '<td>' + gSel + '</td>' +
+      '<td><input type="text" value="' + esc(s.erstsprache) + '" placeholder="z.B. Deutsch" onchange="students['+ii+'].erstsprache=this.value;saveLS()" style="width:90px"></td>' +
+      '<td><input type="email" value="' + esc(s.email) + '" placeholder="optional" onchange="students['+ii+'].email=this.value;saveLS()" style="width:130px"></td>' +
+      '<td><input type="text" value="' + esc(s.telefon) + '" placeholder="optional" onchange="students['+ii+'].telefon=this.value;saveLS()" style="width:100px"></td>' +
       '</tr>';
   }).join('');
 }
@@ -732,12 +717,6 @@ const SUBJ = {
 const SUBJ_LABELS = {D:'Deutsch', E:'Englisch', F:'Français', M:'Mathematik', N:'Natur & T.'};
 const CODES = ['D','E','F','M','N'];
 
-function switchGradeSem(sem, btn) {
-  document.querySelectorAll('#panel-grades .gt button').forEach(function(b) { b.classList.remove('active'); });
-  btn.classList.add('active');
-  document.getElementById('grade-tbl-s1').style.display = sem === 's1' ? 'block' : 'none';
-  document.getElementById('grade-tbl-s2').style.display = sem === 's2' ? 'block' : 'none';
-}
 
 function renderGradesEditable(sem) {
   const el = document.getElementById('grade-tbl-' + sem);
@@ -887,79 +866,39 @@ function parseSheetRows(rows) {
   return Object.keys(parsed).length ? {parsed: parsed, cols: cols} : null;
 }
 
-function loadGradesCombined(input) {
+function loadGradesS2(input) {
   const file = input.files[0]; if (!file) return;
-  document.getElementById('xlsx-grades-combined-name').textContent = file.name;
+  document.getElementById('xlsx-grades-s2-name').textContent = file.name;
   const reader = new FileReader();
   reader.onload = function(e) {
     const wb = XLSX.read(new Uint8Array(e.target.result), {type:'array'});
     const sc = document.getElementById('grades-status');
     sc.innerHTML = '';
-    let anyLoaded = false;
+    let loaded = false;
 
-    wb.SheetNames.forEach(function(name) {
-      const rows = XLSX.utils.sheet_to_json(wb.Sheets[name], {header:1, defval:null});
-      const detected = detectSemester(rows);
+    // Try each sheet; use the first one that contains Jahreszeugnis grades
+    for (let si = 0; si < wb.SheetNames.length; si++) {
+      const rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[si]], {header:1, defval:null});
+      // Skip sheets that look like Zwischenbericht
+      const sem = detectSemester(rows);
+      if (sem === 's1') continue;
       const r = parseSheetRows(rows);
-      if (!r) return;
+      if (!r) continue;
+      gS2 = r.parsed;
+      loaded = true;
+      sc.innerHTML = chipHtml('Jahreszeugnis', true, Object.keys(r.parsed).length + ' Schüler erkannt');
+      break;
+    }
 
-      const sem = detected || (name.toLowerCase().includes('zwischen') ? 's1' : 's2');
-      if (sem === 's1') gS1 = r.parsed;
-      else gS2 = r.parsed;
-      anyLoaded = true;
-
-      const semLabel = sem === 's1' ? 'S1 Zwischenbericht' : 'S2 Jahreszeugnis';
-      const detectedNote = detected ? '' : ' (Blattname)';
-      sc.innerHTML += chipHtml(semLabel + detectedNote, true, Object.keys(r.parsed).length + ' Schüler');
-    });
-
-    if (!anyLoaded) sc.innerHTML = chipHtml('Keine Noten erkannt', false, 'Bitte Datei prüfen');
-
-    renderGradesEditable('s1');
+    if (!loaded) sc.innerHTML = chipHtml('Keine Noten erkannt', false, 'Bitte Datei prüfen — "Jahreszeugnis" muss im Inhalt stehen');
     renderGradesEditable('s2');
-    if (anyLoaded) { setTabDone('grades'); updateDots(); saveLS(); }
+    if (loaded) { setTabDone('grades'); updateDots(); saveLS(); }
   };
   reader.readAsArrayBuffer(file);
 }
 
 function chipHtml(label, ok, detail) {
   return '<div style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:20px;font-size:11px;font-weight:600;background:' + (ok ? '#d4edda' : '#fff3cd') + ';color:' + (ok ? '#1a5c2a' : '#7a5c00') + '">' + (ok ? '&#10003;' : '&#9888;') + ' ' + label + (detail ? ' &mdash; ' + detail : '') + '</div>';
-}
-
-function loadGradesSingle(input) {
-  const file = input.files[0]; if (!file) return;
-  document.getElementById('xlsx-grades-single-name').textContent = file.name;
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    const wb = XLSX.read(new Uint8Array(e.target.result), {type:'array'});
-    const sc = document.getElementById('grades-single-status');
-    sc.innerHTML = '';
-    let anyLoaded = false;
-
-    wb.SheetNames.forEach(function(name) {
-      const rows = XLSX.utils.sheet_to_json(wb.Sheets[name], {header:1, defval:null});
-      const detected = detectSemester(rows);
-      const r = parseSheetRows(rows);
-      if (!r) return;
-
-      if (!detected) {
-        sc.innerHTML += chipHtml('Semester nicht erkannt', false, 'Weder "Jahreszeugnis" noch "Zwischenbericht" gefunden');
-        return;
-      }
-
-      if (detected === 's1') gS1 = r.parsed;
-      else gS2 = r.parsed;
-      anyLoaded = true;
-
-      const semLabel = detected === 's1' ? 'S1 Zwischenbericht' : 'S2 Jahreszeugnis';
-      sc.innerHTML += chipHtml(semLabel, true, Object.keys(r.parsed).length + ' Schüler erkannt');
-      renderGradesEditable(detected);
-    });
-
-    if (!anyLoaded && sc.innerHTML === '') sc.innerHTML = chipHtml('Keine Noten erkannt', false, 'Bitte Datei prüfen');
-    if (anyLoaded) { setTabDone('grades'); updateDots(); saveLS(); }
-  };
-  reader.readAsArrayBuffer(file);
 }
 
 // ════════════════════════════════════════════
@@ -1191,12 +1130,14 @@ function refreshCardProgress(idx, k) {
 // CSV GENERATION
 // ════════════════════════════════════════════
 function today() { return new Date().toISOString().slice(0, 10); }
+// fmtDate: DD.MM.YYYY → YYYY-MM-DD for CSV export
 function fmtDate(d) {
   if (!d) return '';
-  if (/^\d{4}-\d{2}-\d{2}$/.test(d)) return d;
-  const m = d.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
+  const s = d.toString();
+  if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
+  const m = s.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
   if (m) return m[3] + '-' + m[2].padStart(2,'0') + '-' + m[1].padStart(2,'0');
-  return d;
+  return s;
 }
 function toCSV(rows) {
   return rows.map(function(r) {
@@ -1239,18 +1180,14 @@ function dlMarks() {
   const sl = document.getElementById('schulort').value;
   const sy = document.getElementById('schuljahr').value;
   const hdr = ['First_Name','Surname','Date_Of_Birth','School_Year','School_Place',
-    'D_S1','D_S2','E_S1','E_S2','F_S1','F_S2','M_S1','M_S2','N_S1','N_S2'];
+    'D_S2','E_S2','F_S2','M_S2','N_S2'];
   const rows = students.map(function(s) {
     const k = mk(s.vorname, s.nachname);
-    const g1 = gS1[k] || {}, g2 = gS2[k] || {};
+    const g2 = gS2[k] || {};
     const gv = function(g, c) { const v = g[c]; if (v === null || v === undefined || v === 'ILZ') return ''; return typeof v === 'number' ? v.toFixed(1) : v; };
     return [
       s.vorname, s.nachname, fmtDate(s.geburtsdatum), sy, sl,
-      gv(g1,'D'), gv(g2,'D'),
-      gv(g1,'E'), gv(g2,'E'),
-      gv(g1,'F'), gv(g2,'F'),
-      gv(g1,'M'), gv(g2,'M'),
-      gv(g1,'N'), gv(g2,'N'),
+      gv(g2,'D'), gv(g2,'E'), gv(g2,'F'), gv(g2,'M'), gv(g2,'N'),
     ];
   });
   dlFile('Abschlusszertifikat-' + today() + '.csv', toCSV([hdr].concat(rows)));
@@ -1282,7 +1219,7 @@ function dlProj() {
 // EXPORT STATUS PAGE
 // ════════════════════════════════════════════
 function renderExportStatus() {
-  const s1c = Object.keys(gS1).length, s2c = Object.keys(gS2).length;
+  const s2c = Object.keys(gS2).length;
   const projFilled = students.filter(function(s) {
     const p = projData[mk(s.vorname, s.nachname)];
     return p && Object.keys(p.ratings).length > 0;
@@ -1302,8 +1239,7 @@ function renderExportStatus() {
       emoji: '&#128202;', label: 'Abschlusszertifikat.csv', color: 'var(--mg)',
       items: [
         {l:'Personendaten', ok:students.length>0, m:students.length>0 ? students.length+' Schüler:innen' : 'Fehlend → Schritt 1'},
-        {l:'Noten S1 (Zwischenbericht)', ok:s1c>0, m:s1c>0 ? s1c+' Einträge' : 'Nicht geladen — Spalten bleiben leer', opt:true},
-        {l:'Noten S2 (Jahreszeugnis)', ok:s2c>0, m:s2c>0 ? s2c+' Einträge' : 'Fehlend → Schritt 2'},
+        {l:'Noten Jahreszeugnis', ok:s2c>0, m:s2c>0 ? s2c+' Einträge' : 'Fehlend → Schritt 2'},
         {l:'Schulort & Schuljahr', ok:!!(document.getElementById('schulort').value && document.getElementById('schuljahr').value), m:'Einstellungen'},
       ]
     },
@@ -1355,7 +1291,7 @@ function setTabDone(tab) {
 }
 function updateDots() {
   document.getElementById('xd-p').className = 'xd' + (students.length > 0 ? ' done' : '');
-  const hg = Object.keys(gS1).length > 0 || Object.keys(gS2).length > 0;
+  const hg = Object.keys(gS2).length > 0;
   document.getElementById('xd-g').className = 'xd' + (hg ? ' done' : '');
   const pf = students.filter(function(s) {
     const p = projData[mk(s.vorname, s.nachname)];
@@ -1376,7 +1312,7 @@ window.addEventListener('load', function() {
     document.getElementById('persons-result').style.display = 'block';
     document.getElementById('s-count').textContent = students.length;
     setTabDone('persons');
-    if (Object.keys(gS1).length || Object.keys(gS2).length) setTabDone('grades');
+    if (Object.keys(gS2).length) setTabDone('grades');
     updateDots();
     showRestoreBanner();
   }
