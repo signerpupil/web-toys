@@ -281,7 +281,7 @@ kbd{display:inline-block;padding:1px 6px;border-radius:4px;font-size:10px;font-w
   <div class="sdesc">
     Exportiere in PUPIL unter <strong>Master Data &rarr; Personen</strong> die Klasse als Excel.
     Stelle sicher dass folgende Spalten exportiert werden:
-    <em>Nachname, Vorname, Geburtsdatum, Klasse, Geschlecht, Erstsprache, Rollen</em>.
+    <em>Nachname, Vorname, Geburtsdatum, Erstsprache, Rollen</em> (Pflicht) sowie optional <em>Klasse, Geschlecht</em>.
     Lade die Datei hier hoch &mdash; nur Schülerinnen und Schüler werden importiert.
   </div>
 
@@ -689,6 +689,7 @@ function renderPersonsTable() {
   tb.innerHTML = students.map(function(s, i) {
     const ii = String(i);
     const gSel = '<select onchange="students['+ii+'].geschlecht=normalizeGeschlecht(this.value);saveLS()" style="min-width:90px">' +
+      '<option value=""' + (!s.geschlecht?' selected':'') + '>—</option>' +
       '<option value="männlich"' + (s.geschlecht==='männlich'?' selected':'') + '>♂ m</option>' +
       '<option value="weiblich"' + (s.geschlecht==='weiblich'?' selected':'') + '>♀ w</option>' +
       '</select>';
@@ -1165,7 +1166,7 @@ function dlCDW() {
     const g = gS2[k] || {};
     return [
       s.vorname, s.nachname, s.email || '', fmtDate(s.geburtsdatum), s.telefon || '',
-      s.geschlecht === 'männlich' ? 'm' : 'w',
+      s.geschlecht === 'männlich' ? 'm' : (s.geschlecht === 'weiblich' ? 'w' : ''),
       s.klassenstufe || '',
       s.erstsprache === 'Deutsch' ? 'j' : 'n',
       ilzFlag(g,'D'), ilzFlag(g,'M'), ilzFlag(g,'E'), ilzFlag(g,'F'), ilzFlag(g,'N'),
