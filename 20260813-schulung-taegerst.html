@@ -143,10 +143,6 @@ section.slide { scroll-snap-align: start; min-height: 100dvh; position: relative
 .btn-survey { margin-top:38px; display:inline-flex; align-items:center; gap:10px; padding:19px 46px; background:var(--color-magenta); color:white; border-radius:var(--radius-full); font-weight:700; font-size:1.15rem; border:none; cursor:pointer; font-family:var(--font-primary); position:relative; z-index:1; }
 .btn-survey:hover { background:#d4245f; }
 .survey-edit-link { display:block; margin-top:18px; font-size:.86rem; color:rgba(255,255,255,.45); background:none; border:none; cursor:pointer; text-decoration:underline; font-family:var(--font-primary); position:relative; z-index:1; }
-.survey-embed { margin-top:32px; width:min(640px,92vw); height:min(480px,58vh); background:white; border-radius:var(--radius-md); box-shadow:var(--shadow-lg); overflow:hidden; position:relative; z-index:1; }
-.survey-embed iframe { width:100%; height:100%; border:none; display:block; }
-.survey-fallback-link { display:block; margin-top:16px; font-size:.86rem; color:rgba(255,255,255,.45); position:relative; z-index:1; text-decoration:underline; }
-.survey-fallback-link:hover { color:rgba(255,255,255,.7); }
 
 /* BULLETS (content + side panel) */
 .slide--bullets { flex: 1 1 auto; width: 100%; background: var(--color-cream); display: grid; grid-template-columns: 1fr 1.35fr; min-height: 100%; }
@@ -307,10 +303,8 @@ section.slide { scroll-snap-align: start; min-height: 100dvh; position: relative
 </div>
 <h2 class="slide__title">Kurze Umfrage zum Einstieg</h2>
 <p class="slide__subtitle">Bevor wir starten: ein paar kurze Fragen zu eurem aktuellen Wissensstand.</p>
-<div class="survey-embed">
-  <iframe src="https://forms.cloud.microsoft/e/3px2XxyLV3?embed=true" allowfullscreen webkitallowfullscreen mozallowfullscreen msallowfullscreen title="Kurze Umfrage zum Einstieg"></iframe>
-</div>
-<a class="survey-fallback-link" href="https://forms.cloud.microsoft/e/3px2XxyLV3?embed=true" target="_blank" rel="noopener">&#8599; In neuem Tab &ouml;ffnen</a>
+<button class="btn-survey" data-forms-key="forms_start" data-forms-prompt="Link zur Start-Umfrage (MS Forms) eingeben:">&#128203; Umfrage &ouml;ffnen</button>
+<button class="survey-edit-link" data-forms-edit-key="forms_start" data-forms-prompt="Link zur Start-Umfrage (MS Forms) eingeben:">Link &auml;ndern</button>
 </div></section>
 <section class="slide" id="slide-3">
 <div class="slide--cards">
