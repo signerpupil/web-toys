@@ -256,7 +256,7 @@ section.slide { scroll-snap-align: start; min-height: 100dvh; position: relative
   </a>
   <div class="topnav__progress-wrap">
     <div class="topnav__progress-track" id="progressTrack"><div class="topnav__progress-fill" id="progressFill"></div></div>
-    <span class="topnav__counter" id="slideCounter">1 / 43</span>
+    <span class="topnav__counter" id="slideCounter">1 / 44</span>
   </div>
   <div class="topnav__right">
     <button class="topnav__btn" id="tenantOpenBtn">&#9881; Instanz</button>
@@ -471,6 +471,28 @@ section.slide { scroll-snap-align: start; min-height: 100dvh; position: relative
   </div>
   <p class="screenshot-caption">Homescreen mit Schnellzugriffleiste und individuellen Favoriten</p>
 </div>
+  </div>
+</div>
+</section>
+<section class="slide" id="slide-10b">
+<div class="slide--bullets">
+  <div class="slide__content">
+    <span class="slide__kicker">Basic Basics</span>
+    <h2 class="slide__title-sm animate-in">Dashboard</h2>
+    <ul class="bullet-list animate-in">
+      <li>Das Dashboard (Home) zeigt euch Agenda, &laquo;Links der Schule&raquo; und weitere Kacheln auf einen Blick.</li>
+      <li>Kacheln lassen sich individuell ein- und ausblenden, je nach euren Bed&uuml;rfnissen.</li>
+      <li>&Uuml;ber &laquo;Links der Schule&raquo; k&ouml;nnt ihr eigene Kurzlinks direkt vom Dashboard aus &ouml;ffnen.</li>
+      <li>Der Seven Assistant (KI) ist ebenfalls direkt vom Dashboard aus erreichbar.</li>
+    </ul>
+    <a href="#" class="pupil-link" data-path-key="home">&#8599; Dashboard &ouml;ffnen</a>
+  </div>
+  <div class="slide__panel" style="--accent-bg:var(--color-pink-tint)">
+    <div style="text-align:center;">
+      <div style="font-size:3.6rem;">&#127968;</div>
+      <p style="margin-top:16px; font-weight:700; color:var(--color-black); font-size:1.2rem;">Euer Startpunkt</p>
+      <p style="font-size:1rem; color:var(--color-text-muted); max-width:300px; margin-top:10px;">Das Dashboard ist die erste Seite nach dem Login &ndash; individuell einrichtbar f&uuml;r euren Alltag.</p>
+    </div>
   </div>
 </div>
 </section>
@@ -1047,14 +1069,14 @@ section.slide { scroll-snap-align: start; min-height: 100dvh; position: relative
 
 <nav class="sidenav"><button class="sidenav__dot" data-i="0" data-title="Start"></button>
 <button class="sidenav__dot" data-i="9" data-title="Schulung heute"></button>
-<button class="sidenav__dot" data-i="12" data-title="Berechtigungen"></button>
-<button class="sidenav__dot" data-i="15" data-title="Journal"></button>
-<button class="sidenav__dot" data-i="21" data-title="Förderplaner"></button>
-<button class="sidenav__dot" data-i="27" data-title="Noten & Zeugnisse"></button>
-<button class="sidenav__dot" data-i="32" data-title="Elterngespräche"></button>
-<button class="sidenav__dot" data-i="36" data-title="Selbstlernen"></button>
-<button class="sidenav__dot" data-i="39" data-title="Weiteres Vorgehen"></button>
-<button class="sidenav__dot" data-i="41" data-title="Fragen"></button></nav>
+<button class="sidenav__dot" data-i="13" data-title="Berechtigungen"></button>
+<button class="sidenav__dot" data-i="16" data-title="Journal"></button>
+<button class="sidenav__dot" data-i="22" data-title="Förderplaner"></button>
+<button class="sidenav__dot" data-i="28" data-title="Noten & Zeugnisse"></button>
+<button class="sidenav__dot" data-i="33" data-title="Elterngespräche"></button>
+<button class="sidenav__dot" data-i="37" data-title="Selbstlernen"></button>
+<button class="sidenav__dot" data-i="40" data-title="Weiteres Vorgehen"></button>
+<button class="sidenav__dot" data-i="42" data-title="Fragen"></button></nav>
 
 <div class="modal-overlay" id="tenantOverlay">
   <div class="modal-box">
@@ -1096,8 +1118,8 @@ var PUPIL_PATHS = {
   'uefk':            '/alsv/plan'
 };
 
-var MAJOR_INDICES = [0,9,12,15,21,27,32,36,39,41];
-var TOTAL_SLIDES = 43;
+var MAJOR_INDICES = [0,9,13,16,22,28,33,37,40,42];
+var TOTAL_SLIDES = 44;
 
 (function(){
   var deck = document.getElementById('deck');
