@@ -118,6 +118,13 @@ section.slide { scroll-snap-align: start; min-height: 100dvh; position: relative
 .tag-row { display:flex; gap:10px; flex-wrap:wrap; margin-top:28px; position:relative; z-index:1; }
 .tag-pill { background: rgba(255,255,255,.12); color:white; padding:9px 20px; border-radius: var(--radius-full); font-size:.94rem; font-weight:600; }
 
+/* Compact agenda grid inside a dark section-opener */
+.opener-agenda-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(230px,1fr)); gap:14px; margin-top:8px; position:relative; z-index:1; max-width: 1100px; }
+.opener-agenda-item { background: rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.14); border-radius: var(--radius-md); padding:14px 16px; display:flex; gap:12px; align-items:flex-start; }
+.opener-agenda-item__num { width:26px;height:26px;border-radius:50%; background:var(--color-magenta); color:white; font-weight:800; font-size:.8rem; display:flex;align-items:center;justify-content:center; flex-shrink:0; }
+.opener-agenda-item__title { color:white; font-weight:700; font-size:.92rem; }
+.opener-agenda-item__desc { color:rgba(255,255,255,.6); font-size:.8rem; margin-top:2px; line-height:1.4; }
+
 /* PAUSE */
 .slide--pause { flex: 1 1 auto; width: 100%; background: var(--color-yellow); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align:center; padding: 60px 10%; position:relative; }
 .slide--pause .pause-emoji { font-size: 4.8rem; position:relative; z-index:1; }
@@ -249,7 +256,7 @@ section.slide { scroll-snap-align: start; min-height: 100dvh; position: relative
   </a>
   <div class="topnav__progress-wrap">
     <div class="topnav__progress-track" id="progressTrack"><div class="topnav__progress-fill" id="progressFill"></div></div>
-    <span class="topnav__counter" id="slideCounter">1 / 43</span>
+    <span class="topnav__counter" id="slideCounter">1 / 42</span>
   </div>
   <div class="topnav__right">
     <button class="topnav__btn" id="tenantOpenBtn">&#9881; Instanz</button>
@@ -431,33 +438,18 @@ section.slide { scroll-snap-align: start; min-height: 100dvh; position: relative
 </div>
 <span class="eyebrow eyebrow--light" style="position:relative;z-index:1;">Donnerstag</span>
 <div class="slide__accent-bar"></div>
-<h2 class="slide__title">Schulung heute</h2>
-<p class="slide__subtitle">Basic Basics, Berechtigungen, Journal, F&ouml;rderplaner, Noten &amp; Zeugnisse und Elterngespr&auml;che &ndash; zum Schluss nochmals ein Blick auf die Dokumentation.</p>
-<div class="tag-row">
-  <span class="tag-pill">Basic Basics</span>
-  <span class="tag-pill">Berechtigungen</span>
-  <span class="tag-pill">Journal</span>
-  <span class="tag-pill">F&ouml;rderplaner</span>
-  <span class="tag-pill">Noten &amp; Zeugnisse</span>
-  <span class="tag-pill">Elterngespr&auml;che</span>
-  <span class="tag-pill">Doku</span>
+<h2 class="slide__title" style="font-size:clamp(1.9rem,4.2vw,3rem); margin-bottom:10px;">Schulung heute</h2>
+<p class="slide__subtitle" style="font-size:1.05rem; margin-bottom:6px;">Euer Fahrplan f&uuml;r heute &ndash; zum Schluss nochmals ein Blick auf die Dokumentation.</p>
+<div class="opener-agenda-grid">
+  <div class="opener-agenda-item"><div class="opener-agenda-item__num">1</div><div><div class="opener-agenda-item__title">Basic Basics</div><div class="opener-agenda-item__desc">Navigation, Personen und Listen im Alltag.</div></div></div>
+  <div class="opener-agenda-item"><div class="opener-agenda-item__num">2</div><div><div class="opener-agenda-item__title">Berechtigungen</div><div class="opener-agenda-item__desc">Wie Rollen und Zugriffsrechte grunds&auml;tzlich funktionieren.</div></div></div>
+  <div class="opener-agenda-item"><div class="opener-agenda-item__num">3</div><div><div class="opener-agenda-item__title">Journal</div><div class="opener-agenda-item__desc">Beobachtungen laufend festhalten.</div></div></div>
+  <div class="opener-agenda-item"><div class="opener-agenda-item__num">4</div><div><div class="opener-agenda-item__title">F&ouml;rderplaner</div><div class="opener-agenda-item__desc">F&ouml;rderziele, Diagnostik und Lernberichte.</div></div></div>
+  <div class="opener-agenda-item"><div class="opener-agenda-item__num">5</div><div><div class="opener-agenda-item__title">Noten &amp; Zeugnisse</div><div class="opener-agenda-item__desc">Beurteilungen erfassen und &Uuml;bersicht behalten.</div></div></div>
+  <div class="opener-agenda-item"><div class="opener-agenda-item__num">6</div><div><div class="opener-agenda-item__title">Elterngespr&auml;che</div><div class="opener-agenda-item__desc">Termine planen und Gespr&auml;che vorbereiten.</div></div></div>
+  <div class="opener-agenda-item"><div class="opener-agenda-item__num">7</div><div><div class="opener-agenda-item__title">Dokumentation</div><div class="opener-agenda-item__desc">Wo ihr danach alles wieder nachschlagen k&ouml;nnt.</div></div></div>
 </div>
 </div></section>
-<section class="slide" id="slide-8b">
-<div class="slide--agenda">
-<span class="slide__kicker">Ablauf heute</span>
-<h2 class="slide__title-sm animate-in">Das erwartet euch</h2>
-<div class="agenda-list animate-in">
-  <div class="agenda-item"><div class="agenda-item__num">1</div><div><div class="agenda-item__title">Basic Basics</div><div class="agenda-item__desc">Navigation, Personen und Listen im Alltag.</div></div></div>
-  <div class="agenda-item"><div class="agenda-item__num">2</div><div><div class="agenda-item__title">Berechtigungen</div><div class="agenda-item__desc">Wie Rollen und Zugriffsrechte grunds&auml;tzlich funktionieren.</div></div></div>
-  <div class="agenda-item"><div class="agenda-item__num">3</div><div><div class="agenda-item__title">Journal</div><div class="agenda-item__desc">Beobachtungen laufend festhalten.</div></div></div>
-  <div class="agenda-item"><div class="agenda-item__num">4</div><div><div class="agenda-item__title">F&ouml;rderplaner</div><div class="agenda-item__desc">F&ouml;rderziele, Diagnostik und Lernberichte.</div></div></div>
-  <div class="agenda-item"><div class="agenda-item__num">5</div><div><div class="agenda-item__title">Noten &amp; Zeugnisse</div><div class="agenda-item__desc">Beurteilungen erfassen und &Uuml;bersicht behalten.</div></div></div>
-  <div class="agenda-item"><div class="agenda-item__num">6</div><div><div class="agenda-item__title">Elterngespr&auml;che</div><div class="agenda-item__desc">Termine planen und Gespr&auml;che vorbereiten.</div></div></div>
-  <div class="agenda-item"><div class="agenda-item__num">7</div><div><div class="agenda-item__title">Dokumentation</div><div class="agenda-item__desc">Wo ihr danach alles wieder nachschlagen k&ouml;nnt.</div></div></div>
-</div>
-</div>
-</section>
 <section class="slide" id="slide-10">
 <div class="slide--bullets">
   <div class="slide__content">
@@ -1093,7 +1085,7 @@ var PUPIL_PATHS = {
 };
 
 var MAJOR_INDICES = [0,8,11,14,20,26,31,34,37,39];
-var TOTAL_SLIDES = 43;
+var TOTAL_SLIDES = 42;
 
 (function(){
   var deck = document.getElementById('deck');
