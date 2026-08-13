@@ -79,8 +79,9 @@ section.slide { scroll-snap-align: start; min-height: 100dvh; position: relative
 .topnav__progress-fill { height:100%; width:0%; background:var(--color-magenta); border-radius:2px; transition: width .25s var(--ease); }
 .topnav__counter { color:rgba(255,255,255,.55); font-size:.8rem; font-weight:700; white-space:nowrap; font-variant-numeric: tabular-nums; }
 .topnav__right { display:flex; align-items:center; gap:10px; flex-shrink:0; }
-.topnav__btn { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15); color: white; border-radius: var(--radius-full); padding: 7px 16px; font-size: .84rem; font-weight: 600; cursor: pointer; display:flex; align-items:center; gap:6px; font-family: var(--font-primary); white-space:nowrap; }
-.topnav__btn:hover { background: rgba(255,255,255,.16); }
+.topnav__btn { background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1); color: rgba(255,255,255,.6); border-radius: var(--radius-full); padding: 6px 14px; font-size: .76rem; font-weight: 600; cursor: pointer; display:flex; align-items:center; gap:6px; font-family: var(--font-primary); white-space:nowrap; opacity:1; transition: opacity .25s var(--ease), visibility .25s; }
+.topnav__btn:hover { background: rgba(255,255,255,.12); color: white; }
+.topnav__btn.is-hidden { opacity:0; visibility:hidden; pointer-events:none; }
 
 .sidenav { position: fixed; right: 20px; top: 50%; transform: translateY(-50%); z-index: 99; display: flex; flex-direction: column; gap: 14px; overflow: visible; }
 .sidenav__dot { width: 11px; height: 11px; border-radius: 50%; background: rgba(255,255,255,.85); border: 1.5px solid rgba(13,13,13,.35); box-shadow: 0 1px 3px rgba(13,13,13,.2); cursor: pointer; transition: all .2s; position: relative; padding:0; }
@@ -1140,6 +1141,7 @@ var TOTAL_SLIDES = 44;
   var slideCounter = document.getElementById('slideCounter');
   var progressTrack = document.getElementById('progressTrack');
   var trainingLinks = document.getElementById('trainingLinks');
+  var tenantBtn = document.getElementById('tenantOpenBtn');
   var TRAINING_TYPES = ['slide--bullets', 'slide--cards'];
   var currentIndex = 0;
 
@@ -1157,6 +1159,7 @@ var TOTAL_SLIDES = 44;
     var child = sections[i].firstElementChild;
     var isTraining = child && TRAINING_TYPES.indexOf(child.className.split(' ')[0]) !== -1;
     trainingLinks.classList.toggle('show', !!isTraining);
+    if(tenantBtn){ tenantBtn.classList.toggle('is-hidden', i !== 0); }
   }
 
   function _scrollTo(el){
