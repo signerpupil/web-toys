@@ -1,0 +1,589 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PUPIL Product Updates</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --color-magenta:  #F43175;
+    --color-black:    #0D0D0D;
+    --color-white:    #FFFFFF;
+    --color-cream:    #FFFAF6;
+    --color-orange:   #FF8C42;
+    --color-yellow:   #FFD313;
+    --color-blue:     #072AC8;
+    --color-teal:     #21C2A2;
+    --color-cyan:     #63E8F2;
+    --color-text-muted: rgba(255,255,255,0.6);
+    --font-primary:   'Plus Jakarta Sans', 'PP Mori', 'Inter', sans-serif;
+    --radius-lg: 24px;
+    --radius-xl: 40px;
+    --radius-full: 9999px;
+  }
+  /* Cursor hidden by default (kiosk, no interaction expected); shown again on real
+     mouse movement (e.g. while driving the screen via Raspberry Pi Connect) and
+     re-hidden after a short idle period — see the idle-detection script below. */
+  * { box-sizing: border-box; margin: 0; padding: 0; cursor: none !important; }
+  html.cursor-active * { cursor: auto !important; }
+  html {
+    height: 100%;
+    /* Mild scale-up for large kiosk/TV screens — kept subtle to avoid overflow/wrapping. */
+    font-size: clamp(16px, 0.85vw, 19px);
+  }
+  html, body { overflow: hidden; }
+  body {
+    height: 100%;
+    font-family: var(--font-primary);
+    background:
+      radial-gradient(circle at 6% 8%, rgba(244,49,117,0.08), transparent 32%),
+      radial-gradient(circle at 96% 92%, rgba(33,194,162,0.10), transparent 34%),
+      radial-gradient(circle at 88% 6%, rgba(255,211,19,0.06), transparent 26%),
+      var(--color-black);
+    color: var(--color-white);
+    display: flex;
+    flex-direction: column;
+    padding: 3vh 3.2vw;
+    position: relative;
+  }
+  /* faint ambient dot grid — fills empty black space without competing for attention */
+  body::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px);
+    background-size: 28px 28px;
+    pointer-events: none;
+    z-index: 0;
+  }
+  header, .spotlight, .grid-heading, .grid, .ticker, footer { position: relative; z-index: 1; }
+
+  /* ---------- Header ---------- */
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 32px;
+    flex-shrink: 0;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .brand-title {
+    font-size: 1.5rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+  .brand-title span { color: var(--color-magenta); }
+  .eyebrow {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-magenta);
+    margin-top: 2px;
+  }
+  .clock {
+    text-align: right;
+  }
+  .clock-time { font-size: 1.75rem; font-weight: 800; letter-spacing: -0.02em; }
+  .clock-date { font-size: 0.9rem; color: var(--color-text-muted); margin-top: 2px; }
+
+  /* ---------- Spotlight ---------- */
+  .spotlight {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(120deg, var(--color-magenta) 0%, #ff5c96 45%, var(--color-magenta) 100%);
+    border-radius: var(--radius-xl);
+    padding: 44px 56px;
+    flex-shrink: 0;
+    min-height: 260px;
+    max-height: 300px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+  /* Dedicated column for the decorative motif so it occupies a fixed share of the
+     width instead of leaving a random gap between the text and the corner blob. */
+  .spotlight__visual {
+    position: relative;
+    flex: 0 0 18%;
+    align-self: stretch;
+    min-width: 140px;
+  }
+  /* GPU-cheap light sweep instead of animating background-position (avoids repaint jank) */
+  .spotlight::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -60%;
+    width: 45%;
+    height: 100%;
+    background: linear-gradient(100deg, transparent, rgba(255,255,255,0.16), transparent);
+    transform: translate3d(0,0,0) skewX(-12deg);
+    animation: sweep 7s ease-in-out infinite;
+    will-change: transform;
+    pointer-events: none;
+    z-index: 0;
+  }
+  @keyframes sweep {
+    0%, 100% { transform: translate3d(0,0,0) skewX(-12deg); }
+    50% { transform: translate3d(340%,0,0) skewX(-12deg); }
+  }
+  .spotlight__blob {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 85%;
+    max-width: 320px;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.22;
+    animation: floatBlob 14s ease-in-out infinite;
+    transform-origin: center;
+    will-change: transform;
+  }
+  @keyframes floatBlob {
+    0%, 100% { transform: translate(-42%, -55%) translate(0, 0) rotate(0deg); }
+    50%      { transform: translate(-42%, -55%) translate(-10px, 14px) rotate(6deg); }
+  }
+  .spotlight__arc {
+    position: absolute;
+    bottom: 6%;
+    right: 8%;
+    width: 55%;
+    max-width: 200px;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+    animation: float 11s ease-in-out infinite reverse;
+  }
+  @keyframes float {
+    0%, 100% { transform: translate(0, 0) rotate(0deg); }
+    50% { transform: translate(-10px, 14px) rotate(6deg); }
+  }
+  .spotlight__content {
+    position: relative;
+    z-index: 1;
+    flex: 1 1 auto;
+    min-width: 0;
+    animation: fadeUp 0.7s ease-out both;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .spotlight__tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255,255,255,0.18);
+    border-radius: var(--radius-full);
+    padding: 8px 18px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin-bottom: 22px;
+    animation: tagBreathe 2.4s ease-in-out infinite;
+  }
+  @keyframes tagBreathe {
+    0%, 100% { background: rgba(255,255,255,0.18); }
+    50%      { background: rgba(255,255,255,0.30); }
+  }
+  .spotlight__tag .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--color-yellow);
+    animation: pulse 1.6s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.7); }
+  }
+  .spotlight__title {
+    font-size: clamp(1.6rem, 2.4vw, 2.25rem);
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    margin-bottom: 14px;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+  .spotlight__desc {
+    font-size: 1.05rem;
+    line-height: 1.5;
+    color: rgba(255,255,255,0.92);
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+  }
+  .spotlight__meta {
+    margin-top: 26px;
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.75);
+    font-weight: 600;
+  }
+
+  /* ---------- Grid of other updates ---------- */
+  .grid-heading {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin: 32px 0 18px;
+    flex-shrink: 0;
+  }
+  .grid-heading h2 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+  .grid-heading .sub {
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 20px;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+  }
+  .card {
+    position: relative;
+    overflow: hidden;
+    background: #191919;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: var(--radius-lg);
+    padding: 24px 26px;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    opacity: 0;
+    animation: fadeUp 0.6s ease-out both;
+    transition: border-color 0.4s ease, transform 0.4s ease;
+  }
+  .card:hover { border-color: rgba(244,49,117,0.4); transform: translateY(-3px); }
+  .card__badge {
+    display: inline-flex;
+    align-self: flex-start;
+    background: rgba(244,49,117,0.15);
+    color: var(--color-magenta);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    border-radius: var(--radius-full);
+    padding: 5px 12px;
+    margin-bottom: 12px;
+    animation: badgePulse 3s ease-in-out infinite;
+  }
+  @keyframes badgePulse {
+    0%, 100% { background: rgba(244,49,117,0.15); }
+    50% { background: rgba(244,49,117,0.30); }
+  }
+  .card__title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    line-height: 1.3;
+    margin-bottom: 10px;
+  }
+  .card__desc {
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: rgba(255,255,255,0.7);
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    flex: 1;
+  }
+  .card__date {
+    margin-top: 14px;
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.45);
+    font-weight: 600;
+  }
+
+  /* ---------- Ticker ---------- */
+  .ticker {
+    display: none; /* wasn't rendering cleanly on the kiosk — disabled */
+    margin-top: 20px;
+    overflow: hidden;
+    white-space: nowrap;
+    flex-shrink: 0;
+    -webkit-mask-image: linear-gradient(90deg, transparent, black 6%, black 94%, transparent);
+    mask-image: linear-gradient(90deg, transparent, black 6%, black 94%, transparent);
+  }
+  .ticker__track {
+    display: inline-flex;
+    animation: scroll 45s linear infinite;
+  }
+  .ticker__item {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: rgba(255,255,255,0.55);
+    padding-right: 48px;
+  }
+  .ticker__item .sep { color: var(--color-magenta); }
+  @keyframes scroll {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+
+  footer {
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .progress-track {
+    flex: 1;
+    height: 4px;
+    background: rgba(255,255,255,0.1);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+    margin-right: 24px;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--color-magenta);
+    width: 0%;
+  }
+  footer .label {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  @media (max-width: 1100px) {
+    .grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  /* ---------- Logo entrance ---------- */
+  .logo-mark {
+    transform-origin: center;
+    animation: logoIn 0.8s cubic-bezier(0.34,1.56,0.64,1) both, glow 3s ease-in-out 0.8s infinite;
+  }
+  @keyframes logoIn {
+    from { opacity: 0; transform: scale(0.4) rotate(-15deg); }
+    to   { opacity: 1; transform: scale(1) rotate(0deg); }
+  }
+  @keyframes glow {
+    0%, 100% { filter: drop-shadow(0 0 0 rgba(244,49,117,0)); }
+    50% { filter: drop-shadow(0 0 8px rgba(244,49,117,0.6)); }
+  }
+  .brand-title, .eyebrow, .clock {
+    animation: fadeUp 0.6s ease-out both;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <svg class="logo-mark" width="40" height="51" viewBox="20 33 285 365" xmlns="http://www.w3.org/2000/svg">
+      <path fill="#F43175" d="M164.6,50.7c-36.87,4.82-109.66,21.56-126.75,60.27c-3.33,7.47-3.55,15.88-0.22,23.32
+        c19.11,42.97,117.44,30.41,96.28,102.98h-0.04l-0.19,0.71c-5.57,18.83-15.82,40.39-24.15,60.12
+        c-9.31,22.53-23.93,50.14-13.39,71.78c2.99,6.13,8.82,10.39,15.63,10.8C198.36,385.79,428.42,13.33,164.6,50.7z"/>
+    </svg>
+    <div>
+      <div class="brand-title">7<span>education</span></div>
+      <div class="eyebrow">PUPIL Product Updates</div>
+    </div>
+  </div>
+  <div class="clock">
+    <div class="clock-time" id="clock-time">--:--</div>
+    <div class="clock-date" id="clock-date">—</div>
+  </div>
+</header>
+
+<section class="spotlight" id="spotlight">
+  <div class="spotlight__content">
+    <div class="spotlight__tag"><span class="dot"></span> Feature Spotlight</div>
+    <div class="spotlight__title" id="spotlight-title">—</div>
+    <div class="spotlight__desc" id="spotlight-desc">—</div>
+    <div class="spotlight__meta" id="spotlight-meta">—</div>
+  </div>
+  <div class="spotlight__visual">
+    <svg class="spotlight__blob" viewBox="0 0 400 500" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M380 50 C420 120 420 280 380 360 C340 440 200 480 120 440 C40 400 -20 300 20 180 C60 60 160 -20 260 10 C320 30 360 -20 380 50Z" fill="white"/>
+    </svg>
+    <svg class="spotlight__arc" viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M280 280 C280 120 120 20 20 20" stroke="white" stroke-width="4" fill="none"/>
+    </svg>
+  </div>
+</section>
+
+<div class="grid-heading">
+  <h2>Weitere aktuelle Updates</h2>
+  <div class="sub" id="grid-sub">—</div>
+</div>
+
+<div class="grid" id="grid"></div>
+
+<div class="ticker">
+  <div class="ticker__track" id="ticker-track"></div>
+</div>
+
+<footer>
+  <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+  <div class="label">Aktualisiert alle 5 Minuten</div>
+</footer>
+
+<script>
+  // Real PUPIL release notes (public), fetched from Jira on 2026-08-07.
+  const FEATURES = [
+    {
+      key: "CODEFELLAS-3836",
+      title: "Kontaktdaten von Lehrpersonen und Fachpersonal in Vorlagen und Listen nutzbar",
+      desc: "Name, Mobilnummer, Geschäftstelefon und Schul-E-Mail von Lehrpersonen, Fachpersonal für besondere Förderung, Logopädie und Psychomotorik lassen sich jetzt als Platzhalter in Vorlagen einfügen und werden beim Drucken korrekt ersetzt. Pro Personentyp stehen die ersten drei zugeordneten Personen einzeln als Platzhalter zur Verfügung (z. B. Lehrperson 1, 2, 3). Die Felder sind zudem im Adressbuch und in Listen sichtbar und nutzbar.",
+      resolved: "2026-08-06T11:31:05.372+0200"
+    },
+    {
+      key: "CODEFELLAS-3832",
+      title: "Hausarzt- und Zahnarztdaten in Vorlagen, Listen und Sammelmutation nutzbar",
+      desc: "Hausarzt- und Zahnarztinformationen, einschliesslich Kontakt- und Adressdaten, können jetzt als Platzhalter in Vorlagen verwendet werden, sind im Adressbuch und in Personenlisten sichtbar und lassen sich als Spalten in der Listenkonfiguration hinzufügen. Ein Hausarzt oder Zahnarzt kann zudem per Sammelmutation mehreren Schülerinnen und Schülern gleichzeitig zugewiesen werden, wobei einzelne Felder vor Sammeländerungen geschützt bleiben.",
+      resolved: "2026-08-06T10:18:49.247+0200"
+    },
+    {
+      key: "CODEFELLAS-3835",
+      title: "Geschwister-Felder als Platzhalter und in Listen nutzbar",
+      desc: "Vorname, Nachname und Geburtsdatum von Geschwistern können jetzt in der Vorlagenverwaltung als Platzhalter verwendet und bei der Darstellung korrekt ersetzt werden. Zusätzlich sind diese Felder im Adressbuch und in Listen sichtbar und nutzbar. Es werden jeweils bis zu vier Geschwister berücksichtigt.",
+      resolved: "2026-08-04T13:28:04.051+0200"
+    },
+    {
+      key: "CODEFELLAS-3837",
+      title: "Gesundheits- und Förderbedarfsangaben in Vorlagen, Listen und Filtern nutzbar",
+      desc: "Angaben zu Ernährungsbedürfnissen, besonderem Förderbedarf, Art der Beeinträchtigung und Allergien/Unverträglichkeiten von Schüler:innen lassen sich jetzt in Vorlagen als Platzhalter einfügen und werden beim Drucken korrekt ersetzt. Die Felder sind zudem im Adressbuch, in Listen und in der Spaltenkonfiguration der Personenliste sichtbar und aktivierbar.",
+      resolved: "2026-08-04T12:37:16.946+0200"
+    },
+    {
+      key: "BUGHUNTERS-755",
+      title: "Überfachliche Beurteilungen: Statusspalte in der Beurteilungsplanung",
+      desc: "In der Planungsübersicht der überfachlichen Beurteilungen wird neu für jede Beurteilung ein Status angezeigt: «offen» (noch keine Aspekte bewertet), «begonnen» (teilweise bewertet) oder «abgeschlossen» (alle Aspekte bewertet). Damit können Lehrpersonen auf einen Blick erkennen, welche Beurteilungen noch ausstehend sind.",
+      resolved: "2026-07-29T16:32:03.503+0200"
+    },
+    {
+      key: "BUGHUNTERS-1018",
+      title: "Überfachliche Beurteilungen: Vereinfachte Zuweisung von Lernenden zur Einschätzungsplanung",
+      desc: "Beim Erstellen einer Einschätzungsplanung werden Lernende neu automatisch anhand ihrer Klasse oder Gruppe zugewiesen – eine manuelle Auswahl ist nicht mehr nötig. Neu eintretende Schülerinnen und Schüler werden zudem automatisch zur bestehenden Planung hinzugefügt.",
+      resolved: "2026-07-29T15:50:37.208+0200"
+    },
+    {
+      key: "CODEFELLAS-3831",
+      title: "Mobilnummer von Schüler:innen breiter nutzbar",
+      desc: "Die Mobilnummer von Schüler:innen steht ab sofort an mehreren Stellen zur Verfügung: als Platzhalter in der Vorlagenverwaltung, im Adressbuch und in Listen, in der Spaltenkonfiguration der Personenliste sowie bei der Massenmutation. Damit lässt sich die Mobilnummer effizienter in Workflows einbinden – ohne manuelle Umwege.",
+      resolved: "2026-07-28T10:09:01.333+0200"
+    },
+    {
+      key: "CODEFELLAS-3834",
+      title: "Zusätzliche Felder der gesetzlichen Vertreter als Platzhalter und in Listen nutzbar",
+      desc: "Schuladministratoren können zusätzliche Felder der gesetzlichen Vertreter (GV1–GV3) jetzt direkt in der Vorlagenverwaltung als Platzhalter verwenden. Felder wie Geschlecht, Nationalität, Erstsprache, Beruf sowie die vollständige Adresse stehen außerdem im Adressbuch und in Listen zur Verfügung.",
+      resolved: "2026-07-27T16:09:35.125+0200"
+    },
+    {
+      key: "KSNIFFERS-1738",
+      title: "Datenexporte: CSV-Export der Projektarbeitsbewertungen für den Kanton Aargau",
+      desc: "Lehrpersonen und Administratoren können die erfassten Bewertungen der Projektarbeit (Abschlussarbeit) neu als CSV-Datei exportieren und direkt in externe Systeme importieren.",
+      resolved: "2026-07-23T10:05:42.129+0200"
+    }
+  ];
+
+  const RELOAD_MS = 5 * 60 * 1000;
+
+  function fmtDate(iso) {
+    const d = new Date(iso);
+    return d.toLocaleDateString('de-CH', { day: '2-digit', month: 'long', year: 'numeric' });
+  }
+  function relTime(iso) {
+    const diffDays = Math.floor((Date.now() - new Date(iso).getTime()) / 86400000);
+    if (diffDays <= 0) return "heute";
+    if (diffDays === 1) return "vor 1 Tag";
+    return `vor ${diffDays} Tagen`;
+  }
+
+  function render() {
+    const slot = Math.floor(Date.now() / RELOAD_MS);
+    const spotlightIdx = slot % FEATURES.length;
+    const spotlight = FEATURES[spotlightIdx];
+
+    document.getElementById('spotlight-title').textContent = spotlight.title;
+    document.getElementById('spotlight-desc').textContent = spotlight.desc;
+    document.getElementById('spotlight-meta').textContent =
+      `${spotlight.key} · Veröffentlicht am ${fmtDate(spotlight.resolved)} · ${relTime(spotlight.resolved)}`;
+
+    const others = FEATURES.filter((_, i) => i !== spotlightIdx).slice(0, 6);
+    document.getElementById('grid-sub').textContent = `${FEATURES.length} veröffentlichte Features`;
+    const grid = document.getElementById('grid');
+    grid.innerHTML = others.map((f, i) => `
+      <div class="card" style="animation-delay:${0.15 + i * 0.1}s">
+        <div class="card__badge">${f.key.split('-')[0]}</div>
+        <div class="card__title">${f.title}</div>
+        <div class="card__desc">${f.desc}</div>
+        <div class="card__date">${fmtDate(f.resolved)} · ${relTime(f.resolved)}</div>
+      </div>
+    `).join('');
+
+    const tickerItems = FEATURES.map(f =>
+      `<span class="ticker__item">${f.title} <span class="sep">&bull;</span></span>`
+    ).join('');
+    document.getElementById('ticker-track').innerHTML = tickerItems + tickerItems;
+  }
+
+  function tickClock() {
+    const now = new Date();
+    document.getElementById('clock-time').textContent =
+      now.toLocaleTimeString('de-CH', { hour: '2-digit', minute: '2-digit' });
+    document.getElementById('clock-date').textContent =
+      now.toLocaleDateString('de-CH', { weekday: 'long', day: '2-digit', month: 'long' });
+  }
+
+  function tickProgress() {
+    const elapsed = Date.now() % RELOAD_MS;
+    document.getElementById('progress-fill').style.width = `${(elapsed / RELOAD_MS) * 100}%`;
+  }
+
+  render();
+  tickClock();
+  tickProgress();
+  setInterval(tickClock, 1000);
+  setInterval(tickProgress, 1000);
+
+  // Refresh content in place every 5 minutes instead of a full page reload — a real
+  // navigation resets Chromium's cursor state, which only re-hides after actual mouse
+  // movement (cursor:none isn't re-evaluated until the next pointer event). Staying on
+  // the same page keeps the cursor hidden continuously. The nightly reboot (cron, on
+  // the Pi) covers long-run tab health instead.
+  setInterval(render, RELOAD_MS);
+
+  // Idle-based cursor: hidden by default, shown while the mouse actually moves
+  // (e.g. controlling the screen via Raspberry Pi Connect), hidden again shortly
+  // after it stops — same UX as a video player's controls.
+  let cursorIdleTimer;
+  document.addEventListener('mousemove', () => {
+    document.documentElement.classList.add('cursor-active');
+    clearTimeout(cursorIdleTimer);
+    cursorIdleTimer = setTimeout(() => {
+      document.documentElement.classList.remove('cursor-active');
+    }, 2000);
+  });
+</script>
+
+</body>
+</html>
