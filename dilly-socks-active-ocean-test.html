@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="de-CH">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dilly Socks Active Ocean – Der völlig unabhängige Praxistest</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Caveat:wght@600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EAF2F5;
+  --card:#F8FBFC;
+  --ink:#0E2A43;
+  --ink-soft:#44607A;
+  --sock:#1F6FD1;
+  --sock-deep:#14509E;
+  --foam:#BFE3E8;
+  --line:#B7CEDA;
+  --stamp:#B8322A;
+  --hot:#E8742A;
+  --shadow:rgba(14,42,67,.14);
+  --display:"Bricolage Grotesque","Avenir Next","Segoe UI",system-ui,sans-serif;
+  --hand:"Caveat","Segoe Print","Bradley Hand",cursive;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#0A1B2C;
+    --card:#10283F;
+    --ink:#E6F1F6;
+    --ink-soft:#9DB6C8;
+    --sock:#4A97F0;
+    --sock-deep:#2F78D0;
+    --foam:#1B4A5C;
+    --line:#244159;
+    --stamp:#E0584E;
+    --shadow:rgba(0,0,0,.45);
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0A1B2C;--card:#10283F;--ink:#E6F1F6;--ink-soft:#9DB6C8;
+  --sock:#4A97F0;--sock-deep:#2F78D0;--foam:#1B4A5C;--line:#244159;
+  --stamp:#E0584E;--shadow:rgba(0,0,0,.45);
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--display);
+  font-size:1.0625rem;
+  line-height:1.55;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  -webkit-font-smoothing:antialiased;
+}
+:focus-visible{outline:3px solid var(--sock);outline-offset:3px;border-radius:6px}
+
+.wrap{max-width:46rem;margin:0 auto;padding:0 1.25rem}
+
+/* ---------- Titel ---------- */
+.hero{padding:3rem 0 2.25rem;text-align:left}
+.hero h1{
+  font-weight:800;
+  font-size:clamp(2.6rem,11vw,5.2rem);
+  line-height:.92;
+  letter-spacing:-.035em;
+  margin:0 0 1rem;
+  font-variation-settings:"wdth" 90;
+}
+.hero h1 .ocean{color:var(--sock)}
+.hero .sub{
+  font-size:1.2rem;
+  max-width:30rem;
+  color:var(--ink-soft);
+  margin:0;
+}
+.hero-socks{display:flex;gap:.5rem;margin:2rem 0 0;align-items:flex-end}
+.hero-socks svg{width:min(34vw,10.5rem);height:auto;filter:drop-shadow(0 10px 14px var(--shadow))}
+.hero-socks svg:first-child{transform:rotate(-6deg)}
+.hero-socks svg:last-child{transform:rotate(5deg) translateY(.4rem)}
+
+/* ---------- Prüfblatt ---------- */
+.sheet{
+  background:var(--card);
+  border:2px solid var(--ink);
+  border-radius:.5rem;
+  padding:1.25rem 1.25rem .5rem;
+  margin:0 0 3.5rem;
+  position:relative;
+}
+.sheet h2{margin:0 0 .75rem;font-size:1.15rem;font-weight:800}
+.sheet dl{margin:0;display:grid;grid-template-columns:max-content 1fr;gap:0 1.25rem}
+.sheet dt,.sheet dd{padding:.55rem 0;border-top:1px dashed var(--line);margin:0}
+.sheet dt{color:var(--ink-soft);font-weight:600}
+.sheet dd{font-weight:600}
+.sheet .note{
+  position:absolute;right:1rem;top:-1.15rem;
+  font-family:var(--hand);font-size:1.5rem;color:var(--sock);
+  background:var(--paper);padding:0 .5rem;transform:rotate(3deg);
+}
+
+/* ---------- Wellen-Trenner ---------- */
+.wave{display:block;width:100%;height:1.5rem;margin:0 0 2.5rem;color:var(--sock);opacity:.9}
+
+/* ---------- Tests ---------- */
+.test{margin:0 0 4rem}
+.test-head{display:flex;gap:1rem;align-items:baseline;margin:0 0 1.25rem}
+.test-head .no{
+  font-weight:800;font-size:3.4rem;line-height:.8;color:var(--sock);
+  letter-spacing:-.04em;flex:none;
+}
+.test-head h2{margin:0;font-size:1.65rem;line-height:1.1;font-weight:800;letter-spacing:-.02em}
+.test p{margin:0 0 1rem;max-width:34rem}
+.test p.tight{margin-bottom:.35rem}
+
+.quote{
+  font-weight:800;
+  font-size:clamp(1.9rem,7vw,2.8rem);
+  line-height:1.05;
+  letter-spacing:-.025em;
+  margin:.25rem 0 1.5rem;
+  max-width:24rem;
+}
+
+.foot-say{
+  display:flex;gap:.9rem;align-items:center;
+  background:var(--card);border:2px solid var(--ink);border-radius:1.4rem 1.4rem 1.4rem .3rem;
+  padding:.9rem 1.1rem;margin:1.25rem 0;max-width:28rem;
+}
+.foot-say .who{font-size:2rem;flex:none}
+.foot-say p{margin:0;font-weight:600}
+
+.verdict{
+  display:inline-block;
+  font-family:var(--hand);font-size:1.7rem;line-height:1.1;
+  color:var(--sock-deep);
+  transform:rotate(-2deg);
+  margin-top:.25rem;
+}
+:root[data-theme="dark"] .verdict{color:var(--sock)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .verdict{color:var(--sock)}}
+
+.meter{display:flex;gap:.3rem;margin:.5rem 0 0}
+.meter i{display:block;width:2.1rem;height:.7rem;border-radius:.35rem;background:var(--sock)}
+
+/* Velo-Check */
+.checks{list-style:none;padding:0;margin:1.25rem 0;display:grid;gap:.5rem;max-width:26rem}
+.checks li{
+  display:flex;justify-content:space-between;align-items:center;
+  background:var(--card);border:1px solid var(--line);border-radius:.6rem;
+  padding:.6rem .95rem;font-weight:600;
+}
+.checks li.final{border:2px solid var(--ink)}
+.nope{
+  display:grid;gap:.15rem;margin:0 0 1.25rem;padding:0;list-style:none;
+  color:var(--ink-soft);
+}
+.nope li{text-decoration:line-through;text-decoration-color:var(--stamp);text-decoration-thickness:2px}
+
+/* ---------- Thermometer (Test 03) ---------- */
+.thermo{
+  background:var(--card);border:2px solid var(--ink);border-radius:.8rem;
+  padding:1.25rem;margin:1.25rem 0 1.5rem;
+}
+.thermo-top{display:flex;justify-content:space-between;align-items:flex-end;gap:1rem;flex-wrap:wrap}
+.temp{font-weight:800;font-size:3.6rem;line-height:.9;letter-spacing:-.04em;font-variant-numeric:tabular-nums}
+.temp small{font-size:1.4rem;font-weight:600;color:var(--ink-soft);letter-spacing:0}
+.hotel{text-align:right;min-height:3.2rem}
+.hotel .stars{font-size:1.4rem;letter-spacing:.1em;color:var(--hot);min-height:1.9rem;line-height:1.2}
+.hotel .name{font-weight:600;color:var(--ink-soft);font-size:.95rem}
+.sockstate{display:flex;align-items:center;gap:.9rem;margin:1rem 0 .5rem;min-height:3.4rem}
+.sockstate .emoji{font-size:2.4rem;line-height:1;flex:none;transition:transform .25s}
+.sockstate .say{margin:0;font-weight:800;font-size:1.25rem;line-height:1.2}
+.sockstate .say span{display:block;font-weight:400;font-size:1rem;color:var(--ink-soft);margin-top:.15rem}
+
+input[type=range]{
+  -webkit-appearance:none;appearance:none;width:100%;height:2.4rem;background:transparent;margin:.5rem 0 0;cursor:pointer;
+}
+input[type=range]::-webkit-slider-runnable-track{
+  height:.8rem;border-radius:.4rem;
+  background:linear-gradient(90deg,#4A97F0 0%,#7FC4CF 40%,#F2C14E 68%,var(--hot) 85%,#C8372D 100%);
+}
+input[type=range]::-moz-range-track{
+  height:.8rem;border-radius:.4rem;
+  background:linear-gradient(90deg,#4A97F0 0%,#7FC4CF 40%,#F2C14E 68%,var(--hot) 85%,#C8372D 100%);
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;appearance:none;width:1.9rem;height:1.9rem;margin-top:-.55rem;border-radius:50%;
+  background:var(--card);border:3px solid var(--ink);box-shadow:0 2px 6px var(--shadow);
+}
+input[type=range]::-moz-range-thumb{
+  width:1.5rem;height:1.5rem;border-radius:50%;background:var(--card);border:3px solid var(--ink);
+}
+.scale{display:flex;justify-content:space-between;color:var(--ink-soft);font-size:.85rem;margin-top:.1rem}
+.hint{font-family:var(--hand);font-size:1.4rem;color:var(--sock-deep);margin:.6rem 0 0}
+:root[data-theme="dark"] .hint{color:var(--sock)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .hint{color:var(--sock)}}
+
+.rule{display:grid;gap:.5rem;margin:0 0 1rem;max-width:32rem}
+.rule div{display:flex;gap:.8rem;align-items:baseline}
+.rule b{flex:none;min-width:6.3rem;font-weight:800}
+
+/* ---------- Farbe (Test 04) ---------- */
+.chips{display:grid;grid-template-columns:repeat(3,1fr);gap:.7rem;margin:1.25rem 0}
+.chip{
+  border-radius:.8rem;padding:.7rem;min-height:7rem;display:flex;align-items:flex-end;
+  font-weight:600;font-size:.92rem;line-height:1.2;
+  border:2px solid transparent;
+}
+.chip.dull{background:#9AA4AB;color:#1b2227;opacity:.75}
+.chip.wild{background:linear-gradient(135deg,#FF2E93,#FFE600 45%,#00E0A0 75%,#7A3CFF);color:#111;opacity:.75}
+.chip.ours{background:var(--sock);color:#fff;border-color:var(--ink);transform:translateY(-.4rem);box-shadow:0 10px 18px var(--shadow)}
+.chip s{text-decoration-thickness:2px;text-decoration-color:var(--stamp)}
+
+/* ---------- L/R (Test 05) ---------- */
+.lr{
+  background:var(--card);border:2px solid var(--ink);border-radius:.8rem;
+  padding:1.25rem;margin:1.25rem 0 1.5rem;text-align:center;
+}
+.lr-stage{display:flex;justify-content:center;gap:1.5rem;margin-bottom:1rem}
+.lr-stage .slot{width:6.2rem;position:relative;transition:transform .5s cubic-bezier(.5,0,.2,1)}
+.lr-stage .slot svg{width:100%;height:auto;display:block}
+.lr-stage .foot-label{display:block;font-weight:800;margin-top:.2rem;color:var(--ink-soft);font-size:.95rem}
+.lr-stage.swapped .a{transform:translateX(7.7rem)}
+.lr-stage.swapped .b{transform:translateX(-7.7rem)}
+button.swap{
+  font:inherit;font-weight:800;color:#fff;background:var(--sock-deep);
+  border:2px solid var(--ink);border-radius:2rem;padding:.7rem 1.4rem;cursor:pointer;
+  box-shadow:0 3px 0 var(--ink);
+}
+button.swap:active{transform:translateY(2px);box-shadow:0 1px 0 var(--ink)}
+.lr-result{min-height:4.2rem;margin:1rem 0 0;font-weight:800;font-size:1.25rem;line-height:1.25}
+.lr-result span{display:block;font-weight:400;font-size:1rem;color:var(--ink-soft);margin-top:.2rem}
+
+/* ---------- Fazit ---------- */
+.fazit{
+  background:var(--card);border:2px solid var(--ink);border-radius:.6rem;
+  padding:2rem 1.25rem 1.75rem;margin:0 0 4rem;position:relative;overflow:hidden;
+}
+.fazit .intro{max-width:32rem;color:var(--ink-soft);margin:0 0 1.5rem}
+.stamp-row{display:flex;justify-content:center;margin:1rem 0 2rem}
+.stamp{
+  border:5px double var(--stamp);color:var(--stamp);
+  border-radius:.6rem;padding:.6rem 1.2rem .5rem;text-align:center;
+  transform:rotate(-6deg);
+  opacity:0;
+}
+.stamp .small{display:block;font-weight:600;font-size:.95rem}
+.stamp .big{display:block;font-weight:800;font-size:clamp(1.7rem,8vw,2.6rem);letter-spacing:.02em;line-height:1.05}
+.stamp.in{animation:thud .55s cubic-bezier(.2,.9,.3,1.2) forwards}
+@keyframes thud{
+  0%{opacity:0;transform:rotate(-14deg) scale(2.1)}
+  70%{opacity:1;transform:rotate(-6deg) scale(.96)}
+  100%{opacity:.95;transform:rotate(-6deg) scale(1)}
+}
+.highlights{list-style:none;margin:0 0 1.5rem;padding:0;display:grid;gap:.15rem}
+.highlights li{
+  display:flex;gap:.8rem;align-items:center;padding:.6rem 0;border-top:1px dashed var(--line);font-weight:600;
+}
+.highlights li span.e{font-size:1.5rem;flex:none;width:2rem;text-align:center}
+.final-line{
+  font-weight:800;font-size:clamp(1.5rem,6vw,2.1rem);line-height:1.1;letter-spacing:-.02em;margin:1.75rem 0 .25rem;
+}
+.thanks{font-family:var(--hand);font-size:2rem;color:var(--sock-deep);margin:0;transform:rotate(-1.5deg);display:inline-block}
+:root[data-theme="dark"] .thanks{color:var(--sock)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .thanks{color:var(--sock)}}
+
+footer{padding:0 0 3rem;color:var(--ink-soft);font-size:.9rem;text-align:center}
+
+@media (max-width:30rem){
+  .chips{grid-template-columns:1fr}
+  .chip{min-height:3.6rem}
+  .chip.ours{transform:none}
+  .sheet dl{grid-template-columns:1fr}
+  .sheet dt{padding-bottom:0;border-top:1px dashed var(--line)}
+  .sheet dd{border-top:0;padding-top:.1rem}
+  .hotel{text-align:left}
+  .lr-stage.swapped .a{transform:translateX(7.7rem)}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .stamp{opacity:.95}
+  .stamp.in{animation:none}
+  .lr-stage .slot,.sockstate .emoji{transition:none}
+}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <pattern id="knit" width="8" height="8" patternUnits="userSpaceOnUse">
+      <rect width="8" height="8" fill="var(--sock)"/>
+      <path d="M0 8 L4 0 L8 8" fill="none" stroke="var(--sock-deep)" stroke-width="1.2" opacity=".55"/>
+    </pattern>
+    <symbol id="sock" viewBox="0 0 120 160">
+      <path d="M30 6 H72 V82 C72 94 82 98 96 104 C116 113 118 146 92 152 L42 152 C24 152 16 138 28 122 C36 112 30 104 30 94 Z"
+            fill="url(#knit)" stroke="var(--ink)" stroke-width="3" stroke-linejoin="round"/>
+      <rect x="30" y="6" width="42" height="22" fill="var(--ink)" opacity=".92"/>
+      <path d="M30 40 H72" stroke="#fff" stroke-width="3" opacity=".8"/>
+      <path d="M32 132 C45 142 70 144 90 138" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".55"/>
+    </symbol>
+  </defs>
+</svg>
+
+<main class="wrap">
+
+  <!-- Titel -->
+  <header class="hero">
+    <h1>Dilly Socks <span class="ocean">Active Ocean</span></h1>
+    <p class="sub">Der völlig unabhängige, wissenschaftlich fragwürdige Praxistest</p>
+    <div class="hero-socks" aria-hidden="true">
+      <svg viewBox="0 0 120 160"><use href="#sock"/><text x="38" y="23" font-size="15" font-weight="800" fill="#fff" font-family="sans-serif">L</text></svg>
+      <svg viewBox="0 0 120 160"><use href="#sock"/><text x="38" y="23" font-size="15" font-weight="800" fill="#fff" font-family="sans-serif">R</text></svg>
+    </div>
+  </header>
+
+  <!-- Prüfblatt -->
+  <section class="sheet" aria-labelledby="sheet-h">
+    <span class="note">streng geheim 🧦</span>
+    <h2 id="sheet-h">Prüfblatt</h2>
+    <dl>
+      <dt>Testperson</dt><dd>Stefan</dd>
+      <dt>Testzeitraum</dt><dd>Mehrfach und unter realen Alltagsbedingungen</dd>
+      <dt>Testgerät</dt><dd>2 Füsse</dd>
+      <dt>Testumgebung</dt><dd>Sofa, Alltag und längere Velotouren 🚴</dd>
+    </dl>
+  </section>
+
+  <!-- TEST 01 -->
+  <section class="test" aria-labelledby="t1">
+    <div class="test-head"><span class="no" aria-hidden="true">01</span><h2 id="t1">Der erste Eindruck</h2></div>
+    <p class="quote">„Ui, die sind weich!“</p>
+    <p>Schon beim ersten Anziehen fällt auf: Diese Socken sind nicht einfach nur Socken. Sie sind weich, flauschig und ausgesprochen angenehm.</p>
+    <p class="tight">Der Fuss macht ungefähr Folgendes:</p>
+    <div class="foot-say">
+      <span class="who" aria-hidden="true">🦶</span>
+      <p>„Ahhhh. Da lässt es sich aushalten.“</p>
+    </div>
+    <p class="tight"><strong>Komfort:</strong> sehr überzeugend.</p>
+    <div class="meter" aria-label="Komfort: sehr überzeugend"><i></i><i></i><i></i><i></i><i></i></div>
+  </section>
+
+  <svg class="wave" viewBox="0 0 600 24" preserveAspectRatio="none" aria-hidden="true"><path d="M0 12 Q25 0 50 12 T100 12 T150 12 T200 12 T250 12 T300 12 T350 12 T400 12 T450 12 T500 12 T550 12 T600 12" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
+
+  <!-- TEST 02 -->
+  <section class="test" aria-labelledby="t2">
+    <div class="test-head"><span class="no" aria-hidden="true">02</span><h2 id="t2">Die grosse Velo-Prüfung</h2></div>
+    <p><strong>Längere Velotouren? Absolut bestanden.</strong> Die Active Ocean wurden bereits mehrfach auf längeren Ausfahrten eingesetzt.</p>
+    <ul class="nope">
+      <li>Kein Jammern.</li>
+      <li>Kein Reiben.</li>
+      <li>Kein „Wann sind wir endlich wieder zu Hause?“</li>
+    </ul>
+    <p class="tight">Stattdessen:</p>
+    <ul class="checks">
+      <li>Fuss <span>👍</span></li>
+      <li>Velo <span>🚴</span></li>
+      <li>Socken <span>🧦</span></li>
+      <li class="final">Testperson <span>zufrieden</span></li>
+    </ul>
+  </section>
+
+  <svg class="wave" viewBox="0 0 600 24" preserveAspectRatio="none" aria-hidden="true"><path d="M0 12 Q25 0 50 12 T100 12 T150 12 T200 12 T250 12 T300 12 T350 12 T400 12 T450 12 T500 12 T550 12 T600 12" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
+
+  <!-- TEST 03 -->
+  <section class="test" aria-labelledby="t3">
+    <div class="test-head"><span class="no" aria-hidden="true">03</span><h2 id="t3">Die Temperaturfrage</h2></div>
+    <p>Hier wird es wissenschaftlich. Schieb den Regler und sieh selbst, was die Socke dazu sagt:</p>
+
+    <div class="thermo">
+      <div class="thermo-top">
+        <div class="temp"><span id="tval">18</span><small> °C</small></div>
+        <div class="hotel" aria-live="polite">
+          <div class="stars" id="stars"></div>
+          <div class="name" id="hotelname"></div>
+        </div>
+      </div>
+      <div class="sockstate" aria-live="polite">
+        <span class="emoji" id="temoji">🧦</span>
+        <p class="say" id="tsay"></p>
+      </div>
+      <input type="range" id="temp" min="5" max="34" value="18" step="1" aria-label="Aussentemperatur in Grad Celsius">
+      <div class="scale"><span>5 °C</span><span>20</span><span>25</span><span>34 °C</span></div>
+    </div>
+
+    <div class="rule">
+      <div><b>Unter 20–25 °C</b><span>🧦 Top! Angenehm warm und gemütlich.</span></div>
+      <div><b>Ab ca. 25 °C</b><span>🌡️🔥 Aus der gemütlichen Socke wird langsam ein kleines Fuss-Wellness-Hotel.</span></div>
+    </div>
+    <p><strong>Kurz gesagt:</strong> Je kühler das Wetter, desto überzeugender die Active Ocean. Bei sommerlichen 30 °C würde der Tester allerdings eine etwas luftigere Unterkunft für seine Füsse empfehlen.</p>
+  </section>
+
+  <svg class="wave" viewBox="0 0 600 24" preserveAspectRatio="none" aria-hidden="true"><path d="M0 12 Q25 0 50 12 T100 12 T150 12 T200 12 T250 12 T300 12 T350 12 T400 12 T450 12 T500 12 T550 12 T600 12" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
+
+  <!-- TEST 04 -->
+  <section class="test" aria-labelledby="t4">
+    <div class="test-head"><span class="no" aria-hidden="true">04</span><h2 id="t4">Optik</h2></div>
+    <p>Blau. Und zwar ein schönes Blau.</p>
+    <div class="chips">
+      <div class="chip dull"><s>Zu langweilig</s></div>
+      <div class="chip wild"><s>Zu wild</s></div>
+      <div class="chip ours">Einfach schön blau</div>
+    </div>
+    <p>Damit kann man sich auch auf dem Velo sehen lassen.</p>
+    <p class="tight"><strong>Optik:</strong> bestanden. <strong>Farbwahl:</strong> 👍</p>
+  </section>
+
+  <svg class="wave" viewBox="0 0 600 24" preserveAspectRatio="none" aria-hidden="true"><path d="M0 12 Q25 0 50 12 T100 12 T150 12 T200 12 T250 12 T300 12 T350 12 T400 12 T450 12 T500 12 T550 12 T600 12" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
+
+  <!-- TEST 05 -->
+  <section class="test" aria-labelledby="t5">
+    <div class="test-head"><span class="no" aria-hidden="true">05</span><h2 id="t5">Das mysteriöse L/R-Experiment</h2></div>
+    <p>Die Socken sind mit L und R gekennzeichnet. Offenbar wurde also eine wissenschaftlich ausgeklügelte Links-Rechts-Technologie verbaut.</p>
+    <p>Doch dann kam der entscheidende Test: Was passiert, wenn man sie vertauscht?</p>
+
+    <div class="lr">
+      <div class="lr-stage" id="stage">
+        <div class="slot a">
+          <svg viewBox="0 0 120 160" role="img" aria-label="Socke mit Aufschrift L"><use href="#sock"/><text x="38" y="23" font-size="15" font-weight="800" fill="#fff" font-family="sans-serif">L</text></svg>
+          <span class="foot-label">linker Fuss</span>
+        </div>
+        <div class="slot b">
+          <svg viewBox="0 0 120 160" role="img" aria-label="Socke mit Aufschrift R"><use href="#sock"/><text x="38" y="23" font-size="15" font-weight="800" fill="#fff" font-family="sans-serif">R</text></svg>
+          <span class="foot-label">rechter Fuss</span>
+        </div>
+      </div>
+      <button class="swap" id="swap" type="button">Socken vertauschen</button>
+      <p class="lr-result" id="lrres" aria-live="polite"></p>
+    </div>
+
+    <p>Die Socken sind somit offenbar links-rechts-kompatibel. Ein bemerkenswert tolerantes Produkt.</p>
+  </section>
+
+  <!-- FAZIT -->
+  <section class="fazit" aria-labelledby="fz">
+    <div class="test-head"><h2 id="fz" style="font-size:2rem">Das grosse Fazit</h2></div>
+    <p class="intro">Nach mehreren Einsätzen, längeren Velotouren, verschiedenen Temperaturen und umfangreichen Links-Rechts-Experimenten kommt der unabhängige Tester zu folgendem Ergebnis:</p>
+
+    <div class="stamp-row">
+      <div class="stamp" id="stamp">
+        <span class="small">Prädikat</span>
+        <span class="big">AUSGEZEICHNET</span>
+      </div>
+    </div>
+
+    <ul class="highlights">
+      <li><span class="e">🧦</span>sehr angenehm und weich</li>
+      <li><span class="e">☁️</span>schön flauschiges Tragegefühl</li>
+      <li><span class="e">🚴</span>hervorragend für längere Velotouren</li>
+      <li><span class="e">🔵</span>sehr schönes Blau</li>
+      <li><span class="e">🌡️</span>besonders gut bei kühleren Temperaturen</li>
+      <li><span class="e">↔️</span>erstaunlich tolerant bei der Links-Rechts-Frage</li>
+    </ul>
+
+    <p class="final-line">Und vor allem: Definitiv ein gelungenes Geschenk. ❤️</p>
+    <p class="thanks">Vielen Dank!</p>
+  </section>
+
+</main>
+
+<footer class="wrap">Unabhängig getestet. Von einem Tester mit 2 Füssen.</footer>
+
+<script>
+(function(){
+  /* ---- Test 03: Thermometer ---- */
+  var slider=document.getElementById('temp');
+  var tval=document.getElementById('tval');
+  var stars=document.getElementById('stars');
+  var hname=document.getElementById('hotelname');
+  var emoji=document.getElementById('temoji');
+  var say=document.getElementById('tsay');
+
+  function render(t){
+    var e,main,sub,s,h;
+    if(t<20){
+      e='🧦';main='Top!';sub='Angenehm warm und gemütlich.';s='';h='Fuss-Wellness-Hotel: geschlossen';
+    }else if(t<=25){
+      e='🧦';main='Top!';sub='Immer noch angenehm. Das Hotel baut erst noch.';s='';h='Fuss-Wellness-Hotel: im Bau';
+    }else if(t<28){
+      e='🌡️';main='Es wird warm da unten.';sub='Das Hotel hat soeben eröffnet.';s='★★★';h='Fuss-Wellness-Hotel: geöffnet';
+    }else if(t<31){
+      e='🌡️🔥';main='Fuss-Wellness-Hotel, Zimmer bezogen.';sub='Der Tester empfiehlt eine luftigere Unterkunft.';s='★★★★';h='Fuss-Wellness-Hotel: gut besucht';
+    }else{
+      e='🔥';main='Ausgebucht. Sauna-Betrieb.';sub='Bei dieser Hitze bitte andere Socken buchen.';s='★★★★★';h='Fuss-Wellness-Hotel: ausgebucht';
+    }
+    tval.textContent=t;
+    emoji.textContent=e;
+    say.innerHTML=main+'<span>'+sub+'</span>';
+    stars.textContent=s||'\u00A0';
+    hname.textContent=h;
+  }
+  slider.addEventListener('input',function(){render(+slider.value)});
+  render(+slider.value);
+
+  /* ---- Test 05: Links/Rechts ---- */
+  var stage=document.getElementById('stage');
+  var btn=document.getElementById('swap');
+  var res=document.getElementById('lrres');
+  var swapped=false;
+  var count=0;
+  btn.addEventListener('click',function(){
+    swapped=!swapped;count++;
+    stage.classList.toggle('swapped',swapped);
+    res.innerHTML='…Nichts.<span>Sie funktionieren trotzdem. 😮</span>';
+    btn.textContent=swapped?'Wieder zurücktauschen':'Socken vertauschen';
+  });
+
+  /* ---- Fazit: Stempel ---- */
+  var stamp=document.getElementById('stamp');
+  var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(reduce||!('IntersectionObserver' in window)){
+    stamp.style.opacity='.95';
+  }else{
+    var io=new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if(en.isIntersecting){stamp.classList.add('in');io.disconnect();}
+      });
+    },{threshold:.8});
+    io.observe(stamp);
+  }
+})();
+</script>
+</body>
+</html>
