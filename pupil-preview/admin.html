@@ -92,10 +92,11 @@
 <section id="schulen">
   <div class="wrap">
     <h2>Schulen</h2>
-    <p class="muted">Gilt für alle Personen der Schule und für alle Versionen der Erweiterung. Schul-Kürzel = Teil vor <code>.pupil.schule</code>.</p>
+    <p class="muted">Gilt für alle Personen der Schule. Schul-Kürzel = Teil vor <code>.pupil.schule</code> (alle Versionen).
+      Andere PUPIL-Adressen, z. B. bei Metanet, als <code>aegelsee.ch/pupil</code> eintragen (ab Version 0.2.0, einmal im Menü der Erweiterung aktivieren).</p>
     <div class="tbl"><table id="tSchulen"></table></div>
     <div class="row" style="margin-top:12px">
-      <label class="f">Neue Schule <input type="text" id="neuSchule" placeholder="z. B. saentis" pattern="[a-z0-9-]+"></label>
+      <label class="f">Neue Schule <input type="text" id="neuSchule" placeholder="saentis oder aegelsee.ch/pupil"></label>
       <button type="button" id="addSchule">Hinzufügen</button>
     </div>
   </div>
@@ -108,7 +109,7 @@
     <div id="pBox">
       <div class="tbl"><table id="tPersonen"></table></div>
       <div class="row" style="margin-top:12px">
-        <label class="f">Schule <input type="text" id="neuPSchule" placeholder="saentis" pattern="[a-z0-9-]+"></label>
+        <label class="f">Schule <input type="text" id="neuPSchule" placeholder="saentis oder aegelsee.ch/pupil"></label>
         <label class="f">E-Mail <input type="email" id="neuPMail" placeholder="vorname.name@schule.ch"></label>
         <button type="button" id="addPerson">Hinzufügen</button>
       </div>
@@ -145,7 +146,11 @@
   const PF = 'pupil-preview/freischaltungen.json', PP = 'pupil-preview/personen.enc.json', PK = 'pupil-preview/katalog.json';
   const $ = (s) => document.querySelector(s);
   const esc = (t) => String(t ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-  const SLUG = /^[a-z0-9-]+$/, MAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  // Schule: Kuerzel (kloten -> kloten.pupil.schule) oder eigene Adresse (aegelsee.ch/pupil, z. B. Metanet)
+  const SLUG = /^([a-z0-9-]+|[a-z0-9-]+(\.[a-z0-9-]+)+(\/[a-z0-9._~-]+)*)$/, MAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const normSchule = (v) => String(v || '').trim().toLowerCase().replace(/^https?:\/\//, '').replace(/[?#].*$/, '')
+    .replace(/\/app\.php(\/.*)?$/, '').replace(/\/+$/, '').replace(/\.pupil\.schule$/, '');
+  const schulLink = (t) => 'https://' + (t.includes('.') ? t : t + '.pupil.schule');
   const st = { kat: [], cfg: null, shaF: null, shaP: null, enc: null, personen: null, orig: '', origP: '' };
   const lokal = /^(localhost|127\.0\.0\.1)$/.test(location.hostname); // Vorschau ohne GitHub (Testserver)
 
@@ -236,7 +241,7 @@
       + (schulen.length ? schulen.map((t) => {
         const l = c.tenants[t] || [];
         const alle = l.includes('*');
-        return `<tr><td><a href="https://${esc(t)}.pupil.schule" target="_blank" rel="noopener">${esc(t)}</a></td>`
+        return `<tr><td><a href="${esc(schulLink(t))}" target="_blank" rel="noopener">${esc(t)}</a>${t.includes('.') ? ' <span class="pill" title="Eigene Adresse: braucht Version 0.2.0, Personen aktivieren sie einmal im Menü der Erweiterung">eigene Adresse</span>' : ''}</td>`
           + `<td class="c"><input type="checkbox" data-t="${esc(t)}" data-f="*" ${alle ? 'checked' : ''} aria-label="${esc(t)}: alle Funktionen"></td>`
           + st.kat.map((f) => `<td class="c"><input type="checkbox" data-t="${esc(t)}" data-f="${esc(f.id)}" ${alle || l.includes(f.id) ? 'checked' : ''} ${alle ? 'disabled' : ''} aria-label="${esc(t)}: ${esc(f.name)}"></td>`).join('')
           + `<td class="c">${anzPersonen(t) || ''}</td><td><button type="button" class="del" data-del="${esc(t)}">Entfernen</button></td></tr>`;
@@ -287,14 +292,15 @@
   /* Bestaetigung als zweiter Klick auf denselben Knopf (keine Browser-Dialoge) */
   const confirmInline = (b, text) => { if (b.dataset.sicher) return true; b.dataset.sicher = '1'; const alt = b.textContent; b.textContent = text; setTimeout(() => { delete b.dataset.sicher; b.textContent = alt; }, 3000); return false; };
   $('#addSchule').addEventListener('click', () => {
-    const t = $('#neuSchule').value.trim().toLowerCase().replace(/\.pupil\.schule$/, '');
+    const t = normSchule($('#neuSchule').value);
     if (!st.cfg) return zeige($('#zmsg'), 'err', 'Zuerst «Laden».');
-    if (!SLUG.test(t)) return zeige($('#zmsg'), 'err', 'Schul-Kürzel nur aus a-z, 0-9 und Bindestrich, z. B. saentis.');
+    if (!SLUG.test(t)) return zeige($('#zmsg'), 'err', 'Kürzel (z. B. saentis) oder Adresse (z. B. aegelsee.ch/pupil) eingeben.');
+    if (t.endsWith('.pupil.schule') || t.endsWith('pupil-dev.ch')) return zeige($('#zmsg'), 'err', 'Für pupil.schule nur das Kürzel eingeben, z. B. saentis.');
     if (/-p1$/.test(t)) return zeige($('#zmsg'), 'info', `${t} ist eine Präsentationsumgebung - dort ist ohnehin alles frei.`);
     st.cfg.tenants[t] = st.cfg.tenants[t] || []; $('#neuSchule').value = ''; render();
   });
   $('#addPerson').addEventListener('click', () => {
-    const t = $('#neuPSchule').value.trim().toLowerCase().replace(/\.pupil\.schule$/, ''), m = $('#neuPMail').value.trim().toLowerCase();
+    const t = normSchule($('#neuPSchule').value), m = $('#neuPMail').value.trim().toLowerCase();
     if (!st.personen) return;
     if (!SLUG.test(t)) return zeige($('#zmsg'), 'err', 'Schul-Kürzel ungültig.');
     if (!MAIL.test(m)) return zeige($('#zmsg'), 'err', 'E-Mail-Adresse ungültig.');
