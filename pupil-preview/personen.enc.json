@@ -1,0 +1,7 @@
+{
+ "v": 1,
+ "hinweis": "PUPIL Preview Personenliste, verschluesselt (AES-GCM, PBKDF2-SHA256 310000). Bearbeiten nur ueber admin.html.",
+ "salt": "4i4kGtsBKJ/sM8+y0h4gtQ==",
+ "iv": "ghOzuHO+e6ydFNbT",
+ "daten": "U2yL9zOCj0Dp0Sinw9G9FV/4vslx/nfRd6Ty6TMF1ltoBdyv/SRdqM5tzdvW2a3Kh/weHBPBld8UK7+Tx7JIisY="
+}
