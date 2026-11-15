@@ -1,7 +1,15 @@
 {
-  "_hilfe": "Freischaltungen PUPIL Preview. tenants: Slug vor .pupil.schule (z. B. saentis.pupil.schule -> saentis) = Liste von Feature-IDs oder [\"*\"] fuer alle. Testumgebungen (pupil-dev.ch, ...-p1.pupil.schule, einfach.schule) haben immer alle Features. gesperrt: Not-Aus, gilt ueberall inkl. Test. weiterleitung: optional neue URL, alle Erweiterungen lesen ab dann dort. Feature-IDs: design, sus-uebersicht, personendossier-vorschau, berechtigungsuebersicht, spaltenkonfigurationen",
+  "_hilfe": "PUPIL Preview Freischaltungen - nur ueber admin.html bearbeiten. tenants: Schule -> Features (alle Versionen). personen: Schule -> SHA-256(schule:e-mail) -> Features (ab 0.2.0). gesperrt: Not-Aus. Testumgebungen haben immer alles.",
   "stand": "2026-11-15",
   "gesperrt": [],
   "weiterleitung": "",
-  "tenants": {}
+  "tenants": {
+    "saentis": [
+      "design",
+      "sus-uebersicht"
+    ],
+    "kloten": [
+      "*"
+    ]
+  }
 }
