@@ -1,0 +1,406 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>PUPIL Preview Admin</title>
+<link rel="icon" type="image/png" href="icon128.png">
+<link rel="stylesheet" href="style.css">
+<style>
+  body { font-size: 15px; }
+  .hero { padding: 30px 0 34px; }
+  .hero .wrap { display: block; }
+  h1 { font-size: clamp(28px, 4vw, 40px); }
+  section { padding: 22px 0; }
+  .panel { background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 18px 20px; }
+  .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; }
+  label.f { display: grid; gap: 4px; font-weight: 600; font-size: 14px; }
+  label.f small { font-weight: 400; color: var(--muted); }
+  input[type=text], input[type=password], input[type=email], input[type=url], select {
+    font: inherit; padding: 8px 10px; border: 1px solid #D9CFC7; border-radius: 10px; background: #fff; min-width: 220px; }
+  input:focus-visible, select:focus-visible, button:focus-visible { outline: 3px solid var(--magenta); outline-offset: 2px; }
+  button { font: inherit; font-weight: 700; cursor: pointer; border-radius: 999px; padding: 8px 16px; border: 1px solid var(--magenta); background: #fff; color: var(--magenta); }
+  button.primary { background: var(--magenta); color: #fff; }
+  button.primary:hover { background: #D91E61; }
+  button.ghost { border-color: #D9CFC7; color: #444; }
+  button.del { border: 0; background: none; color: #B42318; padding: 4px 8px; font-weight: 600; }
+  button:disabled { opacity: .5; cursor: not-allowed; }
+  .tbl { overflow-x: auto; }
+  table { font-size: 14px; }
+  th, td { padding: 8px 10px; }
+  td.c, th.c { text-align: center; }
+  th.c { font-size: 12px; line-height: 1.25; width: 104px; min-width: 88px; max-width: 110px; white-space: normal; overflow-wrap: break-word; hyphens: auto; -webkit-hyphens: auto; }
+  input[type=checkbox] { width: 18px; height: 18px; accent-color: var(--pupil); cursor: pointer; }
+  .kill input[type=checkbox] { accent-color: #B42318; }
+  .msg { margin-top: 12px; padding: 10px 14px; border-radius: 12px; display: none; }
+  .msg.show { display: block; }
+  .msg.ok { background: #E8F7EF; border: 1px solid #9ED8B8; color: #0F5132; }
+  .msg.err { background: #FDECEC; border: 1px solid #F3B4B4; color: #8A1C1C; }
+  .msg.info { background: var(--pupil-light); border: 1px solid #A0D9ED; color: var(--pupil-dark); }
+  .muted { color: var(--muted); font-size: 13px; }
+  .pill { display: inline-block; font-size: 12px; font-weight: 700; padding: 1px 8px; border-radius: 999px; background: var(--pupil-light); color: var(--pupil-dark); }
+  .pill.warn { background: #FFF0B8; color: #6B5300; }
+  .locked { opacity: .55; pointer-events: none; }
+  .savebar { position: sticky; bottom: 0; background: rgba(255,250,246,.96); border-top: 1px solid var(--line); padding: 12px 0; backdrop-filter: blur(4px); }
+  .savebar .wrap { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  pre.diff { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 12px; white-space: pre-wrap; font-size: 13px; max-height: 320px; overflow: auto; }
+  .hint { font-size: 13px; color: var(--muted); margin: 6px 0 0; }
+  code { font-size: 13px; }
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="./"><img src="icon128.png" alt="">PUPIL <span>Preview</span></a>
+    <nav aria-label="Seitennavigation"><a href="#schulen">Schulen</a><a href="#personen">Personen</a><a href="#notaus">Not-Aus</a></nav>
+  </div>
+</header>
+<main>
+<section class="hero">
+  <div class="wrap">
+    <span class="eyebrow">Admin · nur für das PUPIL-Team</span>
+    <h1>Freischaltungen verwalten</h1>
+    <p class="lead">Pro Schule und pro Person festlegen, welche Preview-Funktionen erscheinen. Testumgebungen
+      (<code>*.pupil-dev.ch</code>, <code>*-p1.pupil.schule</code>, <code>einfach.schule</code>) haben immer alles.</p>
+    <div class="msg info show" id="live" role="status">Lade aktuellen Stand …</div>
+  </div>
+</section>
+
+<section id="zugang">
+  <div class="wrap">
+    <div class="panel">
+      <h2>Zugang</h2>
+      <div class="row">
+        <label class="f">GitHub-Token
+          <input type="password" id="token" autocomplete="off" spellcheck="false" placeholder="github_pat_…">
+          <small>Fine-grained Token, nur Repo <code>signerpupil/web-toys</code>, Recht «Contents: Read and write».</small></label>
+        <label class="f" style="flex-direction:row;display:flex;gap:6px;align-items:center;font-weight:400">
+          <input type="checkbox" id="merken"> auf diesem Gerät merken</label>
+      </div>
+      <div class="row" style="margin-top:12px">
+        <label class="f">Passwort für die Personenliste
+          <input type="password" id="pass" autocomplete="off" placeholder="nur für Personen nötig">
+          <small>Die E-Mails liegen verschlüsselt im Repo (AES-GCM). Öffentlich sind nur Hashes.</small></label>
+        <button type="button" class="primary" id="laden">Laden</button>
+      </div>
+      <div class="msg" id="zmsg" role="status"></div>
+    </div>
+  </div>
+</section>
+
+<section id="schulen">
+  <div class="wrap">
+    <h2>Schulen</h2>
+    <p class="muted">Gilt für alle Personen der Schule und für alle Versionen der Erweiterung. Schul-Kürzel = Teil vor <code>.pupil.schule</code>.</p>
+    <div class="tbl"><table id="tSchulen"></table></div>
+    <div class="row" style="margin-top:12px">
+      <label class="f">Neue Schule <input type="text" id="neuSchule" placeholder="z. B. saentis" pattern="[a-z0-9-]+"></label>
+      <button type="button" id="addSchule">Hinzufügen</button>
+    </div>
+  </div>
+</section>
+
+<section id="personen">
+  <div class="wrap">
+    <h2>Personen <span class="pill" id="pStatus">gesperrt</span></h2>
+    <p class="muted">Zusätzlich zur Schule, nur ab Version 0.2.0. Die E-Mail muss genau der Anmeldung in PUPIL entsprechen («Angemeldet als …»).</p>
+    <div id="pBox">
+      <div class="tbl"><table id="tPersonen"></table></div>
+      <div class="row" style="margin-top:12px">
+        <label class="f">Schule <input type="text" id="neuPSchule" placeholder="saentis" pattern="[a-z0-9-]+"></label>
+        <label class="f">E-Mail <input type="email" id="neuPMail" placeholder="vorname.name@schule.ch"></label>
+        <button type="button" id="addPerson">Hinzufügen</button>
+      </div>
+      <p class="hint" id="pHint"></p>
+    </div>
+  </div>
+</section>
+
+<section id="notaus">
+  <div class="wrap">
+    <h2>Not-Aus</h2>
+    <p class="muted">Schaltet eine Funktion überall aus (auch Testumgebungen), wirkt innert 15 Minuten ohne neue Version.</p>
+    <div class="panel kill" id="kill"></div>
+    <details style="margin-top:14px"><summary>Erweitert: Quelle umziehen</summary>
+      <p class="muted">Steht hier eine URL, lesen alle Erweiterungen ab dann dort (z. B. späterer eigener Server). Die neue Quelle muss dasselbe Format liefern und CORS erlauben. Nur ändern, wenn die neue Quelle schon funktioniert.</p>
+      <label class="f">Weiterleitung <input type="url" id="weiter" placeholder="https://…" style="min-width:min(520px,100%)"></label>
+    </details>
+  </div>
+</section>
+</main>
+
+<div class="savebar">
+  <div class="wrap">
+    <button type="button" class="ghost" id="pruefen">Änderungen prüfen</button>
+    <button type="button" class="primary" id="speichern" disabled>Speichern &amp; veröffentlichen</button>
+    <span class="muted" id="sStatus">Noch nicht geladen.</span>
+  </div>
+  <div class="wrap"><div class="msg" id="smsg" role="status" style="width:100%"></div></div>
+</div>
+
+<script>
+(() => {
+  const REPO = { owner: 'signerpupil', repo: 'web-toys', branch: 'main' };
+  const PF = 'pupil-preview/freischaltungen.json', PP = 'pupil-preview/personen.enc.json', PK = 'pupil-preview/katalog.json';
+  const $ = (s) => document.querySelector(s);
+  const esc = (t) => String(t ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const SLUG = /^[a-z0-9-]+$/, MAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const st = { kat: [], cfg: null, shaF: null, shaP: null, enc: null, personen: null, orig: '', origP: '' };
+  const lokal = /^(localhost|127\.0\.0\.1)$/.test(location.hostname); // Vorschau ohne GitHub (Testserver)
+
+  /* ---------- Speicher fuer den Token (nur in diesem Browser) ---------- */
+  const tokGet = () => { try { return sessionStorage.getItem('ppvTok') || localStorage.getItem('ppvTok') || ''; } catch (e) { return ''; } };
+  const tokSet = (t, merken) => { try { sessionStorage.setItem('ppvTok', t); if (merken) localStorage.setItem('ppvTok', t); else localStorage.removeItem('ppvTok'); } catch (e) { /* egal */ } };
+  $('#token').value = tokGet();
+  try { $('#merken').checked = !!localStorage.getItem('ppvTok'); } catch (e) { /* egal */ }
+
+  /* ---------- Hilfen: UTF-8 base64, SHA-256, AES-GCM ---------- */
+  const b64e = (str) => { const b = new TextEncoder().encode(str); let s = ''; for (let i = 0; i < b.length; i += 0x8000) s += String.fromCharCode(...b.subarray(i, i + 0x8000)); return btoa(s); };
+  const b64d = (b64) => new TextDecoder().decode(Uint8Array.from(atob(b64.replace(/\s/g, '')), (c) => c.charCodeAt(0)));
+  const bytes2b64 = (u) => btoa(String.fromCharCode(...u));
+  const b642bytes = (s) => Uint8Array.from(atob(s), (c) => c.charCodeAt(0));
+  const sha256 = async (s) => [...new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s)))].map((b) => b.toString(16).padStart(2, '0')).join('');
+  const schluessel = (t, mail) => t + ':' + String(mail).trim().toLowerCase(); // identisch zu gate.js / nutzer.js
+  const keyAus = async (pass, salt) => crypto.subtle.deriveKey({ name: 'PBKDF2', salt, iterations: 310000, hash: 'SHA-256' },
+    await crypto.subtle.importKey('raw', new TextEncoder().encode(pass), 'PBKDF2', false, ['deriveKey']), { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']);
+  const verschluesseln = async (obj, pass) => {
+    const salt = crypto.getRandomValues(new Uint8Array(16)), iv = crypto.getRandomValues(new Uint8Array(12));
+    const ct = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, await keyAus(pass, salt), new TextEncoder().encode(JSON.stringify(obj)));
+    return { v: 1, hinweis: 'PUPIL Preview Personenliste, verschluesselt (AES-GCM, PBKDF2-SHA256 310000). Bearbeiten nur ueber admin.html.', salt: bytes2b64(salt), iv: bytes2b64(iv), daten: bytes2b64(new Uint8Array(ct)) };
+  };
+  const entschluesseln = async (enc, pass) => JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt(
+    { name: 'AES-GCM', iv: b642bytes(enc.iv) }, await keyAus(pass, b642bytes(enc.salt)), b642bytes(enc.daten))));
+
+  /* ---------- GitHub ---------- */
+  const api = async (pfad, opt = {}) => {
+    const tok = $('#token').value.trim();
+    const r = await fetch(`https://api.github.com/repos/${REPO.owner}/${REPO.repo}/contents/${pfad}` + (opt.method ? '' : `?ref=${REPO.branch}&t=${Date.now()}`), {
+      method: opt.method || 'GET', cache: 'no-store',
+      headers: Object.assign({ Accept: 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' }, tok ? { Authorization: 'Bearer ' + tok } : {}),
+      body: opt.body ? JSON.stringify(opt.body) : undefined
+    });
+    if (r.status === 404 && !opt.method) return null;
+    if (!r.ok) {
+      let m = ''; try { m = (await r.json()).message || ''; } catch (e) { /* egal */ }
+      const tipp = r.status === 401 ? 'Token ungültig oder abgelaufen.' : r.status === 403 ? 'Token hat keine Schreibrechte für web-toys (Contents: Read and write) oder Limit erreicht.' : r.status === 409 ? 'Jemand anderes hat inzwischen gespeichert. Bitte neu laden.' : '';
+      throw new Error(`GitHub ${r.status}: ${tipp || m}`);
+    }
+    return r.json();
+  };
+  const lesen = async (pfad) => {
+    if (lokal) { const r = await fetch(pfad.replace('pupil-preview/', '') + '?t=' + Date.now()); return r.ok ? { text: await r.text(), sha: 'lokal' } : null; }
+    const j = await api(pfad);
+    return j ? { text: b64d(j.content), sha: j.sha } : null;
+  };
+  const schreiben = (pfad, text, sha, nachricht) => api(pfad, { method: 'PUT', body: Object.assign({ message: nachricht, content: b64e(text), branch: REPO.branch }, sha ? { sha } : {}) });
+
+  /* ---------- Laden ---------- */
+  const zeige = (el, typ, text) => { el.className = 'msg show ' + typ; el.textContent = text; };
+  const laden = async () => {
+    const zm = $('#zmsg');
+    try {
+      tokSet($('#token').value.trim(), $('#merken').checked);
+      const [k, f, p] = await Promise.all([lesen(PK), lesen(PF), lesen(PP)]);
+      if (!k) throw new Error('katalog.json fehlt (node build.js im Erweiterungs-Projekt ausführen und pushen).');
+      st.kat = JSON.parse(k.text).features;
+      st.cfg = f ? JSON.parse(f.text) : { tenants: {} };
+      st.cfg.tenants = st.cfg.tenants || {}; st.cfg.gesperrt = st.cfg.gesperrt || []; st.cfg.personen = st.cfg.personen || {};
+      for (const t of Object.keys(st.cfg.tenants)) if (!Array.isArray(st.cfg.tenants[t])) st.cfg.tenants[t] = []; // unerwartetes Format: als leer behandeln
+      st.shaF = f ? f.sha : null; st.shaP = p ? p.sha : null;
+      st.enc = p ? JSON.parse(p.text) : null;
+      st.personen = null;
+      const pass = $('#pass').value;
+      if (pass && st.enc) {
+        try { st.personen = await entschluesseln(st.enc, pass); } catch (e) { throw new Error('Passwort für die Personenliste ist falsch.'); }
+      } else if (pass && !st.enc) st.personen = {}; // erste Personenliste: Passwort wird neu festgelegt
+      st.orig = JSON.stringify(st.cfg); st.origP = JSON.stringify(st.personen);
+      $('#weiter').value = st.cfg.weiterleitung || '';
+      render();
+      const tok = !!$('#token').value.trim();
+      zeige(zm, tok || lokal ? 'ok' : 'info', (lokal ? 'Lokale Vorschau: Speichern zeigt nur das Ergebnis. ' : '')
+        + (tok ? 'Geladen. Änderungen werden direkt auf GitHub gespeichert.' : lokal ? '' : 'Geladen (nur lesen). Für Änderungen GitHub-Token eintragen.')
+        + (st.personen ? (st.enc ? ' Personenliste entschlüsselt.' : ' Neue Personenliste: das eingegebene Passwort wird beim Speichern festgelegt - gut aufbewahren!') : ''));
+      $('#speichern').disabled = !(tok || lokal);
+      $('#sStatus').textContent = 'Keine Änderungen.';
+    } catch (e) { zeige(zm, 'err', String(e.message || e)); }
+  };
+
+  /* ---------- Darstellung ---------- */
+  const featKopf = () => st.kat.map((f) => `<th class="c" title="${esc(f.desc)}">${esc(f.name)}</th>`).join('');
+  const anzPersonen = (t) => Object.keys((st.personen ? st.personen[t] : (st.cfg.personen || {})[t]) || {}).length;
+  const render = () => {
+    const c = st.cfg;
+    const schulen = [...new Set([...Object.keys(c.tenants), ...Object.keys(c.personen || {}), ...Object.keys(st.personen || {})])].sort();
+    $('#tSchulen').innerHTML = `<thead><tr><th>Schule</th><th class="c">Alle</th>${featKopf()}<th class="c">Personen</th><th></th></tr></thead><tbody>`
+      + (schulen.length ? schulen.map((t) => {
+        const l = c.tenants[t] || [];
+        const alle = l.includes('*');
+        return `<tr><td><a href="https://${esc(t)}.pupil.schule" target="_blank" rel="noopener">${esc(t)}</a></td>`
+          + `<td class="c"><input type="checkbox" data-t="${esc(t)}" data-f="*" ${alle ? 'checked' : ''} aria-label="${esc(t)}: alle Funktionen"></td>`
+          + st.kat.map((f) => `<td class="c"><input type="checkbox" data-t="${esc(t)}" data-f="${esc(f.id)}" ${alle || l.includes(f.id) ? 'checked' : ''} ${alle ? 'disabled' : ''} aria-label="${esc(t)}: ${esc(f.name)}"></td>`).join('')
+          + `<td class="c">${anzPersonen(t) || ''}</td><td><button type="button" class="del" data-del="${esc(t)}">Entfernen</button></td></tr>`;
+      }).join('') : `<tr><td colspan="${st.kat.length + 4}" class="muted">Noch keine Schule freigeschaltet.</td></tr>`) + '</tbody>';
+
+    const pBox = $('#pBox');
+    const offen = !!st.personen;
+    pBox.classList.toggle('locked', !offen);
+    $('#pStatus').textContent = offen ? 'entschlüsselt' : 'gesperrt';
+    $('#pStatus').className = 'pill' + (offen ? '' : ' warn');
+    $('#pHint').textContent = offen ? '' : 'Zum Bearbeiten oben das Passwort für die Personenliste eingeben und «Laden» klicken. Bestehende Personen bleiben beim Speichern unverändert.';
+    const zeilen = [];
+    if (offen) for (const t of Object.keys(st.personen).sort()) for (const m of Object.keys(st.personen[t]).sort()) zeilen.push([t, m, st.personen[t][m]]);
+    $('#tPersonen').innerHTML = `<thead><tr><th>Schule</th><th>E-Mail</th>${featKopf()}<th></th></tr></thead><tbody>`
+      + (offen ? (zeilen.length ? zeilen.map(([t, m, l]) => `<tr><td>${esc(t)}</td><td>${esc(m)}</td>`
+        + st.kat.map((f) => `<td class="c"><input type="checkbox" data-pt="${esc(t)}" data-pm="${esc(m)}" data-f="${esc(f.id)}" ${l.includes(f.id) ? 'checked' : ''} aria-label="${esc(m)}: ${esc(f.name)}"></td>`).join('')
+        + `<td><button type="button" class="del" data-pdel="${esc(t)}|${esc(m)}">Entfernen</button></td></tr>`).join('')
+        : `<tr><td colspan="${st.kat.length + 3}" class="muted">Noch keine Personen.</td></tr>`)
+        : `<tr><td colspan="${st.kat.length + 3}" class="muted">${Object.values(c.personen || {}).reduce((n, p) => n + Object.keys(p).length, 0)} Person(en) hinterlegt (verschlüsselt).</td></tr>`) + '</tbody>';
+
+    $('#kill').innerHTML = st.kat.map((f) => `<label style="display:flex;gap:8px;align-items:center;margin:4px 0"><input type="checkbox" data-kill="${esc(f.id)}" ${c.gesperrt.includes(f.id) ? 'checked' : ''}> ${esc(f.name)} überall ausschalten</label>`).join('');
+    geaendert();
+  };
+
+  /* ---------- Bearbeiten ---------- */
+  document.addEventListener('change', (e) => {
+    const x = e.target;
+    if (x.dataset.t) {
+      const t = x.dataset.t; let l = st.cfg.tenants[t] || [];
+      if (x.dataset.f === '*') l = x.checked ? ['*'] : [];
+      else l = x.checked ? [...new Set([...l, x.dataset.f])] : l.filter((f) => f !== x.dataset.f);
+      st.cfg.tenants[t] = st.kat.map((f) => f.id).filter((id) => l.includes(id)).concat(l.includes('*') ? ['*'] : []);
+      render();
+    } else if (x.dataset.pt) {
+      const l = st.personen[x.dataset.pt][x.dataset.pm];
+      st.personen[x.dataset.pt][x.dataset.pm] = x.checked ? [...new Set([...l, x.dataset.f])] : l.filter((f) => f !== x.dataset.f);
+      geaendert();
+    } else if (x.dataset.kill) {
+      st.cfg.gesperrt = x.checked ? [...new Set([...st.cfg.gesperrt, x.dataset.kill])] : st.cfg.gesperrt.filter((f) => f !== x.dataset.kill);
+      geaendert();
+    } else if (x.id === 'weiter') { st.cfg.weiterleitung = x.value.trim(); geaendert(); }
+  });
+  document.addEventListener('click', (e) => {
+    const b = e.target.closest('button'); if (!b || !st.cfg) return;
+    if (b.dataset.del) { if (confirmInline(b, 'Wirklich entfernen?')) { delete st.cfg.tenants[b.dataset.del]; render(); } }
+    if (b.dataset.pdel) { if (confirmInline(b, 'Wirklich entfernen?')) { const [t, m] = b.dataset.pdel.split('|'); delete st.personen[t][m]; if (!Object.keys(st.personen[t]).length) delete st.personen[t]; render(); } }
+  });
+  /* Bestaetigung als zweiter Klick auf denselben Knopf (keine Browser-Dialoge) */
+  const confirmInline = (b, text) => { if (b.dataset.sicher) return true; b.dataset.sicher = '1'; const alt = b.textContent; b.textContent = text; setTimeout(() => { delete b.dataset.sicher; b.textContent = alt; }, 3000); return false; };
+  $('#addSchule').addEventListener('click', () => {
+    const t = $('#neuSchule').value.trim().toLowerCase().replace(/\.pupil\.schule$/, '');
+    if (!st.cfg) return zeige($('#zmsg'), 'err', 'Zuerst «Laden».');
+    if (!SLUG.test(t)) return zeige($('#zmsg'), 'err', 'Schul-Kürzel nur aus a-z, 0-9 und Bindestrich, z. B. saentis.');
+    if (/-p1$/.test(t)) return zeige($('#zmsg'), 'info', `${t} ist eine Präsentationsumgebung - dort ist ohnehin alles frei.`);
+    st.cfg.tenants[t] = st.cfg.tenants[t] || []; $('#neuSchule').value = ''; render();
+  });
+  $('#addPerson').addEventListener('click', () => {
+    const t = $('#neuPSchule').value.trim().toLowerCase().replace(/\.pupil\.schule$/, ''), m = $('#neuPMail').value.trim().toLowerCase();
+    if (!st.personen) return;
+    if (!SLUG.test(t)) return zeige($('#zmsg'), 'err', 'Schul-Kürzel ungültig.');
+    if (!MAIL.test(m)) return zeige($('#zmsg'), 'err', 'E-Mail-Adresse ungültig.');
+    st.personen[t] = st.personen[t] || {}; st.personen[t][m] = st.personen[t][m] || [];
+    $('#neuPMail').value = ''; render();
+  });
+
+  /* ---------- Ergebnis berechnen + pruefen ---------- */
+  const ergebnis = async () => {
+    const c = JSON.parse(JSON.stringify(st.cfg));
+    const ids = st.kat.map((f) => f.id);
+    for (const t of Object.keys(c.tenants)) { if (!c.tenants[t].length) delete c.tenants[t]; }
+    if (st.personen) { // Hashes aus der entschluesselten Liste neu berechnen
+      c.personen = {};
+      for (const [t, ps] of Object.entries(st.personen)) for (const [m, l] of Object.entries(ps)) {
+        if (!l.length) continue;
+        (c.personen[t] = c.personen[t] || {})[await sha256(schluessel(t, m))] = l;
+      }
+    }
+    if (!Object.keys(c.personen || {}).length) delete c.personen;
+    if (!c.weiterleitung) c.weiterleitung = '';
+    c.stand = new Date().toISOString().slice(0, 10);
+    c._hilfe = 'PUPIL Preview Freischaltungen - nur ueber admin.html bearbeiten. tenants: Schule -> Features (alle Versionen). personen: Schule -> SHA-256(schule:e-mail) -> Features (ab 0.2.0). gesperrt: Not-Aus. Testumgebungen haben immer alles.';
+    // Pruefung wie in der Erweiterung (background.js gueltig) - nie etwas Ungueltiges veroeffentlichen
+    const liste = (l) => Array.isArray(l) && l.every((f) => f === '*' || ids.includes(f));
+    if (!Object.entries(c.tenants).every(([t, l]) => SLUG.test(t) && liste(l))) throw new Error('Ungültige Schul-Freischaltung.');
+    if (!Object.values(c.personen || {}).every((p) => Object.entries(p).every(([h, l]) => /^[0-9a-f]{64}$/.test(h) && liste(l)))) throw new Error('Ungültige Personen-Freischaltung.');
+    if (/@/.test(JSON.stringify(c.tenants) + JSON.stringify(c.personen || {}))) throw new Error('Interner Fehler: E-Mail wäre öffentlich geworden.');
+    if (c.weiterleitung && !/^https:\/\//.test(c.weiterleitung)) throw new Error('Weiterleitung muss mit https:// beginnen.');
+    return c;
+  };
+  const diff = (alt, neu) => {
+    const z = [];
+    const name = (id) => (st.kat.find((f) => f.id === id) || {}).name || id;
+    const schulen = new Set([...Object.keys(alt.tenants || {}), ...Object.keys(neu.tenants || {})]);
+    for (const t of [...schulen].sort()) {
+      const a = (alt.tenants || {})[t] || [], n = (neu.tenants || {})[t] || [];
+      for (const f of n) if (!a.includes(f)) z.push(`+ ${t}: ${f === '*' ? 'alle Funktionen' : name(f)}`);
+      for (const f of a) if (!n.includes(f)) z.push(`- ${t}: ${f === '*' ? 'alle Funktionen' : name(f)}`);
+    }
+    const pa = JSON.stringify(alt.personen || {}), pn = JSON.stringify(neu.personen || {});
+    if (pa !== pn) z.push(`~ Personen: ${Object.values(neu.personen || {}).reduce((n, p) => n + Object.keys(p).length, 0)} hinterlegt`);
+    for (const f of neu.gesperrt || []) if (!(alt.gesperrt || []).includes(f)) z.push(`! NOT-AUS an: ${name(f)}`);
+    for (const f of alt.gesperrt || []) if (!(neu.gesperrt || []).includes(f)) z.push(`+ Not-Aus aufgehoben: ${name(f)}`);
+    if ((alt.weiterleitung || '') !== (neu.weiterleitung || '')) z.push(`! Weiterleitung: ${neu.weiterleitung || '(keine)'}`);
+    return z;
+  };
+  const geaendert = () => {
+    if (!st.cfg) return;
+    const dirty = JSON.stringify(st.cfg) !== st.orig || JSON.stringify(st.personen) !== st.origP;
+    $('#sStatus').textContent = dirty ? 'Ungespeicherte Änderungen.' : 'Keine Änderungen.';
+  };
+  window.addEventListener('beforeunload', (e) => { if (st.cfg && (JSON.stringify(st.cfg) !== st.orig || JSON.stringify(st.personen) !== st.origP)) { e.preventDefault(); e.returnValue = ''; } });
+
+  $('#pruefen').addEventListener('click', async () => {
+    const sm = $('#smsg');
+    try {
+      if (!st.cfg) throw new Error('Zuerst «Laden».');
+      const neu = await ergebnis();
+      const z = diff(JSON.parse(st.orig), neu);
+      sm.className = 'msg show info';
+      sm.innerHTML = '<b>' + (z.length ? z.length + ' Änderung(en):' : 'Keine Änderungen.') + '</b>' + (z.length ? '<pre class="diff">' + esc(z.join('\n')) + '</pre>' : '')
+        + '<details><summary>Öffentliche Datei ansehen</summary><pre class="diff">' + esc(JSON.stringify(neu, null, 2)) + '</pre></details>';
+    } catch (e) { zeige(sm, 'err', String(e.message || e)); }
+  });
+  $('#speichern').addEventListener('click', async () => {
+    const sm = $('#smsg'), b = $('#speichern');
+    try {
+      if (!st.cfg) throw new Error('Zuerst «Laden».');
+      const neu = await ergebnis();
+      const z = diff(JSON.parse(st.orig), neu);
+      const pDirty = st.personen && JSON.stringify(st.personen) !== st.origP;
+      if (!z.length && !pDirty) return zeige(sm, 'info', 'Keine Änderungen.');
+      if (!b.dataset.sicher) { b.dataset.sicher = '1'; b.textContent = 'Wirklich veröffentlichen?'; setTimeout(() => { delete b.dataset.sicher; b.textContent = 'Speichern & veröffentlichen'; }, 4000); $('#pruefen').click(); return; }
+      delete b.dataset.sicher; b.textContent = 'Speichere …'; b.disabled = true;
+      const text = JSON.stringify(neu, null, 2) + '\n';
+      const nachricht = 'PUPIL Preview Freischaltungen: ' + (z.slice(0, 3).join('; ') || 'Personen aktualisiert') + (z.length > 3 ? ' …' : '');
+      if (lokal) { zeige(sm, 'info', 'Lokale Vorschau - nichts gespeichert. So würde die Datei aussehen:\n' + text); return; }
+      if (pDirty) { // zuerst die verschluesselte Liste, dann die oeffentliche Datei
+        const pass = $('#pass').value;
+        if (!pass || pass.length < 10) throw new Error('Passwort für die Personenliste: mindestens 10 Zeichen.');
+        const r1 = await schreiben(PP, JSON.stringify(await verschluesseln(st.personen, pass), null, 1) + '\n', st.shaP, 'PUPIL Preview: Personenliste (verschluesselt) aktualisiert');
+        st.shaP = r1.content.sha;
+      }
+      const r2 = await schreiben(PF, text, st.shaF, nachricht);
+      st.shaF = r2.content.sha;
+      st.cfg = JSON.parse(text); st.cfg.personen = st.cfg.personen || {}; st.cfg.gesperrt = st.cfg.gesperrt || [];
+      st.orig = JSON.stringify(st.cfg); st.origP = JSON.stringify(st.personen);
+      render();
+      zeige(sm, 'ok', 'Gespeichert. GitHub Pages ist in ca. 1 Minute aktuell, die Erweiterungen übernehmen es innert 15 Minuten (sofort beim Öffnen ihres Menüs).');
+    } catch (e) { zeige(sm, 'err', String(e.message || e)); }
+    finally { b.textContent = 'Speichern & veröffentlichen'; b.disabled = !($('#token').value.trim() || lokal); }
+  });
+  $('#laden').addEventListener('click', laden);
+
+  /* Live-Stand oben anzeigen (oeffentliche Datei, ohne Token) */
+  (async () => {
+    try {
+      const r = await fetch((lokal ? '' : 'https://signerpupil.github.io/web-toys/pupil-preview/') + 'freischaltungen.json?t=' + Date.now(), { cache: 'no-store' });
+      const j = await r.json();
+      const p = Object.values(j.personen || {}).reduce((n, x) => n + Object.keys(x).length, 0);
+      zeige($('#live'), 'info', `Live: Stand ${j.stand || '-'} · ${Object.keys(j.tenants || {}).length} Schule(n) · ${p} Person(en) · Not-Aus: ${(j.gesperrt || []).length ? j.gesperrt.join(', ') : 'keiner'}`);
+    } catch (e) { zeige($('#live'), 'err', 'Live-Stand nicht abrufbar.'); }
+    laden();
+  })();
+})();
+</script>
+</body>
+</html>

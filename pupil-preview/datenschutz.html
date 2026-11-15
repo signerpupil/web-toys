@@ -40,6 +40,7 @@
           <td>Anzeige der Preview-Funktionen. Die Daten werden mit Ihrer bestehenden PUPIL-Anmeldung direkt von PUPIL geladen und nicht gespeichert oder weitergegeben.</td></tr>
         <tr><td>Ihre Einstellungen (welche Funktion ein/aus, Design-Stufe)</td><td>Lokal im Browser (<code>chrome.storage.local</code>)</td><td>Damit Ihre Wahl erhalten bleibt</td></tr>
         <tr><td>Ansichts-Einstellungen einzelner Funktionen (z. B. gewählte Spalten, zuletzt gewählte Klasse)</td><td>Lokal im Browser, im Speicher der PUPIL-Seite (<code>localStorage</code>)</td><td>Damit Ihre Ansicht beim nächsten Besuch gleich aussieht</td></tr>
+        <tr><td>Kennung der angemeldeten Person: ein SHA-256-Hash aus Schule und E-Mail-Adresse. Die E-Mail selbst liest die Erweiterung nur kurz aus der PUPIL-Seite («Angemeldet als …») und speichert sie nicht.</td><td>Lokal im Browser (<code>chrome.storage.local</code>)</td><td>Damit Funktionen, die einzelnen Personen freigegeben sind, nur bei diesen erscheinen. Der Vergleich findet im Browser statt, nichts wird übermittelt.</td></tr>
         <tr><td>Liste der Freischaltungen (welche Schule welche Funktion nutzen kann) mit Zeitpunkt des letzten Abrufs</td><td>Lokal im Browser</td><td>Damit die richtigen Funktionen erscheinen, auch wenn kurz keine Verbindung besteht</td></tr>
       </tbody>
     </table>
@@ -53,7 +54,12 @@
       und der Kartenlink in der SuS-Übersicht öffnet die Adresse auf <code>map.geo.admin.ch</code> (Bundesgeoportal).
       Was dabei übermittelt wird, entscheiden Sie durch Ihren Klick.</p>
 
-    <h2>5. Was die Erweiterung nicht tut</h2>
+    <h2>5. Freischaltung für einzelne Personen</h2>
+    <p>Gibt das PUPIL-Team eine Funktion nur für einzelne Personen frei, enthält die öffentliche Freischaltungs-Datei für diese Personen
+      ausschliesslich einen SHA-256-Hash aus Schule und E-Mail-Adresse, keine Namen und keine Adressen. Die zugehörige Liste der
+      E-Mail-Adressen führt PUPIL AG verschlüsselt (AES-256) und nur für die Verwaltung der Freischaltungen.</p>
+
+    <h2>6. Was die Erweiterung nicht tut</h2>
     <ul>
       <li>Keine Analyse- oder Tracking-Werkzeuge, keine Werbung, kein Verkauf oder Weitergabe von Daten.</li>
       <li>Keine Datenänderungen in PUPIL: die Preview-Funktionen erstellen, ändern oder löschen keine Einträge. Sie lesen und zeigen nur an.</li>
@@ -61,7 +67,7 @@
       <li>Kein Nachladen von Programmcode aus dem Internet: der gesamte Code ist Teil der geprüften Erweiterung.</li>
     </ul>
 
-    <h2>6. Berechtigungen der Erweiterung</h2>
+    <h2>7. Berechtigungen der Erweiterung</h2>
     <ul>
       <li><b>storage:</b> Ihre Einstellungen und die Freischaltungen lokal speichern.</li>
       <li><b>scripting:</b> Die Preview-Funktionen auf PUPIL-Seiten ausführen.</li>
@@ -69,17 +75,17 @@
       <li><b>Zugriff auf PUPIL-Seiten:</b> Nur dort werden Funktionen angezeigt.</li>
     </ul>
 
-    <h2>7. Löschen</h2>
+    <h2>8. Löschen</h2>
     <p>Beim Entfernen der Erweiterung werden ihre Einstellungen und die Freischaltungsliste gelöscht. Ansichts-Einstellungen, die einzelne
       Funktionen im Speicher der PUPIL-Seite abgelegt haben, löschen Sie über die Browser-Einstellungen («Website-Daten» der PUPIL-Adresse).
       Bei PUPIL AG werden über die Erweiterung keine Daten über Sie gespeichert.</p>
 
-    <h2>8. Ihre Rechte</h2>
+    <h2>9. Ihre Rechte</h2>
     <p>Sie haben nach dem Schweizer Datenschutzgesetz (DSG) und, soweit anwendbar, der DSGVO das Recht auf Auskunft,
       Berichtigung und Löschung. Da die Erweiterung keine Personendaten an uns übermittelt, liegen bei uns dazu in der Regel
       keine Daten vor. Für Daten in PUPIL selbst gelten die Vereinbarungen zwischen Ihrer Schule und PUPIL AG.</p>
 
-    <h2>9. Änderungen</h2>
+    <h2>10. Änderungen</h2>
     <p>Ändert sich die Funktionsweise, passen wir diese Erklärung an. Stand: 15. November 2026.</p>
   </div>
 </section>

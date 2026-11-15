@@ -1,0 +1,30 @@
+{
+  "version": "0.2.0",
+  "features": [
+    {
+      "id": "design",
+      "name": "Neues Design",
+      "desc": "Ruhigerer, aufgeräumter Look für ganz PUPIL. Wählen Sie zwischen «Dezent» und «Voll»."
+    },
+    {
+      "id": "sus-uebersicht",
+      "name": "SuS-Übersicht",
+      "desc": "Alles zu einer Schülerin oder einem Schüler auf einer Seite. Zu finden unter «Schulalltag»."
+    },
+    {
+      "id": "personendossier-vorschau",
+      "name": "Personendossier: Dokument-Vorschau",
+      "desc": "Dateien im Personendossier direkt ansehen (PDF, Word, Excel, PowerPoint, Bilder), ohne sie herunterzuladen."
+    },
+    {
+      "id": "berechtigungsuebersicht",
+      "name": "Berechtigungsübersicht",
+      "desc": "Wer darf was? Rollen, Berechtigungen und Dossier-Zugriffe auf einen Blick (Stammdaten › Personen)."
+    },
+    {
+      "id": "spaltenkonfigurationen",
+      "name": "Spaltenkonfigurationen",
+      "desc": "Spalten in den Listen Schulen, Klassen, Fächer und Massenmutation selbst wählen. Ändert keine Daten."
+    }
+  ]
+}
