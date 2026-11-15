@@ -9,7 +9,14 @@
       "sus-uebersicht"
     ],
     "kloten": [
-      "*"
+      "sus-uebersicht"
     ]
+  },
+  "personen": {
+    "kloten": {
+      "6ec575177848270c1c23d7715739c737c6069ae3a4f1ef05a7bf7a663816da2b": [
+        "design"
+      ]
+    }
   }
 }
