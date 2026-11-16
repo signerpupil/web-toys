@@ -1,14 +1,11 @@
 {
   "_hilfe": "PUPIL Preview Freischaltungen - nur ueber admin.html bearbeiten. tenants: Schule -> Features (alle Versionen). personen: Schule -> SHA-256(schule:e-mail) -> Features (ab 0.2.0). gesperrt: Not-Aus. Testumgebungen haben immer alles.",
-  "stand": "2026-11-15",
+  "stand": "2026-11-16",
   "gesperrt": [],
   "weiterleitung": "",
   "tenants": {
     "saentis": [
       "design",
-      "sus-uebersicht"
-    ],
-    "kloten": [
       "sus-uebersicht"
     ]
   },
@@ -16,6 +13,10 @@
     "kloten": {
       "6ec575177848270c1c23d7715739c737c6069ae3a4f1ef05a7bf7a663816da2b": [
         "design"
+      ],
+      "a7f7912bc1b8ed25df686c0c67fe65da511e5e974f9fad121f78258c8033599c": [
+        "sus-uebersicht",
+        "berechtigungsuebersicht"
       ]
     }
   }
