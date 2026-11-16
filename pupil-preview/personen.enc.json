@@ -1,7 +1,7 @@
 {
  "v": 1,
  "hinweis": "PUPIL Preview Personenliste, verschluesselt (AES-GCM, PBKDF2-SHA256 310000). Bearbeiten nur ueber admin.html.",
- "salt": "4i4kGtsBKJ/sM8+y0h4gtQ==",
- "iv": "ghOzuHO+e6ydFNbT",
- "daten": "U2yL9zOCj0Dp0Sinw9G9FV/4vslx/nfRd6Ty6TMF1ltoBdyv/SRdqM5tzdvW2a3Kh/weHBPBld8UK7+Tx7JIisY="
+ "salt": "9KQFXu1tzLaGIi/01yKo8w==",
+ "iv": "pKfJFu88QcsoCCFS",
+ "daten": "1yz1JbACX5sH2Y2agcyrRV2X8FCbIe0SoxgmbSv4DqYlkheQqC4AU8zyhxfC/TiCokqXlGDeC5qGblIfFb5S+xgUoUNPXzcwViFV5mKgmYXsD53Us/5ae4H/j4ne2El8rY/f3P0jdIQBf4LbkJ4N5FeeQ2FwPCsANlmlYMHLPZ/Gby2fGUmUqyz6xg=="
 }
