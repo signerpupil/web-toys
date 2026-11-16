@@ -121,7 +121,8 @@
 <section id="notaus">
   <div class="wrap">
     <h2>Not-Aus</h2>
-    <p class="muted">Schaltet eine Funktion überall aus (auch Testumgebungen), wirkt innert 15 Minuten ohne neue Version.</p>
+    <p class="muted">Schaltet eine Funktion überall aus (auch Testumgebungen), wirkt innert 15 Minuten ohne neue Version.
+      Ab Version 0.2.0 sehen Betroffene im Menü «vorübergehend deaktiviert» und Ihren Hinweis.</p>
     <div class="panel kill" id="kill"></div>
     <details style="margin-top:14px"><summary>Erweitert: Quelle umziehen</summary>
       <p class="muted">Steht hier eine URL, lesen alle Erweiterungen ab dann dort (z. B. späterer eigener Server). Die neue Quelle muss dasselbe Format liefern und CORS erlauben. Nur ändern, wenn die neue Quelle schon funktioniert.</p>
@@ -262,7 +263,9 @@
         : `<tr><td colspan="${st.kat.length + 3}" class="muted">Noch keine Personen.</td></tr>`)
         : `<tr><td colspan="${st.kat.length + 3}" class="muted">${Object.values(c.personen || {}).reduce((n, p) => n + Object.keys(p).length, 0)} Person(en) hinterlegt (verschlüsselt).</td></tr>`) + '</tbody>';
 
-    $('#kill').innerHTML = st.kat.map((f) => `<label style="display:flex;gap:8px;align-items:center;margin:4px 0"><input type="checkbox" data-kill="${esc(f.id)}" ${c.gesperrt.includes(f.id) ? 'checked' : ''}> ${esc(f.name)} überall ausschalten</label>`).join('');
+    const hw = c.gesperrtHinweis || {};
+    $('#kill').innerHTML = st.kat.map((f) => { const an = c.gesperrt.includes(f.id); return `<div style="margin:6px 0"><label style="display:flex;gap:8px;align-items:center"><input type="checkbox" data-kill="${esc(f.id)}" ${an ? 'checked' : ''}> ${esc(f.name)} überall ausschalten</label>`
+      + (an ? `<label class="f" style="margin:6px 0 4px 26px">Hinweis für Nutzer:innen (optional, erscheint im Menü der Erweiterung)<input type="text" data-hinweis="${esc(f.id)}" maxlength="200" value="${esc(hw[f.id] || '')}" placeholder="z. B. Wird nach dem PUPIL-Update angepasst." style="min-width:min(520px,100%)"></label>` : '') + '</div>'; }).join('');
     geaendert();
   };
 
@@ -281,6 +284,9 @@
       geaendert();
     } else if (x.dataset.kill) {
       st.cfg.gesperrt = x.checked ? [...new Set([...st.cfg.gesperrt, x.dataset.kill])] : st.cfg.gesperrt.filter((f) => f !== x.dataset.kill);
+      render(); // Hinweis-Feld ein-/ausblenden
+    } else if (x.dataset.hinweis) {
+      st.cfg.gesperrtHinweis = Object.assign({}, st.cfg.gesperrtHinweis || {}, { [x.dataset.hinweis]: x.value.trim() });
       geaendert();
     } else if (x.id === 'weiter') { st.cfg.weiterleitung = x.value.trim(); geaendert(); }
   });
@@ -321,6 +327,10 @@
       }
     }
     if (!Object.keys(c.personen || {}).length) delete c.personen;
+    // Hinweise nur fuer tatsaechlich abgeschaltete Funktionen behalten
+    const hw = {};
+    for (const [f, t] of Object.entries(c.gesperrtHinweis || {})) if ((c.gesperrt || []).includes(f) && String(t).trim()) hw[f] = String(t).trim().slice(0, 200);
+    if (Object.keys(hw).length) c.gesperrtHinweis = hw; else delete c.gesperrtHinweis;
     if (!c.weiterleitung) c.weiterleitung = '';
     c.stand = new Date().toISOString().slice(0, 10);
     c._hilfe = 'PUPIL Preview Freischaltungen - nur ueber admin.html bearbeiten. tenants: Schule -> Features (alle Versionen). personen: Schule -> SHA-256(schule:e-mail) -> Features (ab 0.2.0). gesperrt: Not-Aus. Testumgebungen haben immer alles.';
@@ -346,6 +356,10 @@
     for (const f of neu.gesperrt || []) if (!(alt.gesperrt || []).includes(f)) z.push(`! NOT-AUS an: ${name(f)}`);
     for (const f of alt.gesperrt || []) if (!(neu.gesperrt || []).includes(f)) z.push(`+ Not-Aus aufgehoben: ${name(f)}`);
     if ((alt.weiterleitung || '') !== (neu.weiterleitung || '')) z.push(`! Weiterleitung: ${neu.weiterleitung || '(keine)'}`);
+    for (const f of new Set([...Object.keys(alt.gesperrtHinweis || {}), ...Object.keys(neu.gesperrtHinweis || {})])) {
+      const a = (alt.gesperrtHinweis || {})[f] || '', n = (neu.gesperrtHinweis || {})[f] || '';
+      if (a !== n) z.push(`~ Hinweis ${name(f)}: ${n || '(entfernt)'}`);
+    }
     return z;
   };
   const geaendert = () => {
